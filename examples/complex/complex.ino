@@ -1,3 +1,5 @@
+/* More complex example with additional logging and deprecated methods. */
+
 #include <AESLib.h>
 
 extern "C" {
@@ -12,7 +14,7 @@ AESLib aesLib;
 byte aes_key[] = { 0x2B, 0x7E, 0x15, 0x16, 0x28, 0xAE, 0xD2, 0xA6, 0xAB, 0xF7, 0x15, 0x88, 0x09, 0xCF, 0x4F, 0x3C };
 
 // General initialization vector (use your own)
-byte aes_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+byte aes_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // eq. 'AAAAAAAAAAAAAAAAAAAAAA==';
 
 // Generate IV (once)
 void aes_init() {
@@ -63,6 +65,13 @@ String encode(String msg) {
   Serial.printf("Encoded %i bytes to %s \n", enlen, output);
   sprintf(message, output);
   return String(output);
+}
+
+void print_iv() {
+   byte null_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+   char iv[256];
+   int ivlen = base64_encode(iv, (char*)null_iv, N_BLOCK);
+   Serial.println(iv);
 }
 
 String decode() {
@@ -138,6 +147,8 @@ int loopcount = 0;
 char cleartext[256];
 char ciphertext[512];
 
+// zEDQYJuYhIV5lLJeIB3qlQ==
+
 void loop() {
 
   loopcount++;
@@ -145,11 +156,13 @@ void loop() {
   sprintf(cleartext, "START; %i \n", loopcount);
 
   print_key_iv();
- 
+
+  print_iv();
+
   // V1
   //Serial.println("ENCRYPTION (String)");
-  //String encrypted = encrypt(String(cleartext));  
-  
+  //String encrypted = encrypt(String(cleartext));
+
   // V2
   Serial.println("ENCRYPTION (char*)");
   byte enc_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // iv_block gets written to, reqires always fresh copy.
@@ -164,16 +177,16 @@ void loop() {
   // V1
   //Serial.println("DECRYPTION (String)");
   //String decrypted = decrypt(encrypted);
-  
+
 
   // V2
   Serial.println("DECRYPTION (char*)");
   Serial.println(ciphertext);
   byte dec_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // iv_block gets written to, reqires always fresh copy.
-  String decrypted = decrypt(ciphertext, dec_iv);  
+  String decrypted = decrypt(ciphertext, dec_iv);
 
   Serial.print("Result D: ");
-  Serial.println(decrypted);  
+  Serial.println(decrypted);
 
   String plain = String(cleartext);
 
