@@ -1,0 +1,17 @@
+{
+  "name": "AESLib",
+  "keywords": "thinx, esp8266, arduino, 128, AES",
+  "description": "Arduino/ESP8266 wrapper for AES encryption",
+  "authors": {
+    "name": "Matej Sychra",
+    "email": "suculent@me.com",
+    "url": "https://github.com/suculent/thinx-aeslib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/suculent/thinx-aeslib.git"
+  },
+  "version": "1.0.0",
+  "frameworks": "arduino",
+  "platforms": "esp8266, esp32, avr, arduino"
+}

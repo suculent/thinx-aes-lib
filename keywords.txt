@@ -1,0 +1,25 @@
+#######################################
+# Syntax Coloring Map for AESLib
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+THiNX	KEYWORD1
+AESLib	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+encrypt	KEYWORD1
+decrypt	KEYWORD1
+clean	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+aes_key	LITERAL1
+aes_iv	LITERAL1
