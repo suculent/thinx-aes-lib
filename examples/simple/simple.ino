@@ -1,13 +1,3 @@
-# THiNX AESLib (ESP32, ESP8266, Arduino)
-
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8dded023f3d14a69b3c38c9f5fd66a40)](https://www.codacy.com/app/suculent/thinx-aeslib?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=suculent/thinx-aeslib&amp;utm_campaign=Badge_Grade)
-
-An Arduino/ESP32/ESP8266 library to wrap AES encryption with Base64 support. This project is originally based on [AESLib by kakopappa](https://github.com/kakopappa/arduino-esp8266-aes-lib). Unlike the original project actually works and provides optimized methods that do not require using Arduino's flawed String objects.
-
-# Example
-
-```
-
 #include "AESLib.h"
 
 AESLib aesLib;
@@ -28,7 +18,7 @@ byte aes_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 void aes_init() {
   aesLib.gen_iv(aes_iv);
   // workaround for incorrect B64 functionality on first run...
-  encrypt("HELLO WORLD!", aes_iv);
+  encrypt("HELLO WORLD!", aes_iv); 
 }
 
 String encrypt(char * msg, byte iv[]) {  
@@ -56,7 +46,7 @@ void loop() {
   loopcount++;
 
   sprintf(cleartext, "START; %i \n", loopcount);  
-
+  
   // Encrypt
   byte enc_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // iv_block gets written to, provide own fresh copy...
   String encrypted = encrypt(cleartext, enc_iv);
@@ -72,5 +62,3 @@ void loop() {
 
   delay(500);
 }
-
-```
