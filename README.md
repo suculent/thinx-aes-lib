@@ -4,7 +4,7 @@
 
 An Arduino/ESP32/ESP8266 library to wrap AES encryption with Base64 support. This project is originally based on [AESLib by kakopappa](https://github.com/kakopappa/arduino-esp8266-aes-lib). Unlike the original project actually works and provides optimized methods that do not require using Arduino's flawed String objects.
 
-# Example
+# Client Example
 
 ```
 
@@ -73,4 +73,31 @@ void loop() {
   delay(500);
 }
 
+```
+
+# Server Example
+
+Requires node.js and npm.
+
+Enter the `nodejs` folder in Terminal and install required npm packages with `npm install .` command.
+
+You can run the example with `node index.js` as you know it, and then dig into the source code to adjust for your purposes.
+
+```
+// Setup CryptoJS
+var CryptoJS = require("crypto-js");
+var esp8266_msg = 'ei6NxsBeWk7hj41eia3S0Od26goTtxHvwO6V27LwSW4='; // = "START; 380"
+var esp8266_iv  = 'AAAAAAAAAAAAAAAAAAAAAA==';
+var AESKey = '2B7E151628AED2A6ABF7158809CF4F3C';
+var plain_iv = new Buffer(esp8266_iv, 'base64').toString('hex');
+var iv = CryptoJS.enc.Hex.parse(plain_iv);
+var key = CryptoJS.enc.Hex.parse(AESKey);
+
+// Decrypt
+var bytes  = CryptoJS.AES.decrypt( esp8266_msg, key, { iv: iv } );
+var plaintext = bytes.toString(CryptoJS.enc.Base64);
+var decoded_b64msg = new Buffer(plaintext, 'base64').toString('ascii');
+var decoded_msg = new Buffer(decoded_b64msg, 'base64').toString('ascii');
+
+console.log("Decrypted message: ", decoded_msg);
 ```
