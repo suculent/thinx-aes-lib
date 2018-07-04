@@ -14,62 +14,67 @@ void AESLib::gen_iv(byte  *iv) {
 
 String AESLib::decrypt(String msg, byte key[], byte my_iv[]) {
 
-  // Set decryption key
   aes.set_key(key, sizeof(key));
 
-  // Don't be silly here.
+  // Base64-decode message to `encrypted` array which stores the ciphertext
   int len = msg.length();
-  if (len > 200) {
-    return String("Failed to decrypt. Message too long.");
-  } else {
-    Serial.printf("Decrypting message %s of length %i \n", msg.c_str(), len);
-  }
+  Serial.printf("Decrypting message %s of length %i \n", msg.c_str(), len);
+  char encrypted[len]; // will be always shorter than Base64
+  int b64len = base64_decode(encrypted, (char*)msg.c_str(), msg.length());
 
-  // Copy message to temporary char array
-  char temp[200] = {0};
-  sprintf(temp, msg.c_str());
-  //msg.toCharArray(temp, len);
+  // printf("Decoded %i bytes as %s \n", b64len, encrypted);
 
-  // Decode char array to `decoded array` which is a ciphertext
-  char encrypted[256] = {0}; // MAX_BLOCK * 2
-  // int base64_decode(char * output, char * input, int inputLen)
-  int b64len = base64_decode(encrypted, temp, strlen(temp));
-
-  printf("Decoded %i bytes as %s \n", b64len, encrypted);
-
-  byte out[512] = {0};
+  // AES decrypt into calculated and allocated working buffer
+  byte out[2*len];
   aes.do_aes_decrypt((byte *)encrypted, b64len, out, key, 128, (byte *)my_iv);
 
+  // Calculate and allocate required Base64 buffer size
   int outDataLen = strlen((char*)out);
   int outLen = base64_dec_len((char*)out, outDataLen);
   char message[outLen+2]; // trailing zero for cstring?
-  int baseLen = base64_decode(message, (char *)out, outDataLen);
-  message[baseLen] = '\0'; // adds trailing zero for cstring
-  printf("Out o:%i/b:%i bytes: %s \n", outDataLen, baseLen, message);
 
-  String result = String(message);
-  return result;
+  // Finally Base64-decode the decrypted message and make it a C-strings
+  int baseLen = base64_decode(message, (char *)out, outDataLen);
+  message[baseLen] = '\0'; // ensure trailing zero after cstring
+  // printf("Out o:%i/b:%i bytes: %s \n", outDataLen, baseLen, message);
+
+  // clean();
+
+  return String(message);
 }
 
-/*
-void decrypt(String b64data, String IV_base64, int size)
-{
-  char data_decoded[200];
-  char iv_decoded[200];
-  byte out[200];
-  char temp[200];
-  b64data.toCharArray(temp, 200);
-  base64_decode(data_decoded, temp, b64data.length());
-  IV_base64.toCharArray(temp, 200);
+/* Suggested size for the plaintext buffer is 1/2 length of `msg` */
+void AESLib::decrypt(char * msg, char * plain, byte key[], byte my_iv[]) {
 
-  base64_decode(iv_decoded, temp, IV_base64.length());
+  aes.set_key(key, sizeof(key));
 
-  // void do_aes_decrypt(byte *cipher,int size_c,byte *plain,byte *key, int bits, byte ivl [N_BLOCK]);
-  aes.do_aes_decrypt((byte *)data_decoded, size, out, key, 128, (byte *)iv_decoded);
-  char message[msg.length()];
-  base64_decode(message, (char *)out, b64data.length());
-  printf("Out %s \n", message);
-}*/
+  // Base64-decode message to `encrypted` array which stores the ciphertext
+  int msgLen = strlen(msg);
+  Serial.printf("Decrypting message %s of length %i \n", msg, msgLen);
+  char encrypted[msgLen]; // will be always shorter than Base64
+  int b64len = base64_decode(encrypted, msg, msgLen);
+
+  // printf("Decoded %i bytes as %s \n", b64len, encrypted);
+
+  // AES decrypt into calculated and allocated working buffer
+  byte out[2*msgLen];
+  aes.do_aes_decrypt((byte *)encrypted, b64len, out, key, 128, (byte *)my_iv);
+
+  // Calculate and allocate required Base64 buffer size
+  int outDataLen = strlen((char*)out);
+  int outLen = base64_dec_len((char*)out, outDataLen);
+  char message[outLen+2]; // trailing zero for cstring?
+
+  // Finally Base64-decode the decrypted message and make it a C-strings
+  int baseLen = base64_decode(message, (char *)out, outDataLen);
+  message[baseLen] = '\0'; // ensure trailing zero after cstring
+
+  //clean();
+
+  // Copy from working to output buffer, may deprecate to save RAM.
+  strcpy(message, plain);
+  //clean();
+}
 
 String AESLib::encrypt(String msg, byte key[], byte my_iv[]) {
 
@@ -77,38 +82,59 @@ String AESLib::encrypt(String msg, byte key[], byte my_iv[]) {
 
   // Calculate required length and pad the plaintext for 16bit AES
   int msgLen = sizeof(msg.c_str());
-  int paddedLen = msg.length() + (8 - msg.length() % 8) + 1; // ??? just a test...
+
+  // Add PKCS7 padding
+  int paddedLen = msgLen + (N_BLOCK - (msgLen % N_BLOCK)) + 1; // ??? just a test...
   byte padded[paddedLen];
   aes.padPlaintext((char*)msg.c_str(), padded);
-  aes.padPlaintext((char*)msg.c_str(), padded);
 
-  int baseLength = base64_enc_len(msg.length());
-  char b64data[baseLength];
-
-  // debug print b64data array that is supposed to be empty (filled with NULLs)...
-  for (int j = 0; j < baseLength; j++) {
-    b64data[j] = '\0';
-    Serial.printf("%i ", b64data[j]);
-  }
-  Serial.println();
-
-  char out[200] = {0};
-  byte cipher[1000] = {0};
-
+  // Encode data before encryption
+  char b64data[base64_enc_len(msgLen)];
   int b64len = base64_encode(b64data, (char*)padded, paddedLen);
-  if (b64len > 200) {
-    Serial.println("B64 too long for output array!");
-    return String("");
-  }
 
-  for (int j = 0; j < b64len; j++) {
-    Serial.printf("%i ", b64data[j]);
-  }
-  Serial.println();
-
-  Serial.printf("Encrypting %s\n", b64data);
+  // Encrypt using AES 128bit
+  char out[b64len];
+  byte cipher[2*b64len];
   aes.do_aes_encrypt((byte *)b64data, b64len, cipher, key, 128, my_iv);
+
+  // Encode data to Base64 so it can be returned as String (or written to char*)
   base64_encode(out, (char *)cipher, aes.get_size() );
-  Serial.printf("Encrypted/encoded: %s\n", out);
+
+  //clean();
+
   return String((char*)out);
+}
+
+/* Suggested size for the output buffer is 2 * length of `msg` */
+void AESLib::encrypt(char * msg, char * output, byte key[], byte my_iv[]) {
+
+  aes.set_key(key, sizeof(key));
+
+  // Calculate required length and pad the plaintext for 16bit AES
+  int msgLen = strlen(msg);
+
+  // Add PKCS7 padding
+  int paddedLen = msgLen + (N_BLOCK - (msgLen % N_BLOCK)) + 1; // ??? just a test...
+  byte padded[paddedLen];
+  aes.padPlaintext(msg, padded);
+
+  // Encode data before encryption
+  char b64data[base64_enc_len(msgLen)];
+  int b64len = base64_encode(b64data, (char*)padded, paddedLen);
+
+  // Encrypt using AES 128bit
+  byte cipher[2*b64len];
+  aes.do_aes_encrypt((byte *)b64data, b64len, cipher, key, 128, my_iv);
+
+  // Encode data to Base64 so it can be returned as String (or written to char*)
+  char out2[4*b64len];
+  base64_encode(out2, (char *)cipher, aes.get_size() );
+
+  // Copy to output buffer, may deprecate...
+  strcpy(output, (char*)out2);
+  //clean();
+}
+
+void AESLib::clean() {
+  aes.clean();
 }
