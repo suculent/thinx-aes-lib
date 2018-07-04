@@ -71,8 +71,8 @@ void AESLib::decrypt(char * msg, char * plain, byte key[], byte my_iv[]) {
 
   //clean();
 
-  // Copy from working to output buffer, may deprecate to save RAM.
-  strcpy(message, plain);
+  // Copy from working to plaintext buffer, may deprecate to save RAM.
+  strcpy(plain, message);
   //clean();
 }
 
