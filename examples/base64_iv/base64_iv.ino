@@ -29,7 +29,8 @@ void aes_init() {
 
   // reset aes_iv to server-based value
   int ivLen = base64_decode((char*)server_b64iv.c_str(), (char *)aes_iv, server_b64iv.length());
-  Serial.printf("Decoded IV bytes: %i\n", ivLen);
+  Serial.print("Decoded IV bytes: ");
+  Serial.println(ivLen);
   print_key_iv();
 }
 

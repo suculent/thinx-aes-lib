@@ -61,8 +61,7 @@ String encode(String msg) {
 
   int inputLen = strlen(input);
   int enlen = base64_encode(output, input, msg.length());
-
-  Serial.printf("Encoded %i bytes to %s \n", enlen, output);
+  
   sprintf(message, output);
   return String(output);
 }
