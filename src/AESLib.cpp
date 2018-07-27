@@ -18,7 +18,6 @@ String AESLib::decrypt(String msg, byte key[], byte my_iv[]) {
 
   // Base64-decode message to `encrypted` array which stores the ciphertext
   int len = msg.length();
-  Serial.printf("Decrypting message %s of length %i \n", msg.c_str(), len);
   char encrypted[len]; // will be always shorter than Base64
   int b64len = base64_decode(encrypted, (char*)msg.c_str(), msg.length());
 
@@ -50,7 +49,6 @@ void AESLib::decrypt(char * msg, char * plain, byte key[], byte my_iv[]) {
 
   // Base64-decode message to `encrypted` array which stores the ciphertext
   int msgLen = strlen(msg);
-  Serial.printf("Decrypting message %s of length %i \n", msg, msgLen);
   char encrypted[msgLen]; // will be always shorter than Base64
   int b64len = base64_decode(encrypted, msg, msgLen);
 
