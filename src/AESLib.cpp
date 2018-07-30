@@ -139,7 +139,7 @@ void AESLib::encrypt64(char * msg, char * output, byte key[], byte my_iv[]) {
   int msgLen = strlen(msg);
 
   // Add PKCS7 padding
-  int paddedLen = msgLen + (N_BLOCK - (msgLen % N_BLOCK)) + 1;  // crashes without +1
+  int paddedLen = msgLen + (N_BLOCK - (msgLen % N_BLOCK));  // crashes without +1
   Serial.print("Padding message of length ");
   Serial.print(msgLen);
   Serial.print(" to ");
@@ -147,17 +147,24 @@ void AESLib::encrypt64(char * msg, char * output, byte key[], byte my_iv[]) {
   byte padded[paddedLen];
   aes.padPlaintext(msg, padded);
 
+  Serial.print("Encoding..."); Serial.flush();
   // Encode data before encryption
   char b64data[base64_enc_len(paddedLen)];
   int b64len = base64_encode(b64data, (char*)padded, paddedLen);
+
+  Serial.print("Encrypting (crashes)..."); Serial.flush();
 
   // Encrypt using AES 128bit
   byte cipher[2*b64len];
   aes.do_aes_encrypt((byte *)b64data, b64len, cipher, key, 128, my_iv);
 
+  Serial.println("Encoding (2)..."); Serial.flush();
+
   // Encode data to Base64 so it can be returned as String (or written to char*)
   char out2[4*b64len];
   base64_encode(out2, (char *)cipher, aes.get_size() );
+
+  Serial.println("Returning..."); Serial.flush();
 
   strcpy(output, (char*)out2);
 }
