@@ -61,7 +61,7 @@ String encode(String msg) {
 
   int inputLen = strlen(input);
   int enlen = base64_encode(output, input, msg.length());
-  
+
   sprintf(message, output);
   return String(output);
 }
@@ -83,7 +83,7 @@ String decode() {
 String encrypt(String msg) {
   unsigned long ms = micros();
   byte null_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // iv_block gets written to, reqires always fresh copy.
-  String encMsg = aesLib.encrypt(msg, aes_key, null_iv);
+  String encMsg = aesLib.encrypt64(msg, aes_key, null_iv);
   Serial.print("Encryption took: ");
   Serial.print(micros() - ms);
   Serial.println("us");
@@ -95,7 +95,7 @@ String encrypt(char * msg, byte iv[]) {
   unsigned long ms = micros();
   int msgLen = strlen(msg);
   char encrypted[2 * msgLen];
-  aesLib.encrypt(msg, encrypted, aes_key, iv);
+  aesLib.encrypt64(msg, encrypted, aes_key, iv);
   Serial.print("Encryption took: ");
   Serial.print(micros() - ms);
   Serial.println("us");
@@ -106,7 +106,7 @@ String encrypt(char * msg, byte iv[]) {
 String decrypt(String msg) {
   unsigned long ms = micros();
   byte null_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // iv_block gets written to, reqires always fresh copy.
-  String decMsg = aesLib.decrypt(msg, aes_key, null_iv);
+  String decMsg = aesLib.decrypt64(msg, aes_key, null_iv);
   Serial.print("Decryption [1] took: ");
   Serial.print(micros() - ms);
   Serial.println("us");
@@ -118,7 +118,7 @@ String decrypt(char * msg, byte iv[]) {
   unsigned long ms = micros();
   int msgLen = strlen(msg);
   char decrypted[msgLen]; // half may be enough
-  aesLib.decrypt(msg, decrypted, aes_key, iv);
+  aesLib.decrypt64(msg, decrypted, aes_key, iv);
   Serial.print("Decryption [2] took: ");
   Serial.print(micros() - ms);
   Serial.println("us");
