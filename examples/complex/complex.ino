@@ -11,15 +11,15 @@ extern "C" {
 AESLib aesLib;
 
 // AES Encryption Key
-byte aes_key[] = { 0x2B, 0x7E, 0x15, 0x16, 0x28, 0xAE, 0xD2, 0xA6, 0xAB, 0xF7, 0x15, 0x88, 0x09, 0xCF, 0x4F, 0x3C };
+byte aes_key[] = { 0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30 };
 
 // General initialization vector (use your own)
-byte aes_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // eq. 'AAAAAAAAAAAAAAAAAAAAAA==';
+byte aes_iv[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 // Generate IV (once)
 void aes_init() {
   aesLib.gen_iv(aes_iv);
-  encrypt(""); // workaround for incorrect B64 functionality on first run... initing b64 is not enough
+  encrypt("AAAAAAAAAA", aes_iv); // workaround for incorrect B64 functionality on first run... initing b64 is not enough
 }
 
 // Serves for debug logging the case where IV changes after use...
@@ -62,14 +62,15 @@ String encode(String msg) {
   int inputLen = strlen(input);
   int enlen = base64_encode(output, input, msg.length());
 
+  Serial.printf("Encoded %i bytes to %s \n", enlen, output);
   sprintf(message, output);
   return String(output);
 }
 
 void print_iv() {
-   byte null_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+   byte null_iv[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
    char iv[256];
-   int ivlen = base64_encode(iv, (char*)null_iv, N_BLOCK);
+   int ivlen = base64_encode(iv, (char*)null_iv, 16);
    Serial.println(iv);
 }
 
@@ -79,18 +80,6 @@ String decode() {
   return String(decoded);
 }
 
-// V1
-String encrypt(String msg) {
-  unsigned long ms = micros();
-  byte null_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // iv_block gets written to, reqires always fresh copy.
-  String encMsg = aesLib.encrypt64(msg, aes_key, null_iv);
-  Serial.print("Encryption took: ");
-  Serial.print(micros() - ms);
-  Serial.println("us");
-  return encMsg;
-}
-
-// V2
 String encrypt(char * msg, byte iv[]) {
   unsigned long ms = micros();
   int msgLen = strlen(msg);
@@ -102,18 +91,6 @@ String encrypt(char * msg, byte iv[]) {
   return String(encrypted);
 }
 
-// V1
-String decrypt(String msg) {
-  unsigned long ms = micros();
-  byte null_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // iv_block gets written to, reqires always fresh copy.
-  String decMsg = aesLib.decrypt64(msg, aes_key, null_iv);
-  Serial.print("Decryption [1] took: ");
-  Serial.print(micros() - ms);
-  Serial.println("us");
-  return decMsg;
-}
-
-// V2
 String decrypt(char * msg, byte iv[]) {
   unsigned long ms = micros();
   int msgLen = strlen(msg);
@@ -144,7 +121,7 @@ String plaintext = "12345678;";
 int loopcount = 0;
 
 char cleartext[256];
-char ciphertext[512];
+char ciphertext[1024];
 
 // zEDQYJuYhIV5lLJeIB3qlQ==
 
@@ -152,39 +129,27 @@ void loop() {
 
   loopcount++;
 
-  sprintf(cleartext, "START; %i \n", loopcount);
+  sprintf(cleartext, "AAAAAAAAA");
 
   print_key_iv();
 
   print_iv();
 
-  // V1
-  //Serial.println("ENCRYPTION (String)");
-  //String encrypted = encrypt(String(cleartext));
-
-  // V2
   Serial.println("ENCRYPTION (char*)");
-  byte enc_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // iv_block gets written to, reqires always fresh copy.
+  byte enc_iv[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // iv_block gets written to, reqires always fresh copy.
   String encrypted = encrypt(cleartext, enc_iv);
   sprintf(ciphertext, "%s", encrypted.c_str());
-  //ciphertext = encrypted.c_str();
 
-  Serial.print("Result E: ");
+  Serial.print("Encrypted Result: ");
   Serial.println(encrypted);
   Serial.println();
 
-  // V1
-  //Serial.println("DECRYPTION (String)");
-  //String decrypted = decrypt(encrypted);
-
-
-  // V2
   Serial.println("DECRYPTION (char*)");
   Serial.println(ciphertext);
-  byte dec_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // iv_block gets written to, reqires always fresh copy.
+  byte dec_iv[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // iv_block gets written to, reqires always fresh copy.
   String decrypted = decrypt(ciphertext, dec_iv);
 
-  Serial.print("Result D: ");
+  Serial.print("Decrypted Result: ");
   Serial.println(decrypted);
 
   String plain = String(cleartext);
