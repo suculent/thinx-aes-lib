@@ -108,24 +108,22 @@ String AESLib::encrypt(String msg, byte key[], byte my_iv[]) {
   // Calculate required length and pad the plaintext for 16bit AES
   int msgLen = strlen(msg.c_str());
 
-  // Add PKCS7 padding
-  int paddedLen = msgLen + (N_BLOCK - (msgLen % N_BLOCK)) + 1; 
-  byte padded[paddedLen];
-  aes.padPlaintext((char*)msg.c_str(), padded);
-
   // Encode data before encryption
   char b64data[base64_enc_len(msgLen)];
-  int b64len = base64_encode(b64data, (char*)padded, paddedLen);
+  int b64len = base64_encode(b64data, (char*)msg.c_str(), msgLen);
+
+  // Add PKCS7 padding
+  int paddedLen = b64len + (N_BLOCK - (b64len % N_BLOCK)) + 1;
+  byte padded[paddedLen];
+  aes.padPlaintext(b64data, padded);
 
   // Encrypt using AES 128bit
   char out[b64len];
   byte cipher[2*b64len];
-  aes.do_aes_encrypt((byte *)b64data, b64len, cipher, key, 128, my_iv);
+  aes.do_aes_encrypt((byte *)padded, paddedLen, cipher, key, 128, my_iv);
 
   // Encode data to Base64 so it can be returned as String (or written to char*)
   base64_encode(out, (char *)cipher, aes.get_size() );
-
-  //clean();
 
   return String((char*)out);
 }
@@ -166,36 +164,18 @@ void AESLib::encrypt(char * msg, char * output, byte key[], byte my_iv[]) {
   // Calculate required length and pad the plaintext for 16bit AES
   int msgLen = strlen(msg);
 
-  // Add PKCS7 padding
-  int paddedLen = msgLen + (N_BLOCK - (msgLen % N_BLOCK)) + 1;
-  Serial.print("Padding message of length ");
-  Serial.print(msgLen);
-  Serial.print(" to ");
-  Serial.println(paddedLen);
-  Serial.flush();
-
-  byte padded[paddedLen];
-  aes.padPlaintext(msg, padded);
-
   // Encode data before encryption
-  char b64data[base64_enc_len(paddedLen)];
-  int b64len = base64_encode(b64data, (char*)msg, paddedLen);
+  char b64data[base64_enc_len(msgLen)];
+  int b64len = base64_encode(b64data, (char*)msg, msgLen);
 
-  Serial.print("Encrypting paddedLen ");
-  Serial.print(paddedLen);
-  Serial.print(" to ");
-  Serial.println(b64len);
-  Serial.flush();
+  // Add PKCS7 padding
+  int paddedLen = b64len + (N_BLOCK - (b64len % N_BLOCK)) + 1;
+  byte padded[paddedLen];
+  aes.padPlaintext(b64data, padded);
 
   // Encrypt using AES 128bit
   byte cipher[2*b64len];
-  aes.do_aes_encrypt((byte *)b64data, b64len, cipher, key, 128, my_iv);
-
-  Serial.print("Encrypted paddedLen ");
-  Serial.print(paddedLen);
-  Serial.print(" to ");
-  Serial.println(b64len);
-  Serial.flush();
+  aes.do_aes_encrypt((byte *)padded, paddedLen, cipher, key, 128, my_iv);
 
   strcpy(output, (char*)cipher);
 }
