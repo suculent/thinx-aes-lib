@@ -8,6 +8,10 @@ AESLib provides convenience methods for encrypting data to byte arrays and Strin
 
 In future this should use AES implementation from BearSSL, when available (to save more RAM in larger projects).
 
+# Changes
+
+1.0.3 - fixed padding (after encoding, not before) 
+
 # Client Example
 
 ```
