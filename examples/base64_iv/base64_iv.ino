@@ -29,14 +29,15 @@ void aes_init() {
 
   // reset aes_iv to server-based value
   int ivLen = base64_decode((char*)server_b64iv.c_str(), (char *)aes_iv, server_b64iv.length());
-  Serial.printf("Decoded IV bytes: %i\n", ivLen);
+  Serial.print("Decoded IV bytes: ");
+  Serial.println(ivLen);
   print_key_iv();
 }
 
 String encrypt(char * msg, byte iv[]) {
   int msgLen = strlen(msg);
   char encrypted[2 * msgLen];
-  aesLib.encrypt(msg, encrypted, aes_key, iv);
+  aesLib.encrypt64(msg, encrypted, aes_key, iv);
   return String(encrypted);
 }
 
@@ -44,7 +45,7 @@ String decrypt(char * msg, byte iv[]) {
   unsigned long ms = micros();
   int msgLen = strlen(msg);
   char decrypted[msgLen]; // half may be enough
-  aesLib.decrypt(msg, decrypted, aes_key, iv);
+  aesLib.decrypt64(msg, decrypted, aes_key, iv);
   return String(decrypted);
 }
 

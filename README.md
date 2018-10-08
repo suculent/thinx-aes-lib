@@ -1,10 +1,16 @@
-# THiNX AESLib (ESP32, ESP8266, Arduino)
+# THiNX AESLib (ESP32, ESP8266)
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/8dded023f3d14a69b3c38c9f5fd66a40)](https://www.codacy.com/app/suculent/thinx-aes-lib?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=suculent/thinx-aes-lib&amp;utm_campaign=Badge_Grade)
 
-An Arduino/ESP32/ESP8266 library to wrap AES encryption with Base64 support. This project is originally based on [AESLib by kakopappa](https://github.com/kakopappa/arduino-esp8266-aes-lib). This fork actually works, will be maintained at least for a while, and provides optimized methods that do not require using Arduino's flawed String objects (even though those are still in examples).
+An ESP32/ESP8266/Arduino library for Arduino IDE to wrap AES encryption with Base64 support. This project is originally based on [AESLib by kakopappa](https://github.com/kakopappa/arduino-esp8266-aes-lib). This fork actually works, will be maintained at least for a while, and provides optimized methods that do not require using Arduino's flawed String objects (even though those are still in examples).
+
+AESLib provides convenience methods for encrypting data to byte arrays and Strings, with optional additional base64 encoding to return strings instead of bare data.
 
 In future this should use AES implementation from BearSSL, when available (to save more RAM in larger projects).
+
+# Changes
+
+1.0.3 - fixed padding (after encoding, not before) 
 
 # Client Example
 
@@ -35,7 +41,7 @@ void aes_init() {
 String encrypt(char * msg, byte iv[]) {  
   int msgLen = strlen(msg);
   char encrypted[2 * msgLen];
-  aesLib.encrypt(msg, encrypted, aes_key, iv);  
+  aesLib.encrypt64(msg, encrypted, aes_key, iv);  
   return String(encrypted);
 }
 
@@ -43,7 +49,7 @@ String decrypt(char * msg, byte iv[]) {
   unsigned long ms = micros();
   int msgLen = strlen(msg);
   char decrypted[msgLen]; // half may be enough
-  aesLib.decrypt(msg, decrypted, aes_key, iv);  
+  aesLib.decrypt64(msg, decrypted, aes_key, iv);  
   return String(decrypted);
 }
 

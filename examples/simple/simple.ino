@@ -4,14 +4,14 @@
 
 AESLib aesLib;
 
-String plaintext = "AAAAAAAAA";
+String plaintext = "AAAAAAA";
 int loopcount = 0;
 
 char cleartext[256];
 char ciphertext[512];
 
 // AES Encryption Key
-byte aes_key[] = { 0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30 };
+byte aes_key[] = { 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30 };
 
 // General initialization vector (you must use your own IV's in production for full security!!!)
 byte aes_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -20,15 +20,14 @@ byte aes_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 void aes_init() {
   aesLib.gen_iv(aes_iv);
   // workaround for incorrect B64 functionality on first run...
-  sprintf(cleartext, plaintext.c_str());
-  encrypt(cleartext, aes_iv);
+  encrypt("HELLO WORLD!", aes_iv);
 }
 
 String encrypt(char * msg, byte iv[]) {
   int msgLen = strlen(msg);
-  char encrypted[2 * msgLen];
+  char encrypted[4 * msgLen]; // AHA! needs to be large, 2x is not enough
   aesLib.encrypt64(msg, encrypted, aes_key, iv);
-  return String(encrypted); 
+  return String(encrypted);
 }
 
 String decrypt(char * msg, byte iv[]) {
@@ -41,7 +40,6 @@ String decrypt(char * msg, byte iv[]) {
 
 void setup() {
   Serial.begin(115200);
-  
   aes_init();
 }
 
@@ -49,7 +47,7 @@ void loop() {
 
   loopcount++;
 
-  sprintf(cleartext, plaintext.c_str());
+  sprintf(cleartext, "%s", plaintext.c_str());
 
   // Encrypt
   byte enc_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // iv_block gets written to, provide own fresh copy...

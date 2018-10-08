@@ -14,7 +14,7 @@ AESLib aesLib;
 byte aes_key[] = { 0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30 };
 
 // General initialization vector (use your own)
-byte aes_iv[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; 
+byte aes_iv[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 // Generate IV (once)
 void aes_init() {
@@ -80,7 +80,6 @@ String decode() {
   return String(decoded);
 }
 
-// V2
 String encrypt(char * msg, byte iv[]) {
   unsigned long ms = micros();
   int msgLen = strlen(msg);
@@ -92,7 +91,6 @@ String encrypt(char * msg, byte iv[]) {
   return String(encrypted);
 }
 
-// V2
 String decrypt(char * msg, byte iv[]) {
   unsigned long ms = micros();
   int msgLen = strlen(msg);
@@ -131,25 +129,21 @@ void loop() {
 
   loopcount++;
 
-  //sprintf(cleartext, "START; %i \n", loopcount);
   sprintf(cleartext, "AAAAAAAAA");
 
   print_key_iv();
 
   print_iv();
 
-  // V2
   Serial.println("ENCRYPTION (char*)");
   byte enc_iv[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // iv_block gets written to, reqires always fresh copy.
   String encrypted = encrypt(cleartext, enc_iv);
   sprintf(ciphertext, "%s", encrypted.c_str());
-  //ciphertext = encrypted.c_str();
 
   Serial.print("Encrypted Result: ");
   Serial.println(encrypted);
   Serial.println();
 
-  // V2
   Serial.println("DECRYPTION (char*)");
   Serial.println(ciphertext);
   byte dec_iv[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // iv_block gets written to, reqires always fresh copy.
@@ -160,7 +154,7 @@ void loop() {
 
   String plain = String(cleartext);
 
-  if (plain.indexOf(decrypted) == -1) { 
+  if (plain.indexOf(decrypted) == -1) {
     Serial.println("Decryption FAILED!");
     Serial.printf("At: %i \n", plain.indexOf(decrypted));
     delay(5000);
