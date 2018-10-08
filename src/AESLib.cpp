@@ -22,8 +22,6 @@ String AESLib::decrypt(String msg, byte key[], byte my_iv[]) {
   char encrypted[len]; // will be always shorter than Base64
   int b64len = base64_decode(encrypted, (char*)msg.c_str(), msg.length());
 
-  // printf("Decoded %i bytes as %s \n", b64len, encrypted);
-
   // AES decrypt into calculated and allocated working buffer
   byte out[2*len];
   aes.do_aes_decrypt((byte *)encrypted, b64len, out, key, 128, (byte *)my_iv);
@@ -36,9 +34,6 @@ String AESLib::decrypt(String msg, byte key[], byte my_iv[]) {
   // Finally Base64-decode the decrypted message and make it a C-strings
   int baseLen = base64_decode(message, (char *)out, outDataLen);
   message[baseLen] = '\0'; // ensure trailing zero after cstring
-  // printf("Out o:%i/b:%i bytes: %s \n", outDataLen, baseLen, message);
-
-  // clean();
 
   return String(message);
 }
@@ -54,8 +49,6 @@ void AESLib::decrypt(char * msg, char * plain, byte key[], byte my_iv[]) {
   char encrypted[msgLen]; // will be always shorter than Base64
   int b64len = base64_decode(encrypted, msg, msgLen);
 
-  // printf("Decoded %i bytes as %s \n", b64len, encrypted);
-
   // AES decrypt into calculated and allocated working buffer
   byte out[2*msgLen];
   aes.do_aes_decrypt((byte *)encrypted, b64len, out, key, 128, (byte *)my_iv);
@@ -69,11 +62,8 @@ void AESLib::decrypt(char * msg, char * plain, byte key[], byte my_iv[]) {
   int baseLen = base64_decode(message, (char *)out, outDataLen);
   message[baseLen] = '\0'; // ensure trailing zero after cstring
 
-  //clean();
-
   // Copy from working to plaintext buffer, may deprecate to save RAM.
   strcpy(plain, message);
-  //clean();
 }
 
 String AESLib::encrypt(String msg, byte key[], byte my_iv[]) {
@@ -84,19 +74,20 @@ String AESLib::encrypt(String msg, byte key[], byte my_iv[]) {
   int msgLen = sizeof(msg.c_str());
 
   // Add PKCS7 padding
-  int paddedLen = msgLen + (N_BLOCK - (msgLen % N_BLOCK)) + 1; // ??? just a test...
+  int paddedLen = msgLen + (N_BLOCK - (msgLen % N_BLOCK));
   byte padded[paddedLen];
   aes.padPlaintext((char*)msg.c_str(), padded);
 
   // Encode data before encryption
-  char b64data[base64_enc_len(msgLen)];
+  int encoded_length = base64_enc_len(msgLen);
+  char b64data[encoded_length];
   int b64len = base64_encode(b64data, (char*)padded, paddedLen);
 
   // Encrypt using AES 128bit
   char out[b64len];
   byte cipher[2*b64len];
   aes.do_aes_encrypt((byte *)b64data, b64len, cipher, key, 128, my_iv);
-
+    
   // Encode data to Base64 so it can be returned as String (or written to char*)
   base64_encode(out, (char *)cipher, aes.get_size() );
 
@@ -114,7 +105,7 @@ void AESLib::encrypt(char * msg, char * output, byte key[], byte my_iv[]) {
   int msgLen = strlen(msg);
 
   // Add PKCS7 padding
-  int paddedLen = msgLen + (N_BLOCK - (msgLen % N_BLOCK)) + 1; // ??? just a test...
+  int paddedLen = msgLen + (N_BLOCK - (msgLen % N_BLOCK));
   byte padded[paddedLen];
   aes.padPlaintext(msg, padded);
 
@@ -132,7 +123,6 @@ void AESLib::encrypt(char * msg, char * output, byte key[], byte my_iv[]) {
 
   // Copy to output buffer, may deprecate...
   strcpy(output, (char*)out2);
-  //clean();
 }
 
 void AESLib::clean() {
