@@ -2,11 +2,7 @@
 
 #include <AESLib.h>
 
-extern "C" {
-#include "user_interface.h"
-#include <cont.h>
-  extern cont_t g_cont;
-}
+#define BAUD 230400
 
 AESLib aesLib;
 
@@ -103,18 +99,14 @@ String decrypt(char * msg, byte iv[]) {
 }
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(BAUD);
   Serial.println("\nBooting...");
   aes_init();
 }
 
 void log_free_stack(String tag) {
-  extern cont_t g_cont;
-  register uint32_t *sp asm("a1");
-  unsigned long heap = system_get_free_heap_size();
-  Serial.printf("[%s] STACK U=%4d ", tag.c_str(), cont_get_free_stack(&g_cont));
-  Serial.printf("F=%4d ", 4 * (sp - g_cont.stack));
-  Serial.print("H="); Serial.println(heap);
+  Serial.print("["); Serial.print(tag); Serial.print("] "); 
+  Serial.print("free heap: "); Serial.println(ESP.getFreeHeap());
 }
 
 String plaintext = "12345678;";
