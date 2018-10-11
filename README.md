@@ -113,5 +113,7 @@ console.log("Decrypted message: ", decoded_msg);
 # References
 
 [Primal Cortex](https://primalcortex.wordpress.com/2016/06/17/esp8266-logging-data-in-a-backend-aes-and-crypto-js/)
+
 [arduino-esp8266-aes-encryption-with-nodejs](https://github.com/kakopappa/arduino-esp8266-aes-encryption-with-nodejs)
+
 [arduino-esp8266-aes-lib](https://github.com/kakopappa/arduino-esp8266-aes-lib)
