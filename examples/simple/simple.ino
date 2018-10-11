@@ -47,6 +47,10 @@ void setup() {
   delay(2000);
   Serial.println("aes_init()");
   aes_init();
+
+  Serial.print("free heap: "); Serial.println(ESP.getFreeHeap());
+  
+  Serial.println("Enter text to be encrypted into console (no feedback) and press ENTER (newline):");
 }
 
 /* non-blocking wait function */
@@ -76,5 +80,7 @@ void loop() {
     sprintf(ciphertext, "%s", encrypted.c_str());
     Serial.print("Ciphertext: ");
     Serial.println(encrypted);  
+
+    Serial.print("free heap: "); Serial.println(ESP.getFreeHeap());
   } 
 }

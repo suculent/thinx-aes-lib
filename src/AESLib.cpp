@@ -148,6 +148,7 @@ void AESLib::encrypt64(char * msg, char * output, byte key[], byte my_iv[]) {
 #endif
 
   strcpy(output, (char*)out2);
+#ifdef AES_DEBUG
   Serial.println("- strcpy");
 #endif
 }
