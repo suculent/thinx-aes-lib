@@ -112,6 +112,8 @@ console.log("Decrypted message: ", decoded_msg);
 
 # References
 
+This is an AES library for the Arduino, based on tzikis's AES library, was previously [here](https://github.com/tzikis/arduino). Tzikis library was based on scottmac's library, which was previously [here](https://github.com/scottmac/arduino), but now seems to be removed.
+
 [Primal Cortex](https://primalcortex.wordpress.com/2016/06/17/esp8266-logging-data-in-a-backend-aes-and-crypto-js/)
 
 [arduino-esp8266-aes-encryption-with-nodejs](https://github.com/kakopappa/arduino-esp8266-aes-encryption-with-nodejs)
