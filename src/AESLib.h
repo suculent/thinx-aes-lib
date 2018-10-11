@@ -5,6 +5,8 @@
 #include "AES.h"
 #include "base64.h"
 
+#define AES_DEBUG
+
 class AESLib
 {
   public:

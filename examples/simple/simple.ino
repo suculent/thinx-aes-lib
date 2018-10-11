@@ -4,8 +4,7 @@
 
 AESLib aesLib;
 
-String plaintext = "AAAAAAA";
-int loopcount = 0;
+String plaintext = "HELLO WORLD!";
 
 char cleartext[256];
 char ciphertext[512];
@@ -18,15 +17,19 @@ byte aes_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 // Generate IV (once)
 void aes_init() {
+  Serial.println("gen_iv()");
   aesLib.gen_iv(aes_iv);
   // workaround for incorrect B64 functionality on first run...
-  encrypt("HELLO WORLD!", aes_iv);
+  Serial.println("encrypt()");
+  Serial.println(encrypt(strdup(plaintext.c_str()), aes_iv));
 }
 
-String encrypt(char * msg, byte iv[]) {
+String encrypt(char * msg, byte iv[]) {  
   int msgLen = strlen(msg);
+  Serial.print("msglen = "); Serial.println(msgLen);
   char encrypted[4 * msgLen]; // AHA! needs to be large, 2x is not enough
   aesLib.encrypt64(msg, encrypted, aes_key, iv);
+  Serial.print("encrypted = "); Serial.println(encrypted);
   return String(encrypted);
 }
 
@@ -39,28 +42,39 @@ String decrypt(char * msg, byte iv[]) {
 }
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(230400);
+  while (!Serial); // wait for serial port
+  delay(2000);
+  Serial.println("aes_init()");
   aes_init();
 }
 
+/* non-blocking wait function */
+void wait(unsigned long milliseconds) {
+  unsigned long timeout = millis() + milliseconds;
+  while (millis() < timeout) {
+    yield();
+  }
+}
+
+unsigned long loopcount = 0;
+
 void loop() {
+    
+  if (Serial.available() > 0) {
 
-  loopcount++;
+    loopcount++; Serial.println(loopcount); // entry counter
+    
+    String readBuffer = Serial.readStringUntil('\n');
+    Serial.println("INPUT:" + readBuffer);    
+    
+    sprintf(cleartext, "%s", readBuffer.c_str()); // must not exceed 255 bytes; may contain a newline
 
-  sprintf(cleartext, "%s", plaintext.c_str());
-
-  // Encrypt
-  byte enc_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // iv_block gets written to, provide own fresh copy...
-  String encrypted = encrypt(cleartext, enc_iv);
-  sprintf(ciphertext, "%s", encrypted.c_str());
-  Serial.print("Ciphertext: ");
-  Serial.println(encrypted);
-
-  // Decrypt
-  byte dec_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // iv_block gets written to, provide own fresh copy...
-  String decrypted = decrypt(ciphertext, dec_iv);
-  Serial.print("Cleartext: ");
-  Serial.println(decrypted);
-
-  delay(500);
+    // Encrypt
+    byte enc_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // iv_block gets written to, provide own fresh copy...
+    String encrypted = encrypt(cleartext, enc_iv);
+    sprintf(ciphertext, "%s", encrypted.c_str());
+    Serial.print("Ciphertext: ");
+    Serial.println(encrypted);  
+  } 
 }
