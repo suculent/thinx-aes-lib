@@ -10,6 +10,7 @@ In future this should use AES implementation from BearSSL, when available (to sa
 
 # Changes
 
+`1.0.5` - fixed generating random IV; fixed #include directive filename case
 `1.0.4` - fixed simple example
 `1.0.3` - fixed padding (after encoding, not before) 
 
