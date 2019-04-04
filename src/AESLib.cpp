@@ -2,8 +2,13 @@
 
 uint8_t AESLib::getrnd()
 {
-   uint8_t really_random = *(volatile uint8_t *)0x3FF20E44;
-   return really_random;
+   // if analog input pin 0 is unconnected, random analog
+   // noise will cause the call to randomSeed() to generate
+   // different seed numbers each time the sketch runs.
+   // randomSeed() will then shuffle the random function.
+   randomSeed(analogRead(0));
+
+   return random(256); // return a random number from 0 to 255
 }
 
 void AESLib::gen_iv(byte  *iv) {
