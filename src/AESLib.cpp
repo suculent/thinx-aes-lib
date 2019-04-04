@@ -13,7 +13,7 @@ uint8_t AESLib::getrnd()
 
 void AESLib::gen_iv(byte  *iv) {
     for (int i = 0 ; i < N_BLOCK ; i++ ) {
-        iv[i]= (byte) 0xFF; // getrnd();
+        iv[i]= (byte)getrnd();
     }
 }
 
