@@ -491,6 +491,10 @@ void AES::calc_size_n_pad(int p_size){
   }
   pad = size - s_of_p;
 }
+int AES::get_padded_len(int p_size){
+  calc_size_n_pad(p_size);
+  return size;
+}
 
 /******************************************************************************/
 

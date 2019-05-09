@@ -198,6 +198,15 @@ class AES
   */
   void calc_size_n_pad(int p_size);
 
+  /** returns the size of the padded plaintext .
+   *
+   * Calculates the size of theplaintext with the padding
+   * and the size of the padding needed. Moreover it stores them in their class variables.
+   *
+   * @param p_size the size of the byte array ex sizeof(plaintext)
+  */
+  int get_padded_len(int p_size);
+
   /** Pads the plaintext
    *
    * This function pads the plaintext and returns an char array with the
