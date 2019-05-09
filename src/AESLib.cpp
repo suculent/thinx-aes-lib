@@ -13,9 +13,9 @@ void AESLib::gen_iv(byte  *iv) {
 }
 
 /* Returns Arduino String decoded and decrypted. */
-String AESLib::decrypt(String msg, byte key[], byte my_iv[]) {
+String AESLib::decrypt(String msg, byte key[],int bits, byte my_iv[]) {
 
-  aes.set_key(key, sizeof(key));
+  aes.set_key(key, bits);
 
   int len = msg.length();
   char encrypted[len]; // will be always shorter than Base64
@@ -35,16 +35,16 @@ String AESLib::decrypt(String msg, byte key[], byte my_iv[]) {
 }
 
 /* Suggested size for the plaintext buffer is 1/2 length of `msg` */
-void AESLib::decrypt64(char * msg, char * plain, byte key[], byte my_iv[]) {
+void AESLib::decrypt64(char * msg, char * plain, byte key[],int bits, byte my_iv[]) {
 
-  aes.set_key(key, sizeof(key));
+  aes.set_key(key, bits);
 
   int msgLen = strlen(msg);
   char encrypted[msgLen]; // will be always shorter than Base64
   int b64len = base64_decode(encrypted, msg, msgLen);
 
   byte out[2*msgLen];
-  aes.do_aes_decrypt((byte *)encrypted, b64len, out, key, 128, (byte *)my_iv);
+  aes.do_aes_decrypt((byte *)encrypted, b64len, out, key, bits, (byte *)my_iv);
 
   int outDataLen = strlen((char*)out);
   int outLen = base64_dec_len((char*)out, outDataLen);
@@ -57,16 +57,16 @@ void AESLib::decrypt64(char * msg, char * plain, byte key[], byte my_iv[]) {
 }
 
 /* Returns byte array decoded and decrypted. */
-void AESLib::decrypt(char * msg, char * plain, byte key[], byte my_iv[]) {
+void AESLib::decrypt(char * msg, char * plain, byte key[],int bits, byte my_iv[]) {
 
-  aes.set_key(key, sizeof(key));
+  aes.set_key(key, bits);
 
   int msgLen = strlen(msg);
   char encrypted[msgLen]; // will be always shorter than Base64
   int b64len = base64_decode(encrypted, msg, msgLen);
 
   byte out[2*msgLen];
-  aes.do_aes_decrypt((byte *)encrypted, b64len, out, key, 128, (byte *)my_iv);
+  aes.do_aes_decrypt((byte *)encrypted, b64len, out, key, bits, (byte *)my_iv);
 
   int outDataLen = strlen((char*)out);
   int outLen = base64_dec_len((char*)out, outDataLen);
@@ -76,9 +76,9 @@ void AESLib::decrypt(char * msg, char * plain, byte key[], byte my_iv[]) {
 }
 
 /* Returns Arduino string encrypted and encoded with Base64. */
-String AESLib::encrypt(String msg, byte key[], byte my_iv[]) {
+String AESLib::encrypt(String msg, byte key[],int bits, byte my_iv[]) {
 
-  aes.set_key(key, sizeof(key));
+  aes.set_key(key, bits);
 
   int msgLen = strlen(msg.c_str());
 
@@ -91,7 +91,7 @@ String AESLib::encrypt(String msg, byte key[], byte my_iv[]) {
 
   char out[b64len];
   byte cipher[2*b64len];
-  aes.do_aes_encrypt((byte *)padded, paddedLen, cipher, key, 128, my_iv);
+  aes.do_aes_encrypt((byte *)padded, paddedLen, cipher, key, bits, my_iv);
 
   base64_encode(out, (char *)cipher, aes.get_size() );
 
@@ -99,49 +99,52 @@ String AESLib::encrypt(String msg, byte key[], byte my_iv[]) {
 }
 
 /* Returns message encrypted and base64 encoded to be used as string. */
-void AESLib::encrypt64(char * msg, char * output, byte key[], byte my_iv[]) {
+void AESLib::encrypt64(char * msg, char * output, byte key[],int bits, byte my_iv[]) {
 
 #ifdef AES_DEBUG
   Serial.print("incoming msg: "); Serial.println(msg);
-  Serial.print("incoming k-size: "); Serial.println(sizeof(key));
-  Serial.print("incoming v-size: "); Serial.println(sizeof(my_iv));
+  Serial.print("incoming k-size: "); Serial.println(bits);
+  Serial.print("incoming v-size: "); Serial.println(16); // initialization vector has the same size as the block size = 16
 #endif
 
-  aes.set_key(key, sizeof(key));
+  aes.set_key(key, bits);
 
   int msgLen = strlen(msg);
 #ifdef AES_DEBUG
-  Serial.println("- msgLen");
+  Serial.print("- msg >>"); Serial.print(msg);Serial.println("<<");
+  Serial.print("- msgLen "); Serial.println(msgLen);
 #endif
 
-  char b64data[base64_enc_len(msgLen)];
+  char b64data[base64_enc_len(msgLen)+1];  // should add 1 character to accomodate the 0x\0 ending character
 #ifdef AES_DEBUG
-  Serial.println("- b64data");
+  Serial.print("- b64data [");Serial.print(base64_enc_len(msgLen));Serial.println("]");
 #endif
 
-  int b64len = base64_encode(b64data, (char*)msg, msgLen);
+  int b64len = base64_encode(b64data, msg, msgLen);
 #ifdef AES_DEBUG
-  Serial.println("- b64len");
+  Serial.print("- b64len ");Serial.println(b64len);
+  Serial.print("- b64data ");Serial.println(b64data);
+  Serial.print("- b64data ");dumpHex(b64data,b64len)
 #endif
 
-  int paddedLen = b64len + (N_BLOCK - (b64len % N_BLOCK)) + 1;
+  int paddedLen = aes.get_padded_len(b64len);
 #ifdef AES_DEBUG
-  Serial.println("- paddedLen");
+  Serial.print("- paddedLen ");Serial.println(paddedLen);
 #endif
 
   byte padded[paddedLen];
   aes.padPlaintext(b64data, padded);
 #ifdef AES_DEBUG
-  Serial.println("- padPlaintext");
+  Serial.print("- padPlaintext "); dumpHex(padded,paddedLen)
 #endif
 
-  byte cipher[2*b64len];
-  aes.do_aes_encrypt((byte *)padded, paddedLen, cipher, key, 128, my_iv);
+  byte cipher[paddedLen];
+  aes.do_aes_encrypt((byte *)padded, paddedLen, cipher, key, bits, my_iv);
 #ifdef AES_DEBUG
-  Serial.println("- do_aes_encrypt");
+  Serial.print("- do_aes_encrypt "); dumpHex(cipher,paddedLen)
 #endif
 
-  char out2[4*b64len];
+  char out2[base64_enc_len(paddedLen)+1];
   base64_encode(out2, (char *)cipher, aes.get_size() );
 #ifdef AES_DEBUG
   Serial.println("- base64_encode");
@@ -154,21 +157,21 @@ void AESLib::encrypt64(char * msg, char * output, byte key[], byte my_iv[]) {
 }
 
 /* Returns message encrypted only to be used as byte array. */
-void AESLib::encrypt(char * msg, char * output, byte key[], byte my_iv[]) {
+void AESLib::encrypt(char * msg, char * output, byte key[],int bits, byte my_iv[]) {
 
-  aes.set_key(key, sizeof(key));
+  aes.set_key(key, bits);
 
   int msgLen = strlen(msg);
 
   char b64data[base64_enc_len(msgLen)];
   int b64len = base64_encode(b64data, (char*)msg, msgLen);
 
-  int paddedLen = b64len + (N_BLOCK - (b64len % N_BLOCK)) + 1;
+  int paddedLen =  aes.get_padded_len(b64len);;
   byte padded[paddedLen];
   aes.padPlaintext(b64data, padded);
-
-  byte cipher[2*b64len];
-  aes.do_aes_encrypt((byte *)padded, paddedLen, cipher, key, 128, my_iv);
+  // encryption will return the same number of bytes as the padded message
+  byte cipher[paddedLen];
+  aes.do_aes_encrypt((byte *)padded, paddedLen, cipher, key, bits, my_iv);
 
   strcpy(output, (char*)cipher);
 }
