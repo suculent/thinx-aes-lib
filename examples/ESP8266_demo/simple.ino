@@ -19,7 +19,6 @@ byte aes_iv[N_BLOCK] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0
 void aes_init() {
   Serial.println("gen_iv()");
   aesLib.gen_iv(aes_iv);
-  // workaround for incorrect B64 functionality on first run...
   Serial.println("encrypt()");
   Serial.println(encrypt(strdup(plaintext.c_str()), aes_iv));
 }
@@ -34,8 +33,6 @@ String encrypt(char * msg, byte iv[]) {
   char encrypted[cipherlength]; // AHA! needs to be large, 2x is not enough
   aesLib.encrypt64(msg, encrypted, aes_key,sizeof(aes_key), iv);
   Serial.print("encrypted = "); Serial.println(encrypted);
- // for(int i = 0;i<cipherlength;i++)
- //   Serial.print(encrypted[i],HEX);
   Serial.print("encrypted length :");Serial.println(cipherlength);
 
   return String(encrypted);
@@ -43,8 +40,8 @@ String encrypt(char * msg, byte iv[]) {
 
 String decrypt(char * msg, byte iv[]) {
   unsigned long ms = micros();
-  int msgLen = strlen(msg);  // 
-  char decrypted[msgLen]; // base64_dec_len(msglen); half may be enough
+  int msgLen = strlen(msg);  
+  char decrypted[msgLen]; 
   aesLib.decrypt64(msg, decrypted, aes_key, sizeof(aes_key),iv);
   return String(decrypted);
 }
