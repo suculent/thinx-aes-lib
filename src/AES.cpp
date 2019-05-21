@@ -109,6 +109,11 @@ static const byte s_inv [0x100] PROGMEM =
 #define f2(x)   ((x) & 0x80 ? (x << 1) ^ WPOLY : x << 1)
 #define d2(x)  (((x) >> 1) ^ ((x) & 1 ? DPOLY : 0))
 
+#define dumpHex(arr, count) if (Serial) { for(int kkk =0;kkk< count;kkk++) \
+                                      Serial.printf ("%x " ,arr[kkk]); \
+                                      Serial.printf ("\n"); \
+                          }
+
 static byte s_box (byte x)
 {
   //  return fwd_affine (pgm_read_byte (&inv [x])) ;
@@ -229,24 +234,28 @@ static void inv_mix_sub_columns (byte dt[N_BLOCK], byte st[N_BLOCK])
 /******************************************************************************/
 
 AES::AES(){
-  byte ar_iv[8] = { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x01 };
+  byte ar_iv[8] = { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 };
   memcpy(iv,ar_iv,8);
   memcpy(iv+8,ar_iv,8);
-  arr_pad[0] = 0x00;
-  arr_pad[1] = 0x00;
-  arr_pad[2] = 0x00;
-  arr_pad[3] = 0x00;
-  arr_pad[4] = 0x00;
-  arr_pad[5] = 0x00;
-  arr_pad[6] = 0x00;
-  arr_pad[7] = 0x00;
-  arr_pad[8] = 0x00;
-  arr_pad[9] = 0x00;
-  arr_pad[10] = 0x00;
-  arr_pad[11] = 0x00;
-  arr_pad[12] = 0x00;
-  arr_pad[13] = 0x00;
-  arr_pad[14] = 0x00;
+  // make sure that the padding characters are outside the range of the base64 alphabet
+  // for none base64 encode message collisions can happen :-(
+  arr_pad[0] = 0x82;
+  arr_pad[1] = 0x84;
+  arr_pad[2] = 0x88;
+  arr_pad[3] = 0x9f;
+  arr_pad[4] = 0x92;
+  arr_pad[5] = 0x94;
+  arr_pad[6] = 0x98;
+  arr_pad[7] = 0x9f;
+  arr_pad[8] = 0xa2;
+  arr_pad[9] = 0xa4;
+  arr_pad[10] = 0xa8;
+  arr_pad[11] = 0xaf;
+  arr_pad[12] = 0xb2;
+  arr_pad[13] = 0xb4;
+  arr_pad[14] = 0xb8;
+  arr_pad[15] = 0xbf;
+  padmode = paddingMode::Array; // backwards compatibility 
 }
 
 /******************************************************************************/
@@ -328,6 +337,14 @@ void AES::copy_n_bytes (byte * d, byte * s, byte nn)
     }
   while (nn--)
     *d++ = *s++ ;
+}
+
+/******************************************************************************/
+
+uint8_t AES::getrandom()
+{
+   uint8_t really_random = *(volatile uint8_t *)0x3FF20E44;
+   return really_random;
 }
 
 /******************************************************************************/
@@ -448,7 +465,7 @@ byte AES::cbc_decrypt (byte * cipher, byte * plain, int n_block)
 
 void AES::set_IV(unsigned long long int IVCl){
   memcpy(iv,&IVCl,8);
-  memcpy(iv+8,&IVCl,8);
+  memcpy(iv+8,&IVCl+8,8);
   IVC = IVCl;
 }
 
@@ -457,7 +474,7 @@ void AES::set_IV(unsigned long long int IVCl){
 void AES::iv_inc(){
   IVC += 1;
   memcpy(iv,&IVC,8);
-  memcpy(iv+8,&IVC,8);
+  memcpy(iv+8,&IVC+8,8);
 }
 
 /******************************************************************************/
@@ -477,35 +494,161 @@ void AES::set_size(int sizel){
 
 void AES::get_IV(byte *out){
   memcpy(out,&IVC,8);
-  memcpy(out+8,&IVC,8);
+  memcpy(out+8,&IVC+8,8);
 }
 
-/******************************************************************************/
-
+/******************************************************************************
+ *  Padding modes (https://medium.com/coinmonks/block-sizes-and-padding-in-crypto-5b6d2565370e)
+ * CMS (Cryptographic Message Syntax). 
+ *     This pads with the same value as the number of padding bytes. 
+ *     Defined in RFC 5652, PKCS#5, PKCS#7 (X.509 certificate) and RFC 1423 PEM.
+ * Bit. 
+ *     This pads with 0x80 (10000000) followed by zero (null) bytes. Defined in ANSI X.923 and ISO/IEC 9797–1.
+ * ZeroLength. 
+ *     This pads with zeros except for the last byte which is equal to the number (length) of padding bytes.
+ * Null. 
+ *     This pads will NULL bytes. This is only used with ASCII text.
+ * Space. 
+ *     This pads with spaces. This is only used with ASCII text.
+ * Random. (not implemented)
+ *     This pads with random bytes with the last byte defined by the number of padding bytes.
+ * Array (backward compatibility for this library)
+ *     This pads with the characters from the predefined arr_pad
+ */
+/// TODO:: How can we determine that the msg has beeen padded ?
+/// any byte array can be a valid message to encrypt
+/// so padding should be made reversable and padding should contain info over the padding length or
+/// the reverse operation will not harm the content (see ascii mode)
+/// Idea is to add pad block. So now we now that the last block in the message is a padding block. 
+/// info in this padding block can now be used to remove the padding on the previous block
+/// of course if the 0x00 character is included in an ascii message it will be truncated anyhow
+/// but for none ascii message this will not work.
+/// an additional block is only usefull if the padding block contains the number of padding characters
+/// so not all possible padding modes can take advantage of this
+/// if using NULL in ascii mode then the string will be ended anyway
+/// if using SPACE, it can be that the trailing spaces are truncated. But this most often not an issue in ASCII mode
+///
+/// random padding can not be reversed
+/// array padding is questionable to reverse
 void AES::calc_size_n_pad(int p_size){
-  int s_of_p = p_size - 1;
-  if ( s_of_p % N_BLOCK == 0){
-      size = s_of_p;
-  }else{
-    size = s_of_p +  (N_BLOCK-(s_of_p % N_BLOCK));
+  int s_of_p = p_size;//- 1;  /// why this - 1 ??? is this removing the 0x\0 at the end of a string ? should not be the case for no string messages
+  switch (padmode){
+  case paddingMode::Array:
+  case paddingMode::Null:
+  case paddingMode::Space:
+  case paddingMode::Random:
+    if ( s_of_p % N_BLOCK == 0){  // OK in ASCII mode Space or Null padding or random padding
+        size = s_of_p;
+    }else{
+      size = s_of_p +  (N_BLOCK-(s_of_p % N_BLOCK));
+    }
+    pad = size - s_of_p;
+    break;
+  case paddingMode::CMS:
+  case paddingMode::ZeroLength:
+  case paddingMode::Bit:
+  // additional block
+    size = p_size + N_BLOCK -(p_size % N_BLOCK);
+    pad = size - p_size;
+    break;
   }
-  pad = size - s_of_p;
+}
+
+int AES::get_padded_len(int p_size){
+  calc_size_n_pad(p_size);
+  return size;
+}
+
+int AES::get_pad_len(int p_size){
+  calc_size_n_pad(p_size);
+  return pad;
 }
 
 /******************************************************************************/
-
 void AES::padPlaintext(void* in,byte* out)
 {
   memcpy(out,in,size);
   for (int i = size-pad; i < size; i++){;
-    out[i] = arr_pad[pad - 1];
+    switch (padmode){
+      case paddingMode::CMS :
+        out[i] = pad;
+        break;
+      case paddingMode::Bit:
+      case paddingMode::ZeroLength:
+      case paddingMode::Null:
+        out[i] = 0x00;
+        break;
+      case paddingMode::Space:
+        out[i] = 0x20;
+        break;
+      case paddingMode::Array:
+        out[i] = arr_pad[pad - 1];
+        break;
+      case paddingMode::Random:
+        out[i] = getrandom(); 
+    }
   }
+  if (padmode == paddingMode::Bit)
+    out[size-pad] = 0x80;
+  if (padmode == paddingMode::ZeroLength)
+    out[size-1] = pad;
+
 }
 
 /******************************************************************************/
 
+int AES::get_unpadded_len(byte* msg,int p_size)
+{
+  byte pad_char = 0x00;
+  int i = 0;
+
+  switch (padmode)
+  {
+  case paddingMode::CMS:
+  case paddingMode::ZeroLength: //last byte contains pad length
+    return p_size - (int) msg[p_size-1];
+    break;
+  case paddingMode::Random:
+    return p_size;
+    break;
+  case paddingMode::Array:
+    for( i = 15; i > 0 && msg[p_size-1] !=arr_pad[i]; i--)
+    pad_char = arr_pad[i];
+    for ( i = p_size-1; ((i >=0) && (msg[i] == pad_char)); i--){
+    }
+    return i+1;
+    break;
+  case paddingMode::Space:
+    pad_char = 0x20;
+    for ( i = p_size-1; ((i >=0) && (msg[i] == pad_char)); i--){
+    }
+    return i+1;
+    break;
+  case paddingMode::Bit:
+    for ( i = p_size-1; ((i >=0) && (msg[i] == pad_char)); i--){
+    }
+    return i;
+    break;
+  default:
+    return p_size;
+    break;
+ }
+}
+
+/******************************************************************************/
+void AES::setPadMode(paddingMode mode){
+  padmode = mode;
+}
+
+/******************************************************************************/
+paddingMode AES::getPadMode(){
+  return padmode ;
+}
+
+/******************************************************************************/
+/// TODO check different modes
 bool AES::CheckPad(byte* in,int lsize){
-  if (in[lsize-1] <= 0x0f){
+  if (in[lsize-1] <= 0x0f){  //only block of less than 16 bytes are allowed
     int lpad = (int)in[lsize-1];
     for (int i = lsize - 1; i >= lsize-lpad; i--){
       if (arr_pad[lpad - 1] != in[i]){
@@ -553,6 +696,7 @@ void AES::do_aes_encrypt(byte *plain,int size_p,byte *cipher,byte *key, int bits
   calc_size_n_pad(size_p);
   byte plain_p[get_size()];
   padPlaintext(plain,plain_p);
+  
   int blocks = get_size() / N_BLOCK;
   set_key (key, bits) ;
   cbc_encrypt (plain_p, cipher, blocks, ivl);
@@ -571,20 +715,22 @@ void AES::do_aes_encrypt(byte *plain,int size_p,byte *cipher,byte *key, int bits
 
 /******************************************************************************/
 
-void AES::do_aes_decrypt(byte *cipher,int size_c,byte *plain,byte *key, int bits, byte ivl [N_BLOCK]){
+int AES::do_aes_decrypt(byte *cipher,int size_c,byte *plain,byte *key, int bits, byte ivl [N_BLOCK]){
   set_size(size_c);
   int blocks = size_c / N_BLOCK;
   set_key (key, bits);
   cbc_decrypt (cipher,plain, blocks, ivl);
+  return get_unpadded_len(plain,size_c);
 }
 
 /******************************************************************************/
 
-void AES::do_aes_decrypt(byte *cipher,int size_c,byte *plain,byte *key, int bits){
+int AES::do_aes_decrypt(byte *cipher,int size_c,byte *plain,byte *key, int bits){
   set_size(size_c);
   int blocks = size_c / N_BLOCK;
   set_key (key, bits);
   cbc_decrypt (cipher,plain, blocks);
+  return get_unpadded_len(plain,size_c);
 }
 
 

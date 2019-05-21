@@ -35,6 +35,15 @@
  /* code was modified by george spanos <spaniakos@gmail.com>
  * 16/12/14
  */
+enum class paddingMode{
+CMS,
+Bit,
+ZeroLength,
+Null,
+Space,
+Random,
+Array
+};
 
 class AES
 {
@@ -78,6 +87,14 @@ class AES
    *
    */
   void copy_n_bytes (byte * AESt, byte * src, byte n) ;
+
+
+  /** get a random number
+   *  @Return random number
+   *
+   */
+
+  uint8_t getrandom();
 
   /** Encrypt a single block of 16 bytes .
    *  @param plain[N_BLOCK] Array of the plaintext.
@@ -198,6 +215,34 @@ class AES
   */
   void calc_size_n_pad(int p_size);
 
+  /** get_padded_len returns the size of the padded plaintext .
+   *
+   * Calculates the size of theplaintext with the padding
+   * and the size of the padding needed. Moreover it stores them in their class variables.
+   *
+   * @param p_size the size of the byte array ex sizeof(plaintext)
+  */
+  int get_padded_len(int p_size);
+
+  /** get_unpadded_len returns the length of the plaintext.
+   *
+   * Calculates the length of the plaintext, padding removed
+   *
+   * @param in the array of the padded text
+   * @param p_size the size of the byte array ex sizeof(paddedtext)
+  */
+  int get_unpadded_len(byte *in , int p_size);
+
+  /** returns the number of padding characters.
+   *
+   * Calculates the size of the ciphertext and the number of padding characters
+   * given the length of the plaintext
+   *
+   * @param p_size the size of the byte array ex sizeof(plaintext)
+  */
+
+  int get_pad_len(int p_size);
+
   /** Pads the plaintext
    *
    * This function pads the plaintext and returns an char array with the
@@ -220,6 +265,21 @@ class AES
    */
   bool CheckPad(byte* in,int size);
 
+  /** Sets the padding mode
+   *
+   * This function set the padding mode that will be used in the next encryption
+   * decryptiong calls
+   *
+   * @param mode, the selected padding mode
+  */
+  void setPadMode(paddingMode mode);
+
+  /** Gets the current selected paddingmode
+   *
+   * This function returns the current selected paddingmode
+  */
+   paddingMode getPadMode();
+  
   /** Prints the array given.
    *
    * This function prints the given array and pad,
@@ -272,7 +332,7 @@ class AES
    * @param ivl[N_BLOCK] the initialization vector IV that will be used for decryption.
    * @note The key will be stored in class variable.
    */
-  void do_aes_decrypt(byte *cipher,int size_c,byte *plain,byte *key, int bits, byte ivl [N_BLOCK]);
+  int do_aes_decrypt(byte *cipher,int size_c,byte *plain,byte *key, int bits, byte ivl [N_BLOCK]);
 
   /** User friendly implementation of AES-CBC decryption.
    *
@@ -283,7 +343,7 @@ class AES
    * @param bits bits of the encryption/decrpytion
    * @note The key will be stored in class variable.
    */
-  void do_aes_decrypt(byte *cipher,int size_c,byte *plain,byte *key, int bits);
+  int do_aes_decrypt(byte *cipher,int size_c,byte *plain,byte *key, int bits);
 
   #if defined(AES_LINUX)
     /**
@@ -295,6 +355,7 @@ class AES
   #endif
  private:
   int round ;/**< holds the number of rounds to be used. */
+  paddingMode padmode;
   byte key_sched [KEY_SCHEDULE_BYTES] ;/**< holds the pre-computed key for the encryption/decrpytion. */
   unsigned long long int IVC;/**< holds the initialization vector counter in numerical format. */
   byte iv[16];/**< holds the initialization vector that will be used in the cipher. */
