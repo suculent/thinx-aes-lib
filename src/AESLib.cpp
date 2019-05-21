@@ -65,8 +65,10 @@ void AESLib::decrypt64(char * msg, char * plain, byte key[],int bits, byte my_iv
   int plain_len = aes.do_aes_decrypt((byte *)encrypted, b64len, out, key, bits, (byte *)my_iv);
   // unpad the string
   out[plain_len ] = 0; // add string termination
+  #ifdef AES_DEBUG
   Serial.print("- Decrypt paddedtext    ");dumpHex(out,b64len)
   Serial.print("- Decrypt plain length  ");Serial.println(plain_len);
+  #endif
   int outLen = base64_dec_len((char*)out, plain_len);
   char message[outLen+1]; // trailing zero for cstring?
 
