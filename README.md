@@ -10,7 +10,7 @@ In future this should use AES implementation from BearSSL, when available (to sa
 
 # Changes
 
-`latest` - fixed padding, added parametrization (via @kavers1)
+`latest` - fixed padding, added parametrization (via https://github.com/kavers1)
 
 `1.0.5` - fixed generating random IV; fixed #include directive filename case
 
