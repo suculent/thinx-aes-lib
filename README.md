@@ -6,7 +6,7 @@ An ESP32/ESP8266/Arduino library for Arduino IDE to wrap AES encryption with Bas
 
 AESLib provides convenience methods for encrypting data to byte arrays and Strings, with optional additional base64 encoding to return strings instead of bare data.
 
-In future this should use AES implementation from BearSSL, when available (to save more RAM in larger projects).
+While Arduino Core 2.5.1 is already out, this should be updated to use AES implementation from BearSSL (to save more RAM in larger projects).
 
 # Changes
 
