@@ -58,14 +58,12 @@ void setup() {
   aesLib.set_paddingmode(paddingMode::Array);
   //
   // verify with https://gchq.github.io/CyberChef/#recipe=To_Base64('A-Za-z0-9%2B/%3D')
-  //
-  Serial.print("[1]free heap: "); Serial.println(ESP.getFreeHeap());
+  //  
   char b64in[16] ={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
   char b64out[base64_enc_len(sizeof(aes_iv))];
   Serial.print("[2]Base64 encode length for b64in (16 ascii 0 characters) :"); Serial.println(base64_enc_len(sizeof(b64in)));
   base64_encode(b64out,b64in,16);
   Serial.print("[2]Base64 encode aes_iv :"); Serial.println(b64out);
-  Serial.print("[2]free heap: "); Serial.println(ESP.getFreeHeap());
   delay(1000);
   char b64enc[base64_enc_len(10)];
   Serial.print("[3]Base64 encode length for '0123456789' :"); Serial.println(base64_enc_len(10)); // MDEyMzQ1Njc4OQ==
@@ -75,7 +73,6 @@ void setup() {
   Serial.print("[3]Base64 decode length for '0123456789' :"); Serial.println(base64_dec_len(b64enc,sizeof(b64enc)));
   base64_decode(b64dec,b64enc,sizeof(b64enc));
   Serial.print("Base64 decode '0123456789' :"); Serial.println(b64dec);
-  Serial.print("free heap: "); Serial.println(ESP.getFreeHeap());
   delay(1000);
 
   Serial.println("Enter text to be encrypted into console (no feedback) and press ENTER (newline):");
@@ -101,7 +98,6 @@ void loop() {
     loopcount++; Serial.println(loopcount); // entry counter
     
     String readBuffer = Serial.readStringUntil('\n');
-    Serial.print("free heap: "); Serial.println(ESP.getFreeHeap());
     Serial.println("INPUT:" + readBuffer);    
     
     sprintf(cleartext, "%s", readBuffer.c_str()); // must not exceed 255 bytes; may contain a newline
@@ -112,7 +108,6 @@ void loop() {
     Serial.print("Ciphertext: ");
     Serial.println(encrypted);  
     delay(1000);
-    Serial.print("free heap: "); Serial.println(ESP.getFreeHeap());
      // Decrypt
      delay(1000);
     String decrypted = decrypt( ciphertext, dec_iv);
@@ -125,8 +120,7 @@ void loop() {
     {
       Serial.println("FAILURE");
     
-    }
-  Serial.print(ESP.getFreeHeap());
+    }  
   for(int i = 0;i<16;i++){
     enc_iv[i]= 0;
     dec_iv[i]= 0;

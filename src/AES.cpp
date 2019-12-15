@@ -107,12 +107,7 @@ static const byte s_inv [0x100] PROGMEM =
 
 // times 2 in the GF(2^8)
 #define f2(x)   ((x) & 0x80 ? (x << 1) ^ WPOLY : x << 1)
-#define d2(x)  (((x) >> 1) ^ ((x) & 1 ? DPOLY : 0))
-
-#define dumpHex(arr, count) if (Serial) { for(int kkk =0;kkk< count;kkk++) \
-                                      Serial.printf ("%x " ,arr[kkk]); \
-                                      Serial.printf ("\n"); \
-                          }
+#define d2(x)  (((x) >> 1) ^ ((x) & 1 ? DPOLY : 0))                          
 
 static byte s_box (byte x)
 {
@@ -255,7 +250,7 @@ AES::AES(){
   arr_pad[13] = 0xb4;
   arr_pad[14] = 0xb8;
   arr_pad[15] = 0xbf;
-  padmode = paddingMode::Array; // backwards compatibility 
+  padmode = paddingMode::Array; // backwards compatibility
 }
 
 /******************************************************************************/
@@ -499,16 +494,16 @@ void AES::get_IV(byte *out){
 
 /******************************************************************************
  *  Padding modes (https://medium.com/coinmonks/block-sizes-and-padding-in-crypto-5b6d2565370e)
- * CMS (Cryptographic Message Syntax). 
- *     This pads with the same value as the number of padding bytes. 
+ * CMS (Cryptographic Message Syntax).
+ *     This pads with the same value as the number of padding bytes.
  *     Defined in RFC 5652, PKCS#5, PKCS#7 (X.509 certificate) and RFC 1423 PEM.
- * Bit. 
+ * Bit.
  *     This pads with 0x80 (10000000) followed by zero (null) bytes. Defined in ANSI X.923 and ISO/IEC 9797–1.
- * ZeroLength. 
+ * ZeroLength.
  *     This pads with zeros except for the last byte which is equal to the number (length) of padding bytes.
- * Null. 
+ * Null.
  *     This pads will NULL bytes. This is only used with ASCII text.
- * Space. 
+ * Space.
  *     This pads with spaces. This is only used with ASCII text.
  * Random. (not implemented)
  *     This pads with random bytes with the last byte defined by the number of padding bytes.
@@ -519,7 +514,7 @@ void AES::get_IV(byte *out){
 /// any byte array can be a valid message to encrypt
 /// so padding should be made reversable and padding should contain info over the padding length or
 /// the reverse operation will not harm the content (see ascii mode)
-/// Idea is to add pad block. So now we now that the last block in the message is a padding block. 
+/// Idea is to add pad block. So now we now that the last block in the message is a padding block.
 /// info in this padding block can now be used to remove the padding on the previous block
 /// of course if the 0x00 character is included in an ascii message it will be truncated anyhow
 /// but for none ascii message this will not work.
@@ -585,7 +580,7 @@ void AES::padPlaintext(void* in,byte* out)
         out[i] = arr_pad[pad - 1];
         break;
       case paddingMode::Random:
-        out[i] = getrandom(); 
+        out[i] = getrandom();
     }
   }
   if (padmode == paddingMode::Bit)
@@ -696,7 +691,7 @@ void AES::do_aes_encrypt(byte *plain,int size_p,byte *cipher,byte *key, int bits
   calc_size_n_pad(size_p);
   byte plain_p[get_size()];
   padPlaintext(plain,plain_p);
-  
+
   int blocks = get_size() / N_BLOCK;
   set_key (key, bits) ;
   cbc_encrypt (plain_p, cipher, blocks, ivl);
