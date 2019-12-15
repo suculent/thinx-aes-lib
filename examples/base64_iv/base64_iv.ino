@@ -37,7 +37,7 @@ void aes_init() {
 String encrypt(char * msg, byte iv[]) {
   int msgLen = strlen(msg);
   char encrypted[2 * msgLen];
-  aesLib.encrypt64(msg, encrypted, aes_key,sizeof(aes_key), iv);
+  aesLib.encrypt64(msg, encrypted, aes_key, sizeof(aes_key), iv);
   return String(encrypted);
 }
 
