@@ -47,7 +47,7 @@ String decrypt(char * msg, byte iv[]) {
 }
 
 void setup() {
-  Serial.begin(77800);
+  Serial.begin(9600);
   while (!Serial); // wait for serial port
   delay(2000);
   Serial.print("[0]size of a byte = ");Serial.println((int)sizeof(byte));
