@@ -10,10 +10,12 @@ char cleartext[256];
 char ciphertext[512];
 
 // AES Encryption Key
-byte aes_key[] = { 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30 };
+//byte aes_key[] = { 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30 };
+byte aes_key[] = {    1,    2,    3,    4,    5,    6,    7,    8,    9,    1,    2,    3,    4,    5,    6,    7 };
 
 // General initialization vector (you must use your own IV's in production for full security!!!)
-byte aes_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+//byte aes_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+byte aes_iv[N_BLOCK] = { 7, 6, 5, 4, 3, 2, 1, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
 
 // Generate IV (once)
 void aes_init() {
@@ -24,7 +26,7 @@ void aes_init() {
   Serial.println(encrypt(strdup(plaintext.c_str()), aes_iv));
 }
 
-String encrypt(char * msg, byte iv[]) {  
+String encrypt(char * msg, byte iv[]) {
   int msgLen = strlen(msg);
   Serial.print("msglen = "); Serial.println(msgLen);
   char encrypted[4 * msgLen]; // AHA! needs to be large, 2x is not enough
@@ -49,7 +51,7 @@ void setup() {
   aes_init();
 
   Serial.print("free heap: "); Serial.println(ESP.getFreeHeap());
-  
+
   Serial.println("Enter text to be encrypted into console (no feedback) and press ENTER (newline):");
 }
 
@@ -64,14 +66,14 @@ void wait(unsigned long milliseconds) {
 unsigned long loopcount = 0;
 
 void loop() {
-    
+
   if (Serial.available() > 0) {
 
     loopcount++; Serial.println(loopcount); // entry counter
-    
+
     String readBuffer = Serial.readStringUntil('\n');
-    Serial.println("INPUT:" + readBuffer);    
-    
+    Serial.println("INPUT:" + readBuffer);
+
     sprintf(cleartext, "%s", readBuffer.c_str()); // must not exceed 255 bytes; may contain a newline
 
     // Encrypt
@@ -79,8 +81,8 @@ void loop() {
     String encrypted = encrypt(cleartext, enc_iv);
     sprintf(ciphertext, "%s", encrypted.c_str());
     Serial.print("Ciphertext: ");
-    Serial.println(encrypted);  
+    Serial.println(encrypted);
 
     Serial.print("free heap: "); Serial.println(ESP.getFreeHeap());
-  } 
+  }
 }
