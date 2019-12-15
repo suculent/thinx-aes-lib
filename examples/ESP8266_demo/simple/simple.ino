@@ -24,17 +24,11 @@ void aes_init() {
 }
 
 String encrypt(char * msg, byte iv[]) {  
-  int msgLen = strlen(msg);
-  Serial.print("msglen = "); Serial.println(msgLen);
-  // msglen --> base64_enc_len
-  // base64_enc_len --> cipher_len 
-  // cipher_len --> base64_len
+  int msgLen = strlen(msg);  
   int cipherlength = aesLib.get_cipher64_length(msgLen);
   char encrypted[cipherlength]; // AHA! needs to be large, 2x is not enough
   aesLib.encrypt64(msg, encrypted, aes_key,sizeof(aes_key), iv);
   Serial.print("encrypted = "); Serial.println(encrypted);
-  Serial.print("encrypted length :");Serial.println(cipherlength);
-
   return String(encrypted);
 }
 
@@ -50,10 +44,7 @@ void setup() {
   Serial.begin(9600);
   while (!Serial); // wait for serial port
   delay(2000);
-  Serial.print("[0]size of a byte = ");Serial.println((int)sizeof(byte));
-  Serial.print("[0]size of a char = ");Serial.println((int)sizeof(char));
-  Serial.print("[0]size of a aes_iv = ");Serial.println((int)sizeof(aes_iv));
-  Serial.println("[1]aes_init()");
+  //Serial.println("[1]aes_init()");
   aes_init();
   aesLib.set_paddingmode(paddingMode::Array);
   //
@@ -61,18 +52,18 @@ void setup() {
   //  
   char b64in[16] ={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
   char b64out[base64_enc_len(sizeof(aes_iv))];
-  Serial.print("[2]Base64 encode length for b64in (16 ascii 0 characters) :"); Serial.println(base64_enc_len(sizeof(b64in)));
+  //Serial.print("[2]Base64 encode length for b64in (16 ascii 0 characters) :"); Serial.println(base64_enc_len(sizeof(b64in)));
   base64_encode(b64out,b64in,16);
-  Serial.print("[2]Base64 encode aes_iv :"); Serial.println(b64out);
+  //Serial.print("[2]Base64 encode aes_iv :"); Serial.println(b64out);
   delay(1000);
   char b64enc[base64_enc_len(10)];
-  Serial.print("[3]Base64 encode length for '0123456789' :"); Serial.println(base64_enc_len(10)); // MDEyMzQ1Njc4OQ==
+  //Serial.print("[3]Base64 encode length for '0123456789' :"); Serial.println(base64_enc_len(10)); // MDEyMzQ1Njc4OQ==
   base64_encode(b64enc,"0123456789",10);
-  Serial.print("[3]Base64 encode '0123456789' :"); Serial.println(b64enc);
+  //Serial.print("[3]Base64 encode '0123456789' :"); Serial.println(b64enc);
   char b64dec[ base64_dec_len(b64enc,sizeof(b64enc))];
-  Serial.print("[3]Base64 decode length for '0123456789' :"); Serial.println(base64_dec_len(b64enc,sizeof(b64enc)));
+  //Serial.print("[3]Base64 decode length for '0123456789' :"); Serial.println(base64_dec_len(b64enc,sizeof(b64enc)));
   base64_decode(b64dec,b64enc,sizeof(b64enc));
-  Serial.print("Base64 decode '0123456789' :"); Serial.println(b64dec);
+  //Serial.print("Base64 decode '0123456789' :"); Serial.println(b64dec);
   delay(1000);
 
   Serial.println("Enter text to be encrypted into console (no feedback) and press ENTER (newline):");
@@ -91,9 +82,7 @@ byte enc_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // iv
 byte dec_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     
 
-void loop() {
-    
-  if (Serial.available() > 0) {
+void loop() {    
 
     loopcount++; Serial.println(loopcount); // entry counter
     
@@ -125,5 +114,5 @@ void loop() {
     enc_iv[i]= 0;
     dec_iv[i]= 0;
   }
-  } 
+ 
 }

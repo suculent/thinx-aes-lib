@@ -8,6 +8,12 @@ AESLib provides convenience methods for encrypting data to byte arrays and Strin
 
 While Arduino Core 2.5.1 is already out, this should be updated to use AES implementation from BearSSL (to save more RAM in larger projects).
 
+# Tested on
+
+* ESP8266 (OK)
+* Arduino Mini Pro (not enough memory!)
+* Arduino Uno (does not work correctly!)
+
 # Changes
 
 `latest` - fixed padding, added parametrization (via https://github.com/kavers1)
