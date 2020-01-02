@@ -15,7 +15,7 @@ byte aes_iv[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 // Generate IV (once)
 void aes_init() {
   aesLib.gen_iv(aes_iv);
-  encrypt("AAAAAAAAAA", aes_iv); // workaround for incorrect B64 functionality on first run... initing b64 is not enough
+  // encrypt("AAAAAAAAAA", aes_iv); // workaround for incorrect B64 functionality on first run... initing b64 is not enough
 }
 
 // Serves for debug logging the case where IV changes after use...
@@ -125,7 +125,7 @@ void loop() {
 
   loopcount++;
 
-  sprintf(cleartext, "AAAAAAAAA");
+  sprintf(cleartext, "AABBCCDDEE\0");
 
   print_key_iv();
 
@@ -150,7 +150,8 @@ void loop() {
 
   String plain = String(cleartext);
 
-  if (plain.indexOf(decrypted) == -1) {
+  // decryped may contain mess if not properly padded
+  if (decrypted.indexOf(plain) == -1) {
     Serial.println("Decryption FAILED!");
     Serial.print("At:");
     Serial.println(plain.indexOf(decrypted));

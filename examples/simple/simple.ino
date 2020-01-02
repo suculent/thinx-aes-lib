@@ -26,7 +26,8 @@ void aes_init() {
 String encrypt(char * msg, byte iv[]) {
   int msgLen = strlen(msg);
   Serial.print("msglen = "); Serial.println(msgLen);
-  char encrypted[4 * msgLen]; // AHA! needs to be large, 2x is not enough
+  int cipherlength = aesLib.get_cipher64_length(msgLen);
+  char encrypted[cipherlength];
   aesLib.encrypt64(msg, encrypted, aes_key, sizeof(aes_key), iv);
   Serial.print("encrypted = "); Serial.println(encrypted);
   return String(encrypted);
