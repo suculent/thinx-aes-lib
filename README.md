@@ -2,17 +2,16 @@
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/8dded023f3d14a69b3c38c9f5fd66a40)](https://www.codacy.com/app/suculent/thinx-aes-lib?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=suculent/thinx-aes-lib&amp;utm_campaign=Badge_Grade) [![Greenkeeper badge](https://badges.greenkeeper.io/suculent/thinx-aes-lib.svg)](https://greenkeeper.io/)
 
-An ESP32/ESP8266/Arduino library for Arduino IDE to wrap AES encryption with Base64 support. This project is originally based on [AESLib by kakopappa](https://github.com/kakopappa/arduino-esp8266-aes-lib). This fork actually works, will be maintained at least for a while, and provides optimized methods that do not require using Arduino's flawed String objects (even though those are still in examples).
+An ESP32/ESP8266 library for Arduino IDE to wrap AES encryption with Base64 support. This project is originally based on [AESLib by kakopappa](https://github.com/kakopappa/arduino-esp8266-aes-lib). This fork actually works, will be maintained at least for a while, and provides optimized methods that do not require using Arduino's flawed String objects (even though those are still in examples).
 
 AESLib provides convenience methods for encrypting data to byte arrays and Strings, with optional additional base64 encoding to return strings instead of bare data.
 
-While Arduino Core 2.5.1 is already out, this should be updated to use AES implementation from BearSSL (to save more RAM in larger projects).
+While ESP8266 Arduino Core 2.5.1 is already out, this should be updated to use AES implementation from BearSSL (to save more RAM in larger projects).
 
 # Tested on
 
 * ESP8266 (OK)
-* Arduino Mini Pro (not enough memory!)
-* Arduino Uno (does not work correctly!)
+* Arduino Mini Pro, Arduino Uno (not enough memory, fails)
 
 # Changes
 
@@ -22,7 +21,7 @@ While Arduino Core 2.5.1 is already out, this should be updated to use AES imple
 
 `1.0.4` - fixed simple example
 
-`1.0.3` - fixed padding (after encoding, not before) 
+`1.0.3` - fixed padding (after encoding, not before)
 
 # Client Example
 
@@ -124,7 +123,7 @@ console.log("Decrypted message: ", decoded_msg);
 
 # References
 
-This is an AES library for the Arduino, based on tzikis's AES library, was previously [here](https://github.com/tzikis/arduino). Tzikis library was based on scottmac's library, which was previously [here](https://github.com/scottmac/arduino), but now seems to be removed.
+This is an AES library for the ESP8266, based on tzikis's AES library for Arduino, was previously [here](https://github.com/tzikis/arduino). Tzikis library was based on scottmac's library, which was previously [here](https://github.com/scottmac/arduino), but now seems to be removed. The library is code-wise compatible with Aruino AVR, but it requires more RAM than it is usually available on Arduino boards.
 
 [AES by spaniakos](https://github.com/spaniakos/AES/)
 
