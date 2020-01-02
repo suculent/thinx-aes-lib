@@ -19,11 +19,8 @@ byte aes_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 // Generate IV (once)
 void aes_init() {
-  Serial.println("gen_iv()");
+  Serial.println("aes_init() calling gen_iv()");
   aesLib.gen_iv(aes_iv);
-  // workaround for incorrect B64 functionality on first run...
-  Serial.println("encrypt()");
-  Serial.println(encrypt(strdup(plaintext.c_str()), aes_iv));
 }
 
 String encrypt(char * msg, byte iv[]) {
@@ -50,9 +47,9 @@ void setup() {
   Serial.println("aes_init()");
   aes_init();
 
-  #ifdef ESP8266
+#ifdef ESP8266
   Serial.print("free heap: "); Serial.println(ESP.getFreeHeap());
-  #endif
+#endif
 
   //Serial.println("Enter text to be encrypted into console (no feedback) and press ENTER (newline):");
 }
@@ -67,28 +64,23 @@ void wait(unsigned long milliseconds) {
 
 unsigned long loopcount = 0;
 
-String readBuffer = "XHELLO\r\n";
+String readBuffer = "HELLO WORLD!";
 String encrypted;
 
-byte enc_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-
 void loop() {
-    
-    Serial.print("INPUT:"); Serial.println(readBuffer);
 
-    sprintf(cleartext, "%s", readBuffer.c_str()); // must not exceed 255 bytes; may contain a newline    
+  sprintf(cleartext, "%s", readBuffer.c_str()); // must not exceed 255 bytes; may contain a newline
+  Serial.print("CLEAR:"); Serial.println(cleartext);
 
-    Serial.print("CLEAR:"); Serial.println(cleartext);
+  // Encrypt
+  // iv_block gets written to, provide own fresh copy... so each iteration of encryption will be the same.
+  byte enc_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+  encrypted = encrypt(cleartext, enc_iv);
+  sprintf(ciphertext, "%s", encrypted.c_str());
 
-    // Encrypt
-    // iv_block gets written to, provide own fresh copy...
-    encrypted = encrypt(cleartext, enc_iv);
-    sprintf(ciphertext, "%s", encrypted.c_str());
-    //Serial.print("Ciphertext: "); Serial.println(encrypted);
+#ifdef ESP8266
+  Serial.print("free heap: "); Serial.println(ESP.getFreeHeap());
+#endif
 
-    #ifdef ESP8266
-    Serial.print("free heap: "); Serial.println(ESP.getFreeHeap());
-    #endif
-  // }
   delay(10000);
 }
