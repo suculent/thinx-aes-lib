@@ -2,7 +2,7 @@
 
 #include <AESLib.h>
 
-#define BAUD 230400
+#define BAUD 9600
 
 AESLib aesLib;
 
@@ -15,7 +15,7 @@ byte aes_iv[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 // Generate IV (once)
 void aes_init() {
   aesLib.gen_iv(aes_iv);
-  encrypt("AAAAAAAAAA", aes_iv); // workaround for incorrect B64 functionality on first run... initing b64 is not enough
+  // encrypt("AAAAAAAAAA", aes_iv); // workaround for incorrect B64 functionality on first run... initing b64 is not enough
 }
 
 // Serves for debug logging the case where IV changes after use...
@@ -58,7 +58,7 @@ String encode(String msg) {
   int inputLen = strlen(input);
   int enlen = base64_encode(output, input, msg.length());
 
-  Serial.printf("Encoded %i bytes to %s \n", enlen, output);
+  // Serial.print("Encoded %i bytes to %s \n", enlen, output);
   sprintf(message, output);
   return String(output);
 }
@@ -100,20 +100,24 @@ String decrypt(char * msg, byte iv[]) {
 
 void setup() {
   Serial.begin(BAUD);
+  while(!Serial);
+  delay(2000);
   Serial.println("\nBooting...");
   aes_init();
 }
 
 void log_free_stack(String tag) {
+  #ifdef ESP8266
   Serial.print("["); Serial.print(tag); Serial.print("] "); 
   Serial.print("free heap: "); Serial.println(ESP.getFreeHeap());
+  #endif
 }
 
 String plaintext = "12345678;";
 int loopcount = 0;
 
 char cleartext[256];
-char ciphertext[1024];
+char ciphertext[512];
 
 // zEDQYJuYhIV5lLJeIB3qlQ==
 
@@ -121,7 +125,7 @@ void loop() {
 
   loopcount++;
 
-  sprintf(cleartext, "AAAAAAAAA");
+  sprintf(cleartext, "AABBCCDDEE\0");
 
   print_key_iv();
 
@@ -146,15 +150,20 @@ void loop() {
 
   String plain = String(cleartext);
 
-  if (plain.indexOf(decrypted) == -1) {
+  // decryped may contain mess if not properly padded
+  if (decrypted.indexOf(plain) == -1) {
     Serial.println("Decryption FAILED!");
-    Serial.printf("At: %i \n", plain.indexOf(decrypted));
+    Serial.print("At:");
+    Serial.println(plain.indexOf(decrypted));
     delay(5000);
   } else {
     if (plain.length() == decrypted.length()) {
       Serial.println("Decryption successful.");
     } else {
-      Serial.printf("Decryption length incorrect. Plain: %i, Dec: %i", plain.length(), decrypted.length());
+      Serial.print("Decryption length incorrect. Plain: ");
+      Serial.print(plain.length());
+      Serial.print(" dec: ");
+      Serial.println(decrypted.length());
     }
   }
 

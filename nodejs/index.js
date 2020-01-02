@@ -2,7 +2,8 @@ var CryptoJS = require("crypto-js");
 
 // Sample encrypted text "START; 380"
 //var esp8266_msg = 'ei6NxsBeWk7hj41eia3S0Od26goTtxHvwO6V27LwSW4=';
-var esp8266_msg = 'ei6NxsBeWk7hj41eia3S0Od26goTtxHvwO6V27LwSW4=';
+var esp8266_msg = 'ei6NxsBeWk7hj41eia3S0Od26goTtxHvwO6V27LwSW4='; // works
+
 
 
 // null_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }

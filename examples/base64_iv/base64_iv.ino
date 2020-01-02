@@ -77,7 +77,7 @@ void print_key_iv() {
 }
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   aes_init();
 
   print_key_iv();

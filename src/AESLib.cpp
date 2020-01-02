@@ -35,7 +35,7 @@ String AESLib::decrypt(String msg, byte key[],int bits, byte my_iv[]) {
   aes.set_key(key, bits);
 
   int len = msg.length();
-  char encrypted[base64_dec_len((char*)msg.c_str(),len)]; 
+  char encrypted[base64_dec_len((char*)msg.c_str(),len)];
   int b64len = base64_decode(encrypted, (char*)msg.c_str(), msg.length());
 
   byte out[b64len];
@@ -58,15 +58,14 @@ void AESLib::decrypt64(char * msg, char * plain, byte key[],int bits, byte my_iv
   aes.set_key(key, bits);
 
   int msgLen = strlen(msg);
-  char encrypted[base64_dec_len(msg,msgLen)+1]; 
+  char encrypted[base64_dec_len(msg,msgLen)+1];
   int b64len = base64_decode(encrypted, msg, msgLen);
   // decrypting will keep the message length
-  byte out[b64len]; 
+  byte out[b64len];
   int plain_len = aes.do_aes_decrypt((byte *)encrypted, b64len, out, key, bits, (byte *)my_iv);
   // unpad the string
   out[plain_len ] = 0; // add string termination
   #ifdef AES_DEBUG
-  Serial.print("- Decrypt paddedtext    ");dumpHex(out,b64len)
   Serial.print("- Decrypt plain length  ");Serial.println(plain_len);
   #endif
   int outLen = base64_dec_len((char*)out, plain_len);
@@ -91,10 +90,10 @@ void AESLib::decrypt(char * msg, char * plain, byte key[],int bits, byte my_iv[]
   int plain_len = aes.do_aes_decrypt((byte *)encrypted, b64len, out, key, bits, (byte *)my_iv);
   // unpad the string
   out[plain_len ] = 0; // add string termination
-  
+
   int outLen = base64_dec_len((char*)out, plain_len);
   char message[outLen+1]; // trailing zero for cstring?
-  
+
   strcpy(plain, message);
 }
 
@@ -115,7 +114,7 @@ String AESLib::encrypt(String msg, byte key[],int bits, byte my_iv[]) {
   int paddedLen =  aes.get_padded_len(b64len);
   byte padded[paddedLen];
   aes.padPlaintext(b64data, padded);
-  
+
   // cipher will keep the length of the padded message
   // do_aes_encrypt will pad the message so use the unpadded source
   byte cipher[paddedLen];
@@ -154,7 +153,6 @@ void AESLib::encrypt64(char * msg, char * output, byte key[],int bits, byte my_i
 #ifdef AES_DEBUG
   Serial.print("- b64len ");Serial.println(b64len);
   Serial.print("- b64data ");Serial.println(b64data);
-  Serial.print("- b64data ");dumpHex(b64data,b64len)
 #endif
 
   int paddedLen = aes.get_padded_len(b64len);
@@ -165,15 +163,9 @@ void AESLib::encrypt64(char * msg, char * output, byte key[],int bits, byte my_i
   // this padding is not needed. The do_aes_encrypt will pad anyhow
   byte padded[paddedLen];
   aes.padPlaintext(b64data, padded);
-#ifdef AES_DEBUG
-  Serial.print("- padPlaintext "); dumpHex(padded,paddedLen)
-#endif
 
   byte cipher[paddedLen];
   aes.do_aes_encrypt((byte *)b64data, b64len, cipher, key, bits, my_iv);
-#ifdef AES_DEBUG
-  Serial.print("- do_aes_encrypt "); dumpHex(cipher,paddedLen)
-#endif
 
   char out2[base64_enc_len(paddedLen)+1];
   base64_encode(out2, (char *)cipher, aes.get_size() );
