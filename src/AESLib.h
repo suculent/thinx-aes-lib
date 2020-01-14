@@ -26,7 +26,7 @@ class AESLib
 
     String decrypt(String msg, byte key[],int bits, byte my_iv[]);                  // decode, decrypt, decode and return as String
     uint16_t decrypt64(char * input, char * output, byte key[],int bits, byte my_iv[]); // decode, decrypt and decode
-    void decrypt(char * input, char * output, byte key[],int bits, byte my_iv[]);   // decode and decrypt
+    void decrypt(char * input, uint16_t input_length, char * output, byte key[],int bits, byte my_iv[]);   // decode and decrypt
 
     int get_cipher_length(int msg_len);
     int get_cipher64_length(int msg_len);

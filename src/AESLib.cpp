@@ -53,23 +53,12 @@ String AESLib::decrypt(String msg, byte key[],int bits, byte my_iv[]) {
 }
 
 /* Returns byte array decoded and decrypted. */
-void AESLib::decrypt(char * msg, char * plain, byte key[],int bits, byte my_iv[]) {
-
+void AESLib::decrypt(char * msg, uint16_t msgLen, char * plain, byte key[],int bits, byte my_iv[]) {
   aes.set_key(key, bits);
-
-  int msgLen = strlen(msg);
-  char encrypted[msgLen]; // will be always shorter than Base64
-  int b64len = base64_decode(encrypted, msg, msgLen);
-
-  byte out[2*msgLen];
-  int plain_len = aes.do_aes_decrypt((byte *)encrypted, b64len, out, key, bits, (byte *)my_iv);
-  // unpad the string
-  out[plain_len ] = 0; // add string termination
-
-  int outLen = base64_dec_len((char*)out, plain_len);
-  char message[outLen+1]; // trailing zero for cstring?
-
-  strcpy(plain, message);
+  byte out[msgLen];
+  int plain_len = aes.do_aes_decrypt((byte *)msg, msgLen, out, key, bits, (byte *)my_iv);
+  int b64len = base64_decode(plain, (char*)out, plain_len);
+  out[b64len] = 0; // terminate but could return length instead for byte arrays...
 }
 
 /* Returns Arduino string encrypted and encoded with Base64. */
