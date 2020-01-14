@@ -20,13 +20,13 @@ class AESLib
   public:
     void gen_iv(byte  *iv);
 
-    String encrypt(String msg, byte key[],int bits, byte my_iv[]);                  // encode, encrypt, encode and return as String
-    void encrypt64(char * input, char * output, byte key[],int bits, byte my_iv[]); // encode, encrypt and encode
+    String encrypt(String msg, byte key[], int bits, byte my_iv[]);                  // encode, encrypt, encode and return as String
+    uint16_t encrypt64(char * input, char * output, byte key[],int bits, byte my_iv[]); // encode, encrypt and encode; returns final length
     void encrypt(char * input, char * output, byte key[],int bits, byte my_iv[]);   // encode and encrypt
 
     String decrypt(String msg, byte key[],int bits, byte my_iv[]);                  // decode, decrypt, decode and return as String
-    void decrypt64(char * input, char * output, byte key[],int bits, byte my_iv[]); // decode, decrypt and decode
-    void decrypt(char * input, char * output, byte key[],int bits, byte my_iv[]);   // decode and decrypt
+    uint16_t decrypt64(char * input, char * output, byte key[],int bits, byte my_iv[]); // decode, decrypt and decode
+    void decrypt(char * input, uint16_t input_length, char * output, byte key[],int bits, byte my_iv[]);   // decode and decrypt
 
     int get_cipher_length(int msg_len);
     int get_cipher64_length(int msg_len);
