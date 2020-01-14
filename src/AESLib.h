@@ -20,7 +20,7 @@ class AESLib
   public:
     void gen_iv(byte  *iv);
 
-    String encrypt(String msg, byte key[],int bits, byte my_iv[]);                  // encode, encrypt, encode and return as String
+    String encrypt(String msg, byte key[], int bits, byte my_iv[]);                  // encode, encrypt, encode and return as String
     uint16_t encrypt64(char * input, char * output, byte key[],int bits, byte my_iv[]); // encode, encrypt and encode; returns final length
     void encrypt(char * input, char * output, byte key[],int bits, byte my_iv[]);   // encode and encrypt
 

@@ -124,19 +124,38 @@ uint16_t AESLib::encrypt64(char * msg, char * output, byte key[],int bits, byte 
 /* Suggested size for the plaintext buffer is 1/2 length of `msg` */
 uint16_t AESLib::decrypt64(char * msg, char * plain, byte key[],int bits, byte my_iv[]) {
 
+#ifdef AES_DEBUG
+  Serial.println("[decrypt64] decrypting message:  ");
+#endif
+
   aes.set_key(key, bits);
 
   int msgLen = strlen(msg);
-  char encrypted[base64_dec_len(msg,msgLen)+1];
-  int b64len = base64_decode(encrypted, msg, msgLen);
-  // decrypting will keep the message length
-  byte out[b64len];
-  memset(out, 0, sizeof(out));
-  int plain_len = aes.do_aes_decrypt((byte *)encrypted, b64len, out, key, bits, (byte *)my_iv);
-  out[plain_len] = 0; // ensure string termination
 
 #ifdef AES_DEBUG
-  Serial.print("[decrypt64] plain length:  "); Serial.println(plain_len);
+  Serial.print("[decrypt64] msgLen (strlen msg):  "); Serial.println(msgLen);
+#endif
+
+  // decoded base64 takes some space, but less than original...
+  // it should therefore not overfill when reusing the msg-text buffer :o)
+  int b64len = base64_decode(msg, msg, msgLen);
+  // decrypting will keep the message length
+#ifdef AES_DEBUG
+  Serial.print("[decrypt64] base64_decode allocating decrypt buffer len:  "); Serial.println(b64len);
+#endif
+
+  byte out[b64len];
+
+  Serial.print("[decrypt64] Formatting out buffer to allow strlen...");
+  memset(out, 0, sizeof(out));
+
+  Serial.print("[setup] free heap: "); Serial.println(ESP.getFreeHeap());
+
+  int plain_len = aes.do_aes_decrypt((byte *)msg, b64len, out, key, bits, (byte *)my_iv);
+  out[plain_len+1] = 0; 
+
+#ifdef AES_DEBUG
+  Serial.print("[decrypt64] aes_decrypt length before b64-decode:  "); Serial.println(plain_len);
 #endif
 
   // calculate required output length
