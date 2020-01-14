@@ -21,11 +21,11 @@ class AESLib
     void gen_iv(byte  *iv);
 
     String encrypt(String msg, byte key[],int bits, byte my_iv[]);                  // encode, encrypt, encode and return as String
-    void encrypt64(char * input, char * output, byte key[],int bits, byte my_iv[]); // encode, encrypt and encode
+    uint16_t encrypt64(char * input, char * output, byte key[],int bits, byte my_iv[]); // encode, encrypt and encode; returns final length
     void encrypt(char * input, char * output, byte key[],int bits, byte my_iv[]);   // encode and encrypt
 
     String decrypt(String msg, byte key[],int bits, byte my_iv[]);                  // decode, decrypt, decode and return as String
-    void decrypt64(char * input, char * output, byte key[],int bits, byte my_iv[]); // decode, decrypt and decode
+    uint16_t decrypt64(char * input, char * output, byte key[],int bits, byte my_iv[]); // decode, decrypt and decode
     void decrypt(char * input, char * output, byte key[],int bits, byte my_iv[]);   // decode and decrypt
 
     int get_cipher_length(int msg_len);
