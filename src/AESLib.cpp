@@ -140,7 +140,9 @@ uint16_t AESLib::decrypt64(char * msg, char * plain, byte key[],int bits, byte m
   Serial.print("[decrypt64] Formatting out buffer to allow strlen...");
   memset(out, 0, sizeof(out));
 
+#ifdef ESP8266
   Serial.print("[decrypt64] free heap: "); Serial.println(ESP.getFreeHeap());
+#endif
 
   int b64_len = aes.do_aes_decrypt((byte *)msg, b64len, (byte*)out, key, bits, (byte *)my_iv);
   out[b64_len+1] = 0;
