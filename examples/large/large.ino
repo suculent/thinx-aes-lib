@@ -90,7 +90,6 @@ void loop() {
   decrypt_to_cleartext(ciphertext, len, enc_iv_from);
   Serial.print("Decrypted cleartext:\n"); Serial.println(cleartext);
 
-  // memory intensive test, may fail...
   if (strcmp(readBuffer, cleartext) == 0) {
     Serial.println("Decrypted correctly.");
   } else {
