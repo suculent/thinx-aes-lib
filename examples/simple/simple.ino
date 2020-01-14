@@ -1,4 +1,4 @@
-/* Minimalistic example for Readme */
+/* Minimalistic example for Readme with heavy load (>1K) */
 
 #include "AESLib.h"
 
@@ -29,7 +29,7 @@ byte aes_key[] = { 0x2B, 0x7E, 0x15, 0x16, 0x28, 0xAE, 0xD2, 0xA6, 0xAB, 0xF7, 0
 byte aes_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 // Generate IV (once)
-void aes_init() {
+void aes_init() {  
   aesLib.gen_iv(aes_iv);
 }
 
@@ -42,7 +42,7 @@ uint16_t encrypt_to_ciphertext(char * msg, byte iv[]) {
   return enc_length;
 }
 
-void decrypt_to_cleartext(char * msg, uint16_t msgLen, byte iv[]) {
+void decrypt_to_cleartext(char * msg, uint16_t msgLen, byte iv[]) {  
   Serial.println("Calling decrypt64...");
   Serial.print("[decrypt_to_cleartext] free heap: "); Serial.println(ESP.getFreeHeap());
   uint16_t decLen = aesLib.decrypt64(msg, cleartext, aes_key, sizeof(aes_key), iv);
@@ -53,9 +53,9 @@ void setup() {
   Serial.begin(BAUD);
   Serial.setTimeout(60000);
   delay(2000);
-
+  
   aes_init(); // generate random IV, should be called only once? causes crash if repeated...
-
+  
 #ifdef ESP8266
   Serial.print("[setup] free heap: "); Serial.println(ESP.getFreeHeap());
 #endif
@@ -79,7 +79,7 @@ byte enc_iv_from[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 void loop() {
 
 #ifdef ESP8266
-  Serial.print("»» LOOP BEGINS. Free heap: "); Serial.println(ESP.getFreeHeap());
+  Serial.print("»» LOOP BEGINS. Free heap: "); Serial.println(ESP.getFreeHeap());  
 #endif
 
   Serial.print("readBuffer length: "); Serial.println(readBuffer.length());
@@ -88,13 +88,13 @@ void loop() {
   sprintf(cleartext, "%s", readBuffer.c_str());
 
   // Encrypt
-  // iv_block gets written to, provide own fresh copy... so each iteration of encryption will be the same.
+  // iv_block gets written to, provide own fresh copy... so each iteration of encryption will be the same.  
   uint16_t len = encrypt_to_ciphertext(cleartext, enc_iv_to);
   Serial.print("Encrypted length = "); Serial.println(len);
-
-  Serial.println("Encrypted. Decrypting..."); Serial.flush();
+  
+  Serial.println("Encrypted. Decrypting..."); Serial.flush();   
   decrypt_to_cleartext(ciphertext, len, enc_iv_from);
-  Serial.print("Decrypted cleartext:\n"); Serial.println(cleartext);
+  Serial.print("Decrypted cleartext:\n"); Serial.println(cleartext);    
 
   // memory intensive test, may fail...
   if (readBuffer == String(cleartext)) {
@@ -104,9 +104,9 @@ void loop() {
   }
 
 #ifdef ESP8266
-  Serial.print("»» LOOP ENDED. Free heap: "); Serial.println(ESP.getFreeHeap());
+  Serial.print("»» LOOP ENDED. Free heap: "); Serial.println(ESP.getFreeHeap());  
 #endif
 
   Serial.println("---");
-
+  
 }
