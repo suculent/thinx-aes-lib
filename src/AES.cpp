@@ -107,7 +107,7 @@ static const byte s_inv [0x100] PROGMEM =
 
 // times 2 in the GF(2^8)
 #define f2(x)   ((x) & 0x80 ? (x << 1) ^ WPOLY : x << 1)
-#define d2(x)  (((x) >> 1) ^ ((x) & 1 ? DPOLY : 0))                          
+#define d2(x)  (((x) >> 1) ^ ((x) & 1 ? DPOLY : 0))
 
 static byte s_box (byte x)
 {
