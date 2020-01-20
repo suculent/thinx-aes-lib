@@ -3,7 +3,12 @@
 #if (defined(__AVR__))
 #include <avr/pgmspace.h>
 #else
+#if !defined(__x86_64)
 #include <pgmspace.h>
+#else
+#undef PROGMEM
+#define PROGMEM
+#endif
 #endif
 
 const char PROGMEM b64_alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -27,7 +32,11 @@ int base64_encode(char *output, char *input, int inputLen) {
       a3_to_a4(a4, a3);
 
       for(i = 0; i < 4; i++) {
+#if !defined(__x86_64)
         output[encLen++] = pgm_read_byte(&b64_alphabet[a4[i]]);
+#else
+        output[encLen++] = b64_alphabet[a4[i]];
+#endif
       }
 
       i = 0;
@@ -42,7 +51,11 @@ int base64_encode(char *output, char *input, int inputLen) {
     a3_to_a4(a4, a3);
 
     for(j = 0; j < i + 1; j++) {
-      output[encLen++] = pgm_read_byte(&b64_alphabet[a4[j]]);
+#if !defined(__x86_64)
+        output[encLen++] = pgm_read_byte(&b64_alphabet[a4[j]]);
+#else
+        output[encLen++] = b64_alphabet[a4[j]];
+#endif
     }
 
     while((i++ < 3)) {

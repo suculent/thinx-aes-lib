@@ -111,15 +111,21 @@ static const byte s_inv [0x100] PROGMEM =
 
 static byte s_box (byte x)
 {
-  //  return fwd_affine (pgm_read_byte (&inv [x])) ;
+#if defined(__x86_64)
+  return s_fwd[x];
+#else
   return pgm_read_byte (& s_fwd [x]) ;
+#endif
 }
 
 // Inverse Sbox
 static byte is_box (byte x)
 {
-  // return pgm_read_byte (&inv [inv_affine (x)]) ;
+#if defined(__x86_64)
+  return s_inv[x];
+#else
   return pgm_read_byte (& s_inv [x]) ;
+#endif
 }
 
 
@@ -249,7 +255,7 @@ AES::AES(){
   arr_pad[12] = 0xb2;
   arr_pad[13] = 0xb4;
   arr_pad[14] = 0xb8;
-  arr_pad[15] = 0xbf;
+  // arr_pad[15] = 0xbf; // padding past end of array which has 15 elements
   padmode = paddingMode::Array; // backwards compatibility
 }
 
@@ -667,10 +673,10 @@ for (j = 0; j < loops; j += 1){
   if (p_pad && (j == (loops  - 1)) ) { outp = N_BLOCK - pad; }
   for (i = 0; i < outp; i++)
   {
-    printf_P(PSTR("%c"),output[j*N_BLOCK + i]);
+    printf("%c", output[j*N_BLOCK + i]);
   }
 }
-  printf_P(PSTR("\n"));
+  printf("\n");
 }
 
 /******************************************************************************/
@@ -679,9 +685,9 @@ void AES::printArray(byte output[],int sizel)
 {
   for (int i = 0; i < sizel; i++)
   {
-    printf_P(PSTR("%x"),output[i]);
+    printf("%x", output[i]);
   }
-  printf_P(PSTR("\n"));
+  printf("\n");
 }
 
 

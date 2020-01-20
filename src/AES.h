@@ -35,7 +35,10 @@
  /* code was modified by george spanos <spaniakos@gmail.com>
  * 16/12/14
  */
-enum class paddingMode{
+
+typedef unsigned char byte;
+
+enum class paddingMode {
 CMS,
 Bit,
 ZeroLength,
@@ -279,7 +282,7 @@ class AES
    * This function returns the current selected paddingmode
   */
    paddingMode getPadMode();
-  
+
   /** Prints the array given.
    *
    * This function prints the given array and pad,
