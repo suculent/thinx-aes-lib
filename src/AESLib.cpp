@@ -1,5 +1,15 @@
 #include "AESLib.h"
 
+std::string AESLib::intToHex(uint8_t intValue) {
+    std::string hexStr;
+    std::stringstream sstream;
+    sstream << std::setfill ('0') << std::setw(2)
+    << std::hex << (int)intValue;
+    hexStr = sstream.str();
+    sstream.clear();
+    return hexStr;
+}
+
 uint8_t AESLib::getrnd()
 {
    return aes.getrandom();
@@ -29,7 +39,114 @@ int AESLib::get_cipher64_length(int msglen){
   return base64_enc_len(aes.get_padded_len(base64_enc_len(msglen)));
 }
 
-/* Returns Arduino String decoded and decrypted. */
+void AESLib::clean() {
+  aes.clean();
+}
+
+//
+// Basic de/encryption for char* and byte[] of known length
+//
+
+/* Returns message encrypted only to be used as byte array. TODO: Refactor to byte[] */
+uint16_t AESLib::encrypt(byte input[], uint16_t input_length, char * output, byte key[], int bits, byte my_iv[]) {
+
+  aes.set_key(key, bits);
+  aes.setPadMode((paddingMode)0); // CMS, Bit, ZeroLength, Null, Space, Random, Array
+  aes.do_aes_encrypt((byte *)input, input_length, (byte*)output, key, bits, my_iv);
+
+  //memset((byte*)output, 0, sizeof(output));
+
+  uint16_t enc_len = aes.get_size();
+
+  /*
+  printf("[AESLib::encrypt] Input bytes = '");
+  for (uint8_t pos = 0; pos <= input_length; pos++) {
+    if (input[pos] > 0) {
+      printf("%c", input[pos]);
+    } else {
+      printf("\\0");
+    }
+  }
+  printf("' (input_length = %u, enc_len = %u)\n", input_length, enc_len);
+
+  printf("[AESLib::encrypt] Input bytes = ");
+  for (uint8_t pos = 0; pos < input_length; pos++) {
+    printf("%s ", intToHex(input[pos]).c_str());
+  }
+  printf("\n");
+
+  printf("[AESLib::encrypt] Encrypted bytes = ");
+  for (uint8_t pos = 0; pos < enc_len; pos++) {
+    printf("%s ", intToHex(output[pos]).c_str());
+  }
+  printf("\n");
+  */
+
+  uint16_t base64_len = base64_enc_len(input_length);
+
+  // input -> AES -> output -> B64 -> buffer -> output
+
+  char b64data[base64_len];
+  // Note: arg order is base64_encode(output, input);
+  base64_len = base64_encode(b64data, (char*)output, enc_len);
+  memcpy(output, b64data, base64_len);
+
+  /*
+  printf("[AESLib::encrypt] Encoded %u bytes = ", base64_len);
+  for (uint8_t pos = 0; pos <= base64_len; pos++) {
+    if (pos < base64_len) {
+      printf("%c", output[pos]);
+    }
+  }
+  */
+
+  return base64_len;
+}
+
+/* Returns byte array decoded and decrypted. TODO: Refactor to byte[] */
+uint16_t AESLib::decrypt(byte input[], uint16_t input_length, char * plain, byte key[],int bits, byte my_iv[]) {
+  aes.set_key(key, bits);
+  byte decode_buffer[input_length];
+  uint16_t b64len = base64_decode((char*)decode_buffer, (char*)input, input_length);
+
+  /*
+  printf("[AESLib::decrypt] Decoded bytes = ");
+  for (uint8_t pos = 0; pos < b64len; pos++) {
+    printf("%s ", intToHex(decode_buffer[pos]).c_str());
+  }
+  printf("\n");
+  */
+
+  int dec_len = aes.do_aes_decrypt((byte *)decode_buffer, b64len, (byte*)plain, key, bits, (byte *)my_iv);
+
+  /*
+  printf("\n[AESLib::decrypt] Decrypted OUT bytes = %u\n", dec_len);
+
+  printf("\n[AESLib::decrypt] Decrypted bytes = ");
+  //plain[dec_len] == 0;
+  for (uint8_t pos = 0; pos < dec_len; pos++) {
+    printf("%s ", intToHex(plain[pos]).c_str());
+  }
+
+
+  printf("\n[AESLib::decrypt] Decrypted chars = ");
+  //plain[dec_len] == 0;
+  for (uint8_t pos = 0; pos < dec_len; pos++) {
+    printf("%c", plain[pos]);
+  }
+
+  printf("\n");
+  */
+
+  return dec_len;
+}
+
+//
+// Deprecated de/encryption for Arduino Strings
+//
+
+#ifndef __x86_64
+/* Returns Arduino String decoded and decrypted. Will probably deprecate in favour of char* OR byte[]
 String AESLib::decrypt(String msg, byte key[],int bits, byte my_iv[]) {
 
   aes.set_key(key, bits);
@@ -50,18 +167,9 @@ String AESLib::decrypt(String msg, byte key[],int bits, byte my_iv[]) {
   //message[baseLen] = '\0'; // ensure trailing zero after cstring <--not needed is already done in base64_decode
 
   return String(message);
-}
+}*/
 
-/* Returns byte array decoded and decrypted. */
-void AESLib::decrypt(char * msg, uint16_t msgLen, char * plain, byte key[],int bits, byte my_iv[]) {
-  aes.set_key(key, bits);
-  byte out[msgLen];
-  int plain_len = aes.do_aes_decrypt((byte *)msg, msgLen, out, key, bits, (byte *)my_iv);
-  int b64len = base64_decode(plain, (char*)out, plain_len);
-  out[b64len] = 0; // terminate but could return length instead for byte arrays...
-}
-
-/* Returns Arduino string encrypted and encoded with Base64. */
+/* Returns Arduino string encrypted and encoded with Base64. Will probably deprecate in favour of char* OR byte[]
 String AESLib::encrypt(String msg, byte key[],int bits, byte my_iv[]) {
 
   aes.set_key(key, bits);
@@ -88,7 +196,12 @@ String AESLib::encrypt(String msg, byte key[],int bits, byte my_iv[]) {
   base64_encode(out, (char *)cipher, paddedLen );
 
   return String((char*)out);
-}
+}*/
+
+//
+// Encryption with added base64 layer on input, seems useless with known lengths.
+// Will probably deprecate soon as well to keep the wrapper as slim as possible.
+//
 
 /* Returns message encrypted and base64 encoded to be used as string. */
 uint16_t AESLib::encrypt64(char * msg, char * output, byte key[],int bits, byte my_iv[]) {
@@ -112,7 +225,7 @@ uint16_t AESLib::encrypt64(char * msg, char * output, byte key[],int bits, byte 
   return encrypted_length;
 }
 
-/* Suggested size for the plaintext buffer is 1/2 length of `msg` */
+/* Suggested size for the plaintext buffer is 1/2 length of `msg`. Refactor! */
 uint16_t AESLib::decrypt64(char * msg, char * plain, byte key[],int bits, byte my_iv[]) {
 
 #ifdef AES_DEBUG
@@ -168,26 +281,4 @@ uint16_t AESLib::decrypt64(char * msg, char * plain, byte key[],int bits, byte m
 
   return outLen;
 }
-
-/* Returns message encrypted only to be used as byte array. */
-void AESLib::encrypt(char * msg, char * output, byte key[],int bits, byte my_iv[]) {
-
-  aes.set_key(key, bits);
-
-  int msgLen = strlen(msg);
-
-  char b64data[base64_enc_len(msgLen)+1];
-  int b64len = base64_encode(b64data, (char*)msg, msgLen);
-
-  int paddedLen =  aes.get_padded_len(b64len);;
-  byte padded[paddedLen];
-  aes.padPlaintext(b64data, padded);
-  // encryption will return the same number of bytes as the padded message
-  // do_aes_encrypt will pad the message so use the unpadded source
-  //byte cipher[paddedLen];
-  aes.do_aes_encrypt((byte *)b64data, b64len, (byte*)output, key, bits, my_iv);
-}
-
-void AESLib::clean() {
-  aes.clean();
-}
+#endif

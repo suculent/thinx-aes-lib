@@ -2,9 +2,8 @@ var CryptoJS = require("crypto-js");
 
 // Sample encrypted text "START; 380"
 //var esp8266_msg = 'ei6NxsBeWk7hj41eia3S0Od26goTtxHvwO6V27LwSW4=';
-var esp8266_msg = 'ei6NxsBeWk7hj41eia3S0Od26goTtxHvwO6V27LwSW4='; // works
-
-
+var esp8266_msg = 'TG9va3MgbGlrZSBrZXkgYnV0IGl0J3Mgbm90IG1lLg=='; // works
+// var plain_msg =  new Buffer(esp8266_iv, 'base64').toString('hex');
 
 // null_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 var esp8266_iv  = 'AAAAAAAAAAAAAAAAAAAAAA==';
@@ -17,16 +16,19 @@ var iv = CryptoJS.enc.Hex.parse(plain_iv);
 var key= CryptoJS.enc.Hex.parse(AESKey);
 
 // Decrypt
-var bytes  = CryptoJS.AES.decrypt( esp8266_msg, key, { iv: iv } );
+var bytes  = CryptoJS.AES.decrypt( esp8266_msg, key, { iv: iv } ); // iv 0 won't do
+//var plaintext = bytes.toString();
 var plaintext = bytes.toString(CryptoJS.enc.Base64);
 var decoded_b64msg =  new Buffer(plaintext, 'base64').toString('ascii');
-var decoded_msg =     new Buffer(decoded_b64msg, 'base64').toString('ascii');
+//var decoded_msg =     new Buffer(decoded_b64msg, 'base64').toString('ascii');
 
-console.log("Decrypted message: ", decoded_msg);
+console.log("Decrypted message: ", decoded_b64msg, "plain =", plaintext);
 
+/*
 // Re-encrypt
 var plaintext_b64 = Buffer.from(decoded_msg).toString('base64');
 iv = CryptoJS.enc.Hex.parse(plain_iv); // reset IV back to 0
 var ebytes = CryptoJS.AES.encrypt( plaintext_b64, key, { iv: iv } );
 var ciphertext = ebytes.toString();
 console.log("ciphertext: ", ciphertext);
+*/

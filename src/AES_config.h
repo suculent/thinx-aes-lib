@@ -5,7 +5,7 @@
 #ifndef __AES_CONFIG_H__
 #define __AES_CONFIG_H__
 
-#if  (defined(__linux) || defined(linux)) && !defined(__ARDUINO_X86__)
+#if defined(__x86_64) || (defined(__linux) || defined(linux)) && !defined(__ARDUINO_X86__)
 
   #define AES_LINUX
 
@@ -14,7 +14,7 @@
   #include <stdlib.h>
   #include <string.h>
   #include <sys/time.h>
-  #include <unistd.h> 
+  #include <unistd.h>
 #else
   #include <Arduino.h>
 #endif
@@ -33,7 +33,13 @@
   #if (defined(__AVR__))
     #include <avr/pgmspace.h>
   #else
-    #include <pgmspace.h>
+  #if !defined(__x86_64)
+    #include <pgmspace.h> // probably ESP's PGMSPACE, needs to be mocked for testing
+  #else
+    // disable the PROGMEM definition in test environment
+    #undef PROGMEM
+    #define PROGMEM
+  #endif
   #endif
 #endif
 
