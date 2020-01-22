@@ -100,6 +100,16 @@ uint16_t AESLib::encrypt(byte input[], uint16_t input_length, char * output, byt
   }
   */
 
+#ifndef __x86_64
+  Serial.printf("[AESLib::encrypt] Encoded %u bytes = ", base64_len);
+  for (uint8_t pos = 0; pos <= base64_len; pos++) {
+    if (pos < base64_len) {
+      Serial.printf("%c", output[pos]);
+    }
+  }
+  Serial.println("");
+#endif
+
   return base64_len;
 }
 
@@ -109,13 +119,14 @@ uint16_t AESLib::decrypt(byte input[], uint16_t input_length, char * plain, byte
   byte decode_buffer[input_length];
   uint16_t b64len = base64_decode((char*)decode_buffer, (char*)input, input_length);
 
-  /*
-  printf("[AESLib::decrypt] Decoded bytes = ");
+
+#ifndef __x86_64
+  Serial.printf("[AESLib::decrypt] Decoded bytes = ");
   for (uint8_t pos = 0; pos < b64len; pos++) {
-    printf("%s ", intToHex(decode_buffer[pos]).c_str());
+    Serial.printf("%s ", intToHex(decode_buffer[pos]).c_str());
   }
-  printf("\n");
-  */
+  Serial.printf("\n");
+#endif
 
   int dec_len = aes.do_aes_decrypt((byte *)decode_buffer, b64len, (byte*)plain, key, bits, (byte *)my_iv);
 
