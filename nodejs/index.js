@@ -22,7 +22,7 @@ var message = "Looks like key but it's not me.";
 // ENCRYPT /////////////////////////////////////////////////////////////////////
 
 // Encrypt
-var iv = CryptoJS.enc.Hex.parse(plain_iv); // reset IV back to 0
+// iv = CryptoJS.enc.Hex.parse(plain_iv); // resets IV back to initial state 
 var ebytes = CryptoJS.AES.encrypt( message, key, { iv: iv } );
 //var ebytes = CryptoJS.AES.encrypt( message, key );
 var ciphertext = ebytes.toString();
