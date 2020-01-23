@@ -13,8 +13,8 @@ unsigned char ciphertext[2*INPUT_BUFFER_LIMIT] = {0}; // THIS IS OUTPUT BUFFER (
 
 unsigned char readBuffer[18] = "username:password";
 
-unsigned char zmi_username[6] = "username";
-unsigned char zmi_password[11] = "password";
+unsigned char zmi_username[9] = "username";
+unsigned char zmi_password[9] = "password";
 
 // AES Encryption Key (same as in node-js example)
 byte aes_key[] = { 0x04, 0x0B, 0x04, 0x05, 0x05, 0x09, 0x04, 0x07, 0x05, 0x05, 0x05, 0x02, 0x05, 0x05, 0x01, 0x00 };
@@ -37,7 +37,7 @@ uint16_t encrypt_to_ciphertext(char * msg, uint16_t msgLen, byte iv[]) {
 
 uint16_t decrypt_to_cleartext(byte msg[], uint16_t msgLen, byte iv[]) {
   Serial.print("Calling decrypt...; ");
-  uint16_t dec_bytes = aesLib.decrypt(msg, msgLen, (char*)cleartext, aes_key, sizeof(aes_key), iv);  
+  uint16_t dec_bytes = aesLib.decrypt(msg, msgLen, (char*)cleartext, aes_key, sizeof(aes_key), iv);
   Serial.print("Decrypted bytes: "); Serial.println(dec_bytes);
   return dec_bytes;
 }
@@ -61,6 +61,12 @@ void wait(unsigned long milliseconds) {
 
 unsigned long loopcount = 0;
 
+// Working IV buffer: Will be updated after encryption to follow up on next block.
+// But we don't want/need that in this test, so we'll copy this over with enc_iv_to/enc_iv_from
+// in each loop to keep the test at IV iteration 1. We could go further, but we'll get back to that later when needed.
+
+byte enc_iv[N_BLOCK] = { 0x04, 0x0B, 0x04, 0x05, 0x05, 0x09, 0x04, 0x07, 0x05, 0x05, 0x05, 0x02, 0x05, 0x05, 0x01, 0x00 };
+
 byte enc_iv_to[N_BLOCK] = { 0x04, 0x0B, 0x04, 0x05, 0x05, 0x09, 0x04, 0x07, 0x05, 0x05, 0x05, 0x02, 0x05, 0x05, 0x01, 0x00 };
 byte enc_iv_from[N_BLOCK] = { 0x04, 0x0B, 0x04, 0x05, 0x05, 0x09, 0x04, 0x07, 0x05, 0x05, 0x05, 0x02, 0x05, 0x05, 0x01, 0x00 };
 
@@ -74,14 +80,15 @@ void loop() {
   // Encrypt
   // iv_block gets written to, provide own fresh copy... so each iteration of encryption will be the same.
   uint16_t msgLen = sizeof(readBuffer);
-  uint16_t encLen = encrypt_to_ciphertext((char*)cleartext, msgLen, enc_iv_to);
+  memcpy(enc_iv, enc_iv_to, sizeof(enc_iv_to));
+  uint16_t encLen = encrypt_to_ciphertext((char*)cleartext, msgLen, enc_iv);
   Serial.print("Encrypted length = "); Serial.println(encLen );
-  memset(enc_iv_to, 0, sizeof(enc_iv_to));
 
   Serial.println("Encrypted. Decrypting..."); Serial.println(encLen ); Serial.flush();
-  uint16_t decLen = decrypt_to_cleartext(ciphertext, encLen , enc_iv_from);  
+  memcpy(enc_iv, enc_iv_from, sizeof(enc_iv_from));
+  uint16_t decLen = decrypt_to_cleartext(ciphertext, encLen , enc_iv);
+  Serial.print("Decrypted cleartext of length: "); Serial.println(decLen);
   Serial.print("Decrypted cleartext:\n"); Serial.printf("%s\n", (char*)cleartext);
-  memset(enc_iv_from, 0, sizeof(enc_iv_from));
 
   if (strcmp((char*)readBuffer, (char*)cleartext) == 0) {
     Serial.println("Decrypted correctly.");
