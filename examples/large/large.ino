@@ -25,22 +25,22 @@ byte aes_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 // Generate IV (once)
 void aes_init() {
-  aesLib.gen_iv(aes_iv);
+  // aesLib.gen_iv(aes_iv); // would generate random IV for forward encryption, but we set own from above anyway...
 }
 
-uint16_t encrypt_to_ciphertext(char * msg, byte iv[]) {
+uint16_t encrypt_to_ciphertext(char * msg, uint16_t msgLen, byte iv[]) {
   Serial.println("Calling encrypt (string)...");
-  int msgLen = strlen(msg);
   int cipherlength = aesLib.get_cipher64_length(msgLen);
-  aesLib.encrypt(msg, ciphertext, aes_key, sizeof(aes_key), iv);
+  aesLib.encrypt((byte*)msg, msgLen, ciphertext, aes_key, sizeof(aes_key), iv);
   return cipherlength;
 }
 
-void decrypt_to_cleartext(char * msg, uint16_t msgLen, byte iv[]) {
+uint16_t decrypt_to_cleartext(char * msg, uint16_t msgLen, byte iv[]) {
   Serial.print("Calling decrypt...; ");
   Serial.print("[decrypt_to_cleartext] free heap: "); Serial.println(ESP.getFreeHeap());
-  aesLib.decrypt(msg, msgLen, cleartext, aes_key, sizeof(aes_key), iv);
-  Serial.print("Decrypted bytes: "); Serial.println(strlen(cleartext));
+  uint16_t dec_len = aesLib.decrypt((byte*)msg, msgLen, cleartext, aes_key, sizeof(aes_key), iv);
+  Serial.print("Decrypted bytes: "); Serial.println(dec_len);
+  return dec_len;
 }
 
 void setup() {
@@ -67,6 +67,8 @@ void wait(unsigned long milliseconds) {
 
 unsigned long loopcount = 0;
 
+byte enc_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
 byte enc_iv_to[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 byte enc_iv_from[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
@@ -78,16 +80,18 @@ void loop() {
 
   Serial.print("readBuffer length: "); Serial.println(strlen(readBuffer));
 
-   // must not exceed INPUT_BUFFER_LIMIT bytes; may contain a newline
+   // must not exceed INPUT_BUFFER_LIMIT bytes; may contain a newline. Encoded will be a bit more than 1.5x long as original.
   sprintf(cleartext, "%s", readBuffer);
 
   // Encrypt
   // iv_block gets written to, provide own fresh copy... so each iteration of encryption will be the same.
-  uint16_t len = encrypt_to_ciphertext(cleartext, enc_iv_to);
+  memcpy(enc_iv, enc_iv_to, sizeof(enc_iv_to));
+  uint16_t len = encrypt_to_ciphertext(cleartext, sizeof(readBuffer), enc_iv_to);
   Serial.print("Encrypted length = "); Serial.println(len);
 
   Serial.println("Encrypted. Decrypting..."); Serial.println(len); Serial.flush();
-  decrypt_to_cleartext(ciphertext, len, enc_iv_from);
+  memcpy(enc_iv, enc_iv_from, sizeof(enc_iv_from));
+  uint16_t dlen = decrypt_to_cleartext(ciphertext, len, enc_iv_from);
   Serial.print("Decrypted cleartext:\n"); Serial.println(cleartext);
 
   if (strcmp(readBuffer, cleartext) == 0) {
