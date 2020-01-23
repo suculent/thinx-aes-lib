@@ -1,4 +1,4 @@
-/* Minimalistic example for Readme */
+/* Medium example for ESP8266 (not for Arduino, uses additional Base64 layer) */
 
 #include "AESLib.h"
 
@@ -20,11 +20,10 @@ void aes_init() {
   Serial.println("gen_iv()");
   aesLib.gen_iv(aes_iv);
   Serial.println("encrypt()");
-  Serial.println(encrypt(strdup(plaintext.c_str()), aes_iv));
+  Serial.println(encrypt(strdup(plaintext.c_str()), plaintext.length(), aes_iv));
 }
 
-String encrypt(char * msg, byte iv[]) {
-  int msgLen = strlen(msg);
+String encrypt(char * msg, uint16_t msgLen, byte iv[]) {  
   int cipherlength = aesLib.get_cipher64_length(msgLen);
   char encrypted[cipherlength]; // AHA! needs to be large, 2x is not enough
   aesLib.encrypt64(msg, encrypted, aes_key, sizeof(aes_key), iv);
@@ -32,9 +31,8 @@ String encrypt(char * msg, byte iv[]) {
   return String(encrypted);
 }
 
-String decrypt(char * msg, byte iv[]) {
+String decrypt(char * msg, uint16_t msgLen, byte iv[]) {
   unsigned long ms = micros();
-  int msgLen = strlen(msg);
   char decrypted[msgLen];
   aesLib.decrypt64(msg, decrypted, aes_key, sizeof(aes_key), iv);
   return String(decrypted);
@@ -48,7 +46,8 @@ void setup() {
   aes_init();
   aesLib.set_paddingmode(paddingMode::Array);
   //
-  // verify with https://gchq.github.io/CyberChef/#recipe=To_Base64('A-Za-z0-9%2B/%3D')
+  // verify with https://cryptii.com
+  // previously: verify with https://gchq.github.io/CyberChef/#recipe=To_Base64('A-Za-z0-9%2B/%3D')
   //
   char b64in[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   char b64out[base64_enc_len(sizeof(aes_iv))];
@@ -93,14 +92,16 @@ void loop() {
     sprintf(cleartext, "%s", readBuffer.c_str()); // must not exceed 255 bytes; may contain a newline
 
     // Encrypt
-    String encrypted = encrypt(cleartext, enc_iv);
+    uint16_t clen = String(cleartext).length();
+    String encrypted = encrypt(cleartext, clen, enc_iv);
     sprintf(ciphertext, "%s", encrypted.c_str());
     Serial.print("Ciphertext: ");
     Serial.println(encrypted);
     delay(1000);
     // Decrypt
     delay(1000);
-    String decrypted = decrypt( ciphertext, dec_iv);
+    uint16_t dlen = encrypted.length();
+    String decrypted = decrypt( ciphertext, dlen, dec_iv);
     Serial.print("Cleartext: ");
     Serial.println(decrypted);
     if (decrypted.equals(cleartext)) {
