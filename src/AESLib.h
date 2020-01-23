@@ -1,6 +1,8 @@
 #ifndef AESLib_h
 #define AESLib_h
 
+#define __STDC_WANT_LIB_EXT1__ 1
+
 #include "AES.h"
 #include "base64.h"
 
@@ -29,7 +31,7 @@
                                       Serial.printf ("%s," ,arr[kkk]); \
                                       Serial.printf ("\n"); \
                           }
-#define AES_DEBUG
+//#define AES_DEBUG
 #endif
 
 class AESLib

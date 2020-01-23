@@ -1,5 +1,9 @@
 #import "../src/AESLib.h"
 
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
 #include <iomanip>
 #include <sstream>
 #include <string>
@@ -35,9 +39,9 @@ char readBuffer[33] = "Looks like key but it's not me.";
 byte aes_key[] = { 0x2B, 0x7E, 0x15, 0x16, 0x28, 0xAE, 0xD2, 0xA6, 0xAB, 0xF7, 0x15, 0x88, 0x09, 0xCF, 0x4F, 0x3C };
 
 // General initialization vector (same as in node-js example) (you must use your own IV's in production for full security!!!)
-byte aes_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // 2 bytes (16 bits)
-byte enc_iv_to[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // 2 bytes (16 bits)
-byte enc_iv_from[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // 2 bytes (16 bits)
+byte aes_iv[N_BLOCK] = { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // 2 bytes (16 bits)
+byte enc_iv_to[N_BLOCK] = { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // 2 bytes (16 bits)
+byte enc_iv_from[N_BLOCK] = { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // 2 bytes (16 bits)
 
 // Generate IV (once)
 void aes_init() {
@@ -47,57 +51,55 @@ void aes_init() {
 // must not be in production code, ever
 uint16_t encrypt_to_ciphertext(char * msg, byte iv[]) {
   uint16_t msgLen = strlen(msg);
-  memset(ciphertext, 0, sizeof(ciphertext));
+  errno_t er = memset_s( ciphertext, sizeof(ciphertext), 0, sizeof(ciphertext) );
   uint16_t cipherLength = aesLib.encrypt((byte*)msg, msgLen, ciphertext, aes_key, sizeof(aes_key), iv);
   return cipherLength;
 }
 
 uint16_t decrypt_to_cleartext(byte msg[], uint16_t msgLen, byte iv[]) {
-  memset(cleartext, 0, INPUT_BUFFER_LIMIT);
+  errno_t er = memset_s( cleartext, sizeof(cleartext), 0, INPUT_BUFFER_LIMIT );
   uint16_t dec_len = aesLib.decrypt(msg, msgLen, cleartext, aes_key, sizeof(aes_key), iv);
-  //printf("[Test::decrypt] Decrypted byte count: "); printf("%zu or %u\n", strlen(cleartext), msgLen);
-  // printf("[Test::decrypt] Decrypted length: "); printf("%u\n", dec_len);
-  // erase ciphertext bufer (may contain garbage anyway)
-  // memset(ciphertext, 0, 2*INPUT_BUFFER_LIMIT);
   return dec_len;
 }
 
 // must not be in production code, ever
-void test_ncrypt() {
+void test_ncrypt_1() {
 
-  sprintf(cleartext, "%s", readBuffer); // copy from buffer because cleartext will be destroyed so it cannot be compared as test
+    sprintf(cleartext, "%s", readBuffer); // copy from buffer because cleartext will be destroyed
 
-  // Encrypt
-  // iv_block gets written to, provide own fresh copy... so each iteration of encryption will be the same.
-  uint16_t len = encrypt_to_ciphertext(cleartext, enc_iv_to);
+    memcpy(aes_iv, enc_iv_to, sizeof(enc_iv_to));
+    uint16_t len = encrypt_to_ciphertext(cleartext, aes_iv);
 
-  memset(enc_iv_to, 0, sizeof(enc_iv_to));
+    errno_t er = memset_s( cleartext, sizeof(cleartext), 0, INPUT_BUFFER_LIMIT );
 
-  uint16_t dec_len = decrypt_to_cleartext((byte*)ciphertext, len, enc_iv_from);
+    memcpy(aes_iv, enc_iv_to, sizeof(enc_iv_from));
+    uint16_t dec_len = decrypt_to_cleartext((byte*)ciphertext, len, aes_iv);
 
-  // printf("\n[Test::ncrypt] Decrypted cleartext: "); printf("%s (dec_len = %u)\n", cleartext, dec_len);
-
-  //memset(enc_iv_from, 0, sizeof(enc_iv_from));
-  //printf("\n[AESLib::decrypt] ReadBuffer = ");
-
-  bool mismatch = false;
-  for (uint8_t pos = 0; pos < strlen(readBuffer); pos++) {
-    //printf("%s ", intToHexString(readBuffer[pos]).c_str());
-    if (readBuffer[pos] != cleartext[pos]) {
-      printf("Mismatch found at %u\n", pos);
-      mismatch = true;
+    bool mismatch = false;
+    for (uint8_t pos = 0; pos < strlen(readBuffer); pos++) {
+        if (readBuffer[pos] != cleartext[pos]) {
+            printf("Mismatch found at %u\n", pos);
+            mismatch = true;
+        }
     }
-  }
 
-  if (mismatch == false) {
-    printf("\nTest passed. Decrypted cleartext is same as source read buffer.\n\n");
-  }
+    if (mismatch == false) {
+        printf("\nTest passed. Decrypted cleartext is same as source read buffer.\n\n");
+    }
+}
 
+void test_ncrypt_2() {
+    test_ncrypt_1();
 }
 
 
 int main(int argc, char *argv[])
 {
-  printf("\n/*\n * THiNX AESLib Test\n */\n\n");
-  test_ncrypt();
+    printf("\n/*\n * THiNX AESLib Test\n */\n\n");
+
+    printf("\nPass 1...\n");
+    test_ncrypt_1();
+
+    printf("\nPass 2...\n");
+    test_ncrypt_2();
 }

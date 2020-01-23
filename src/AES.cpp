@@ -261,7 +261,7 @@ AES::AES(){
 
 /******************************************************************************/
 
-byte AES::set_key (byte key [], int keylen)
+byte AES::set_key (byte key [], byte keylen)
 {
   byte hi ;
   switch (keylen)

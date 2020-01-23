@@ -2,22 +2,25 @@
 
 #include "AESLib.h"
 
-#define BAUD 9600
+#define BAUD 230400
 
 AESLib aesLib;
 
 #define INPUT_BUFFER_LIMIT (128 + 1) // designed for Arduino UNO, not stress-tested anymore (this works with readBuffer[129])
 
-char cleartext[INPUT_BUFFER_LIMIT] = {0}; // THIS IS INPUT BUFFER (FOR TEXT)
-char ciphertext[2*INPUT_BUFFER_LIMIT] = {0}; // THIS IS OUTPUT BUFFER (FOR BASE64-ENCODED ENCRYPTED DATA)
+unsigned char cleartext[INPUT_BUFFER_LIMIT] = {0}; // THIS IS INPUT BUFFER (FOR TEXT)
+unsigned char ciphertext[2*INPUT_BUFFER_LIMIT] = {0}; // THIS IS OUTPUT BUFFER (FOR BASE64-ENCODED ENCRYPTED DATA)
 
-char readBuffer[129] = "1234567890ABCDEF1234567890ABCDEF1234567890ABCDEF1234567890ABCDEF1234567890ABCDEF1234567890ABCDEF1234567890ABCDEF1234567890ABCDEF\0";
+unsigned char readBuffer[18] = "admin:najednicku\0";
+
+unsigned char zmi_username[6] = "admin";
+unsigned char zmi_password[11] = "najednicku";
 
 // AES Encryption Key (same as in node-js example)
-byte aes_key[] = { 0x2B, 0x7E, 0x15, 0x16, 0x28, 0xAE, 0xD2, 0xA6, 0xAB, 0xF7, 0x15, 0x88, 0x09, 0xCF, 0x4F, 0x3C };
+byte aes_key[] = { 0x04, 0x0B, 0x04, 0x05, 0x05, 0x09, 0x04, 0x07, 0x05, 0x05, 0x05, 0x02, 0x05, 0x05, 0x01, 0x00 };
 
 // General initialization vector (same as in node-js example) (you must use your own IV's in production for full security!!!)
-byte aes_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+byte aes_iv[N_BLOCK] = { 0x04, 0x0B, 0x04, 0x05, 0x05, 0x09, 0x04, 0x07, 0x05, 0x05, 0x05, 0x02, 0x05, 0x05, 0x01, 0x00 };
 
 // Generate IV (once)
 void aes_init() {
@@ -28,13 +31,13 @@ uint16_t encrypt_to_ciphertext(char * msg, byte iv[]) {
   Serial.println("Calling encrypt (string)...");
   int msgLen = strlen(msg);
   int cipherlength = aesLib.get_cipher64_length(msgLen);
-  aesLib.encrypt(msg, ciphertext, aes_key, sizeof(aes_key), iv);
+  aesLib.encrypt((byte*)msg, msgLen, ciphertext, aes_key, sizeof(aes_key), iv);
   return cipherlength;
 }
 
 void decrypt_to_cleartext(char * msg, uint16_t msgLen, byte iv[]) {
   Serial.print("Calling decrypt...; ");
-  aesLib.decrypt(msg, msgLen, cleartext, aes_key, sizeof(aes_key), iv);
+  aesLib.decrypt((byte*)msg, msgLen, cleartext, aes_key, sizeof(aes_key), iv);
   Serial.print("Decrypted bytes: "); Serial.println(strlen(cleartext));
 }
 
@@ -57,8 +60,8 @@ void wait(unsigned long milliseconds) {
 
 unsigned long loopcount = 0;
 
-byte enc_iv_to[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-byte enc_iv_from[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+byte enc_iv_to[N_BLOCK] = { 0x04, 0x0B, 0x04, 0x05, 0x05, 0x09, 0x04, 0x07, 0x05, 0x05, 0x05, 0x02, 0x05, 0x05, 0x01, 0x00 };
+byte enc_iv_from[N_BLOCK] = { 0x04, 0x0B, 0x04, 0x05, 0x05, 0x09, 0x04, 0x07, 0x05, 0x05, 0x05, 0x02, 0x05, 0x05, 0x01, 0x00 };
 
 void loop() {
 

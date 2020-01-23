@@ -54,37 +54,8 @@ uint16_t AESLib::encrypt(byte input[], uint16_t input_length, char * output, byt
   aes.setPadMode((paddingMode)0); // CMS, Bit, ZeroLength, Null, Space, Random, Array
   aes.do_aes_encrypt((byte *)input, input_length, (byte*)output, key, bits, my_iv);
 
-  //memset((byte*)output, 0, sizeof(output));
-
   uint16_t enc_len = aes.get_size();
-
-  /*
-  printf("[AESLib::encrypt] Input bytes = '");
-  for (uint8_t pos = 0; pos <= input_length; pos++) {
-    if (input[pos] > 0) {
-      printf("%c", input[pos]);
-    } else {
-      printf("\\0");
-    }
-  }
-  printf("' (input_length = %u, enc_len = %u)\n", input_length, enc_len);
-
-  printf("[AESLib::encrypt] Input bytes = ");
-  for (uint8_t pos = 0; pos < input_length; pos++) {
-    printf("%s ", intToHex(input[pos]).c_str());
-  }
-  printf("\n");
-
-  printf("[AESLib::encrypt] Encrypted bytes = ");
-  for (uint8_t pos = 0; pos < enc_len; pos++) {
-    printf("%s ", intToHex(output[pos]).c_str());
-  }
-  printf("\n");
-  */
-
   uint16_t base64_len = base64_enc_len(input_length);
-
-  // input -> AES -> output -> B64 -> buffer -> output
 
   char b64data[base64_len];
   // Note: arg order is base64_encode(output, input);
@@ -92,13 +63,27 @@ uint16_t AESLib::encrypt(byte input[], uint16_t input_length, char * output, byt
   memcpy(output, b64data, base64_len);
 
   /*
+#ifdef AES_DEBUG
   printf("[AESLib::encrypt] Encoded %u bytes = ", base64_len);
-  for (uint8_t pos = 0; pos <= base64_len; pos++) {
+  for (uint8_t pos = 0; pos < base64_len; pos++) {
     if (pos < base64_len) {
       printf("%c", output[pos]);
     }
   }
+#endif
   */
+
+#ifndef __x86_64
+#ifdef AES_DEBUG
+  Serial.printf("[AESLib::encrypt] Encoded %u bytes = ", base64_len);
+  for (uint8_t pos = 0; pos < base64_len; pos++) {
+    if (pos < base64_len) {
+      Serial.printf("%c", output[pos]);
+    }
+  }
+  Serial.println("");
+#endif
+#endif
 
   return base64_len;
 }
@@ -109,34 +94,17 @@ uint16_t AESLib::decrypt(byte input[], uint16_t input_length, char * plain, byte
   byte decode_buffer[input_length];
   uint16_t b64len = base64_decode((char*)decode_buffer, (char*)input, input_length);
 
-  /*
-  printf("[AESLib::decrypt] Decoded bytes = ");
+#ifndef __x86_64
+#ifdef AES_DEBUG
+  Serial.printf("[AESLib::decrypt] Decoded bytes = ");
   for (uint8_t pos = 0; pos < b64len; pos++) {
-    printf("%s ", intToHex(decode_buffer[pos]).c_str());
+    Serial.printf("%s ", intToHex(decode_buffer[pos]).c_str());
   }
-  printf("\n");
-  */
+  Serial.printf("\n");
+#endif
+#endif
 
   int dec_len = aes.do_aes_decrypt((byte *)decode_buffer, b64len, (byte*)plain, key, bits, (byte *)my_iv);
-
-  /*
-  printf("\n[AESLib::decrypt] Decrypted OUT bytes = %u\n", dec_len);
-
-  printf("\n[AESLib::decrypt] Decrypted bytes = ");
-  //plain[dec_len] == 0;
-  for (uint8_t pos = 0; pos < dec_len; pos++) {
-    printf("%s ", intToHex(plain[pos]).c_str());
-  }
-
-
-  printf("\n[AESLib::decrypt] Decrypted chars = ");
-  //plain[dec_len] == 0;
-  for (uint8_t pos = 0; pos < dec_len; pos++) {
-    printf("%c", plain[pos]);
-  }
-
-  printf("\n");
-  */
 
   return dec_len;
 }
@@ -251,7 +219,7 @@ uint16_t AESLib::decrypt64(char * msg, char * plain, byte key[],int bits, byte m
   byte out[b64len]; // unfortunately this needs to fit to stack... that's hard limit for chunk
 
   Serial.print("[decrypt64] Formatting out buffer to allow strlen...");
-  memset(out, 0, sizeof(out));
+  errno_t er = memset_s( out, sizeof(out), 0, b64len );
 
 #ifdef ESP8266
   Serial.print("[decrypt64] free heap: "); Serial.println(ESP.getFreeHeap());

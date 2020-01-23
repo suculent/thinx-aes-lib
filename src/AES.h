@@ -74,7 +74,7 @@ class AES
    *  (valid inputs are hence 128, 192, 16, 24 and 32).
    *
    */
-  byte set_key (byte key[], int keylen) ;
+  byte set_key (byte key[], byte keylen) ;
 
   /** clean up subkeys after use.
    *
@@ -357,7 +357,7 @@ class AES
     double millis();
   #endif
  private:
-  int round ;/**< holds the number of rounds to be used. */
+  byte round ;/**< holds the number of rounds to be used. */
   paddingMode padmode;
   byte key_sched [KEY_SCHEDULE_BYTES] ;/**< holds the pre-computed key for the encryption/decrpytion. */
   unsigned long long int IVC;/**< holds the initialization vector counter in numerical format. */
