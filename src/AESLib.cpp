@@ -172,11 +172,10 @@ String AESLib::encrypt(String msg, byte key[],int bits, byte my_iv[]) {
 //
 
 /* Returns message encrypted and base64 encoded to be used as string. */
-uint16_t AESLib::encrypt64(char * msg, char * output, byte key[],int bits, byte my_iv[]) {
+uint16_t AESLib::encrypt64(char * msg, uint16_t msgLen, char * output, byte key[],int bits, byte my_iv[]) {
 
   aes.set_key(key, bits);
 
-  int msgLen = strlen(msg);
   char b64data[base64_enc_len(msgLen)+1];  // should add 1 character to accomodate the 0x\0 ending character
 
   // thanks to this, method can consume byte[] and not just char* (!)
@@ -194,15 +193,13 @@ uint16_t AESLib::encrypt64(char * msg, char * output, byte key[],int bits, byte 
 }
 
 /* Suggested size for the plaintext buffer is 1/2 length of `msg`. Refactor! */
-uint16_t AESLib::decrypt64(char * msg, char * plain, byte key[],int bits, byte my_iv[]) {
+uint16_t AESLib::decrypt64(char * msg, uint16_t msgLen, char * plain, byte key[],int bits, byte my_iv[]) {
 
 #ifdef AES_DEBUG
   Serial.println("[decrypt64] decrypting message:  ");
 #endif
 
   aes.set_key(key, bits);
-
-  int msgLen = strlen(msg);
 
 #ifdef AES_DEBUG
   Serial.print("[decrypt64] msgLen (strlen msg):  "); Serial.println(msgLen);

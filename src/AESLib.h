@@ -46,10 +46,10 @@ class AESLib
     void set_paddingmode(paddingMode mode);
     paddingMode get_paddingmode();
 
-    uint16_t encrypt64(char * input, char * output, byte key[],int bits, byte my_iv[]); // base64 encode, encrypt and base64 encode again; will deprecate
+    uint16_t encrypt64(char * input, uint16_t input_length, char * output, byte key[],int bits, byte my_iv[]); // base64 encode, encrypt and base64 encode again; will deprecate
     uint16_t encrypt(byte input[], uint16_t input_length, char * output, byte key[],int bits, byte my_iv[]); // base64 encode and encrypt; should encode on output only (if)
 
-    uint16_t decrypt64(char * input, char * output, byte key[],int bits, byte my_iv[]); // decode, decrypt and decode
+    uint16_t decrypt64(char * input, uint16_t input_length, char * output, byte key[],int bits, byte my_iv[]); // decode, decrypt and decode
     uint16_t decrypt(byte input[], uint16_t input_length, char * output, byte key[], int bits, byte my_iv[]); // decrypts and decodes (expects encoded)
 
     std::string intToHex(uint8_t intValue);
