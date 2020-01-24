@@ -59,8 +59,9 @@ class AESLib
     String encrypt(String msg, byte key[], int bits, byte my_iv[]) __attribute__((deprecated)); // encode, encrypt, encode and return as String
 #endif
 
-  private:
     uint8_t getrnd();
+    
+  private:
     void clean();
     AES aes;
 };

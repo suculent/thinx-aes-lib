@@ -344,8 +344,9 @@ void AES::copy_n_bytes (byte * d, byte * s, byte nn)
 
 uint8_t AES::getrandom()
 {
-   uint8_t really_random = *(volatile uint8_t *)0x3FF20E44;
-   return really_random;
+    srand ((unsigned int)time(NULL));
+    uint8_t really_random = rand() % 255;
+    return really_random;
 }
 
 /******************************************************************************/

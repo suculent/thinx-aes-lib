@@ -15,9 +15,9 @@ uint8_t AESLib::getrnd()
    return aes.getrandom();
 }
 
-void AESLib::gen_iv(byte  *iv) {
+void AESLib::gen_iv(uint8_t * iv) {
     for (int i = 0 ; i < N_BLOCK ; i++ ) {
-        iv[i]= (byte)getrnd();
+        iv[i]= getrnd();
     }
 }
 
