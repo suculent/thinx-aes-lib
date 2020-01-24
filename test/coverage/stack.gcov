@@ -1,0 +1,327 @@
+        -:    0:Source:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/stack
+        -:    0:Graph:../020-TestCase.gcno
+        -:    0:Data:-
+        -:    0:Runs:0
+        -:    0:Programs:0
+        -:    1:// -*- C++ -*-
+        -:    2://===---------------------------- stack -----------------------------------===//
+        -:    3://
+        -:    4://                     The LLVM Compiler Infrastructure
+        -:    5://
+        -:    6:// This file is dual licensed under the MIT and the University of Illinois Open
+        -:    7:// Source Licenses. See LICENSE.TXT for details.
+        -:    8://
+        -:    9://===----------------------------------------------------------------------===//
+        -:   10:
+        -:   11:#ifndef _LIBCPP_STACK
+        -:   12:#define _LIBCPP_STACK
+        -:   13:
+        -:   14:/*
+        -:   15:    stack synopsis
+        -:   16:
+        -:   17:namespace std
+        -:   18:{
+        -:   19:
+        -:   20:template <class T, class Container = deque<T>>
+        -:   21:class stack
+        -:   22:{
+        -:   23:public:
+        -:   24:    typedef Container                                container_type;
+        -:   25:    typedef typename container_type::value_type      value_type;
+        -:   26:    typedef typename container_type::reference       reference;
+        -:   27:    typedef typename container_type::const_reference const_reference;
+        -:   28:    typedef typename container_type::size_type       size_type;
+        -:   29:
+        -:   30:protected:
+        -:   31:    container_type c;
+        -:   32:
+        -:   33:public:
+        -:   34:    stack() = default;
+        -:   35:    ~stack() = default;
+        -:   36:
+        -:   37:    stack(const stack& q) = default;
+        -:   38:    stack(stack&& q) = default;
+        -:   39:
+        -:   40:    stack& operator=(const stack& q) = default;
+        -:   41:    stack& operator=(stack&& q) = default;
+        -:   42:
+        -:   43:    explicit stack(const container_type& c);
+        -:   44:    explicit stack(container_type&& c);
+        -:   45:    template <class Alloc> explicit stack(const Alloc& a);
+        -:   46:    template <class Alloc> stack(const container_type& c, const Alloc& a);
+        -:   47:    template <class Alloc> stack(container_type&& c, const Alloc& a);
+        -:   48:    template <class Alloc> stack(const stack& c, const Alloc& a);
+        -:   49:    template <class Alloc> stack(stack&& c, const Alloc& a);
+        -:   50:
+        -:   51:    bool empty() const;
+        -:   52:    size_type size() const;
+        -:   53:    reference top();
+        -:   54:    const_reference top() const;
+        -:   55:
+        -:   56:    void push(const value_type& x);
+        -:   57:    void push(value_type&& x);
+        -:   58:    template <class... Args> reference emplace(Args&&... args); // reference in C++17
+        -:   59:    void pop();
+        -:   60:
+        -:   61:    void swap(stack& c) noexcept(is_nothrow_swappable_v<Container>)
+        -:   62:};
+        -:   63:
+        -:   64:template<class Container>
+        -:   65:  stack(Container) -> stack<typename Container::value_type, Container>;  // C++17
+        -:   66:  
+        -:   67:template<class Container, class Allocator> 
+        -:   68:  stack(Container, Allocator) -> stack<typename Container::value_type, Container>; // C++17
+        -:   69:
+        -:   70:template <class T, class Container>
+        -:   71:  bool operator==(const stack<T, Container>& x, const stack<T, Container>& y);
+        -:   72:template <class T, class Container>
+        -:   73:  bool operator< (const stack<T, Container>& x, const stack<T, Container>& y);
+        -:   74:template <class T, class Container>
+        -:   75:  bool operator!=(const stack<T, Container>& x, const stack<T, Container>& y);
+        -:   76:template <class T, class Container>
+        -:   77:  bool operator> (const stack<T, Container>& x, const stack<T, Container>& y);
+        -:   78:template <class T, class Container>
+        -:   79:  bool operator>=(const stack<T, Container>& x, const stack<T, Container>& y);
+        -:   80:template <class T, class Container>
+        -:   81:  bool operator<=(const stack<T, Container>& x, const stack<T, Container>& y);
+        -:   82:
+        -:   83:template <class T, class Container>
+        -:   84:  void swap(stack<T, Container>& x, stack<T, Container>& y)
+        -:   85:  noexcept(noexcept(x.swap(y)));
+        -:   86:
+        -:   87:}  // std
+        -:   88:
+        -:   89:*/
+        -:   90:
+        -:   91:#include <__config>
+        -:   92:#include <deque>
+        -:   93:
+        -:   94:#if !defined(_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER)
+        -:   95:#pragma GCC system_header
+        -:   96:#endif
+        -:   97:
+        -:   98:_LIBCPP_BEGIN_NAMESPACE_STD
+        -:   99:
+        -:  100:template <class _Tp, class _Container = deque<_Tp> > class _LIBCPP_TEMPLATE_VIS stack;
+        -:  101:
+        -:  102:template <class _Tp, class _Container>
+        -:  103:_LIBCPP_INLINE_VISIBILITY
+        -:  104:bool
+        -:  105:operator==(const stack<_Tp, _Container>& __x, const stack<_Tp, _Container>& __y);
+        -:  106:
+        -:  107:template <class _Tp, class _Container>
+        -:  108:_LIBCPP_INLINE_VISIBILITY
+        -:  109:bool
+        -:  110:operator< (const stack<_Tp, _Container>& __x, const stack<_Tp, _Container>& __y);
+        -:  111:
+        -:  112:template <class _Tp, class _Container /*= deque<_Tp>*/>
+    #####:  113:class _LIBCPP_TEMPLATE_VIS stack
+        -:  114:{
+        -:  115:public:
+        -:  116:    typedef _Container                               container_type;
+        -:  117:    typedef typename container_type::value_type      value_type;
+        -:  118:    typedef typename container_type::reference       reference;
+        -:  119:    typedef typename container_type::const_reference const_reference;
+        -:  120:    typedef typename container_type::size_type       size_type;
+        -:  121:    static_assert((is_same<_Tp, value_type>::value), "" );
+        -:  122:    
+        -:  123:protected:
+        -:  124:    container_type c;
+        -:  125:
+        -:  126:public:
+        -:  127:    _LIBCPP_INLINE_VISIBILITY
+        -:  128:    stack()
+        -:  129:        _NOEXCEPT_(is_nothrow_default_constructible<container_type>::value)
+    #####:  130:        : c() {}
+        -:  131:
+        -:  132:    _LIBCPP_INLINE_VISIBILITY
+        -:  133:    stack(const stack& __q) : c(__q.c) {}
+        -:  134:
+        -:  135:    _LIBCPP_INLINE_VISIBILITY
+        -:  136:    stack& operator=(const stack& __q) {c = __q.c; return *this;}
+        -:  137:
+        -:  138:
+        -:  139:#ifndef _LIBCPP_CXX03_LANG
+        -:  140:    _LIBCPP_INLINE_VISIBILITY
+        -:  141:    stack(stack&& __q)
+        -:  142:        _NOEXCEPT_(is_nothrow_move_constructible<container_type>::value)
+        -:  143:        : c(_VSTD::move(__q.c)) {}
+        -:  144:
+        -:  145:    _LIBCPP_INLINE_VISIBILITY
+        -:  146:    stack& operator=(stack&& __q)
+        -:  147:        _NOEXCEPT_(is_nothrow_move_assignable<container_type>::value)
+        -:  148:        {c = _VSTD::move(__q.c); return *this;}
+        -:  149:
+        -:  150:    _LIBCPP_INLINE_VISIBILITY
+        -:  151:    explicit stack(container_type&& __c) : c(_VSTD::move(__c)) {}
+        -:  152:#endif  // _LIBCPP_CXX03_LANG
+        -:  153:
+        -:  154:    _LIBCPP_INLINE_VISIBILITY
+        -:  155:    explicit stack(const container_type& __c) : c(__c) {}
+        -:  156:
+        -:  157:    template <class _Alloc>
+        -:  158:        _LIBCPP_INLINE_VISIBILITY
+        -:  159:        explicit stack(const _Alloc& __a,
+        -:  160:                       typename enable_if<uses_allocator<container_type,
+        -:  161:                                                         _Alloc>::value>::type* = 0)
+        -:  162:            : c(__a) {}
+        -:  163:    template <class _Alloc>
+        -:  164:        _LIBCPP_INLINE_VISIBILITY
+        -:  165:        stack(const container_type& __c, const _Alloc& __a,
+        -:  166:              typename enable_if<uses_allocator<container_type,
+        -:  167:                                                _Alloc>::value>::type* = 0)
+        -:  168:            : c(__c, __a) {}
+        -:  169:    template <class _Alloc>
+        -:  170:        _LIBCPP_INLINE_VISIBILITY
+        -:  171:        stack(const stack& __s, const _Alloc& __a,
+        -:  172:              typename enable_if<uses_allocator<container_type,
+        -:  173:                                                _Alloc>::value>::type* = 0)
+        -:  174:            : c(__s.c, __a) {}
+        -:  175:#ifndef _LIBCPP_CXX03_LANG
+        -:  176:    template <class _Alloc>
+        -:  177:        _LIBCPP_INLINE_VISIBILITY
+        -:  178:        stack(container_type&& __c, const _Alloc& __a,
+        -:  179:              typename enable_if<uses_allocator<container_type,
+        -:  180:                                                _Alloc>::value>::type* = 0)
+        -:  181:            : c(_VSTD::move(__c), __a) {}
+        -:  182:    template <class _Alloc>
+        -:  183:        _LIBCPP_INLINE_VISIBILITY
+        -:  184:        stack(stack&& __s, const _Alloc& __a,
+        -:  185:              typename enable_if<uses_allocator<container_type,
+        -:  186:                                                _Alloc>::value>::type* = 0)
+        -:  187:            : c(_VSTD::move(__s.c), __a) {}
+        -:  188:#endif  // _LIBCPP_CXX03_LANG
+        -:  189:
+        -:  190:    _LIBCPP_NODISCARD_AFTER_CXX17 _LIBCPP_INLINE_VISIBILITY
+        -:  191:    bool empty()     const      {return c.empty();}
+        -:  192:    _LIBCPP_INLINE_VISIBILITY
+    #####:  193:    size_type size() const      {return c.size();}
+        -:  194:    _LIBCPP_INLINE_VISIBILITY
+        -:  195:    reference top()             {return c.back();}
+        -:  196:    _LIBCPP_INLINE_VISIBILITY
+        -:  197:    const_reference top() const {return c.back();}
+        -:  198:
+        -:  199:    _LIBCPP_INLINE_VISIBILITY
+    #####:  200:    void push(const value_type& __v) {c.push_back(__v);}
+        -:  201:#ifndef _LIBCPP_CXX03_LANG
+        -:  202:    _LIBCPP_INLINE_VISIBILITY
+        -:  203:    void push(value_type&& __v) {c.push_back(_VSTD::move(__v));}
+        -:  204:
+        -:  205:    template <class... _Args>
+        -:  206:        _LIBCPP_INLINE_VISIBILITY
+        -:  207:#if _LIBCPP_STD_VER > 14
+        -:  208:        decltype(auto) emplace(_Args&&... __args)
+        -:  209:        { return c.emplace_back(_VSTD::forward<_Args>(__args)...);}
+        -:  210:#else
+        -:  211:        void      emplace(_Args&&... __args)
+        -:  212:        {        c.emplace_back(_VSTD::forward<_Args>(__args)...);}
+        -:  213:#endif
+        -:  214:#endif  // _LIBCPP_CXX03_LANG
+        -:  215:
+        -:  216:    _LIBCPP_INLINE_VISIBILITY
+    #####:  217:    void pop() {c.pop_back();}
+        -:  218:
+        -:  219:    _LIBCPP_INLINE_VISIBILITY
+        -:  220:    void swap(stack& __s)
+        -:  221:        _NOEXCEPT_(__is_nothrow_swappable<container_type>::value)
+        -:  222:    {
+        -:  223:        using _VSTD::swap;
+        -:  224:        swap(c, __s.c);
+        -:  225:    }
+        -:  226:
+        -:  227:    template <class T1, class _C1>
+        -:  228:    friend
+        -:  229:    bool
+        -:  230:    operator==(const stack<T1, _C1>& __x, const stack<T1, _C1>& __y);
+        -:  231:
+        -:  232:    template <class T1, class _C1>
+        -:  233:    friend
+        -:  234:    bool
+        -:  235:    operator< (const stack<T1, _C1>& __x, const stack<T1, _C1>& __y);
+        -:  236:};
+        -:  237:
+        -:  238:#ifndef _LIBCPP_HAS_NO_DEDUCTION_GUIDES
+        -:  239:template<class _Container,
+        -:  240:         class = typename enable_if<!__is_allocator<_Container>::value, nullptr_t>::type
+        -:  241:>
+        -:  242:stack(_Container)
+        -:  243:    -> stack<typename _Container::value_type, _Container>;
+        -:  244:  
+        -:  245:template<class _Container,
+        -:  246:         class _Alloc,
+        -:  247:         class = typename enable_if<!__is_allocator<_Container>::value, nullptr_t>::type,
+        -:  248:         class = typename enable_if< __is_allocator<_Alloc>::value, nullptr_t>::type
+        -:  249:         > 
+        -:  250:stack(_Container, _Alloc)
+        -:  251:    -> stack<typename _Container::value_type, _Container>;
+        -:  252:#endif
+        -:  253:
+        -:  254:template <class _Tp, class _Container>
+        -:  255:inline _LIBCPP_INLINE_VISIBILITY
+        -:  256:bool
+        -:  257:operator==(const stack<_Tp, _Container>& __x, const stack<_Tp, _Container>& __y)
+        -:  258:{
+        -:  259:    return __x.c == __y.c;
+        -:  260:}
+        -:  261:
+        -:  262:template <class _Tp, class _Container>
+        -:  263:inline _LIBCPP_INLINE_VISIBILITY
+        -:  264:bool
+        -:  265:operator< (const stack<_Tp, _Container>& __x, const stack<_Tp, _Container>& __y)
+        -:  266:{
+        -:  267:    return __x.c < __y.c;
+        -:  268:}
+        -:  269:
+        -:  270:template <class _Tp, class _Container>
+        -:  271:inline _LIBCPP_INLINE_VISIBILITY
+        -:  272:bool
+        -:  273:operator!=(const stack<_Tp, _Container>& __x, const stack<_Tp, _Container>& __y)
+        -:  274:{
+        -:  275:    return !(__x == __y);
+        -:  276:}
+        -:  277:
+        -:  278:template <class _Tp, class _Container>
+        -:  279:inline _LIBCPP_INLINE_VISIBILITY
+        -:  280:bool
+        -:  281:operator> (const stack<_Tp, _Container>& __x, const stack<_Tp, _Container>& __y)
+        -:  282:{
+        -:  283:    return __y < __x;
+        -:  284:}
+        -:  285:
+        -:  286:template <class _Tp, class _Container>
+        -:  287:inline _LIBCPP_INLINE_VISIBILITY
+        -:  288:bool
+        -:  289:operator>=(const stack<_Tp, _Container>& __x, const stack<_Tp, _Container>& __y)
+        -:  290:{
+        -:  291:    return !(__x < __y);
+        -:  292:}
+        -:  293:
+        -:  294:template <class _Tp, class _Container>
+        -:  295:inline _LIBCPP_INLINE_VISIBILITY
+        -:  296:bool
+        -:  297:operator<=(const stack<_Tp, _Container>& __x, const stack<_Tp, _Container>& __y)
+        -:  298:{
+        -:  299:    return !(__y < __x);
+        -:  300:}
+        -:  301:
+        -:  302:template <class _Tp, class _Container>
+        -:  303:inline _LIBCPP_INLINE_VISIBILITY
+        -:  304:typename enable_if<
+        -:  305:    __is_swappable<_Container>::value,
+        -:  306:    void
+        -:  307:>::type
+        -:  308:swap(stack<_Tp, _Container>& __x, stack<_Tp, _Container>& __y)
+        -:  309:    _NOEXCEPT_(_NOEXCEPT_(__x.swap(__y)))
+        -:  310:{
+        -:  311:    __x.swap(__y);
+        -:  312:}
+        -:  313:
+        -:  314:template <class _Tp, class _Container, class _Alloc>
+        -:  315:struct _LIBCPP_TEMPLATE_VIS uses_allocator<stack<_Tp, _Container>, _Alloc>
+        -:  316:    : public uses_allocator<_Container, _Alloc>
+        -:  317:{
+        -:  318:};
+        -:  319:
+        -:  320:_LIBCPP_END_NAMESPACE_STD
+        -:  321:
+        -:  322:#endif  // _LIBCPP_STACK

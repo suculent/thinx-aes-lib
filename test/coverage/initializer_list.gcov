@@ -1,0 +1,123 @@
+        -:    0:Source:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/initializer_list
+        -:    0:Graph:../020-TestCase.gcno
+        -:    0:Data:-
+        -:    0:Runs:0
+        -:    0:Programs:0
+        -:    1:// -*- C++ -*-
+        -:    2://===----------------------- initializer_list -----------------------------===//
+        -:    3://
+        -:    4://                     The LLVM Compiler Infrastructure
+        -:    5://
+        -:    6:// This file is dual licensed under the MIT and the University of Illinois Open
+        -:    7:// Source Licenses. See LICENSE.TXT for details.
+        -:    8://
+        -:    9://===----------------------------------------------------------------------===//
+        -:   10:
+        -:   11:#ifndef _LIBCPP_INITIALIZER_LIST
+        -:   12:#define _LIBCPP_INITIALIZER_LIST
+        -:   13:
+        -:   14:/*
+        -:   15:    initializer_list synopsis
+        -:   16:
+        -:   17:namespace std
+        -:   18:{
+        -:   19:
+        -:   20:template<class E>
+        -:   21:class initializer_list
+        -:   22:{
+        -:   23:public:
+        -:   24:    typedef E        value_type;
+        -:   25:    typedef const E& reference;
+        -:   26:    typedef const E& const_reference;
+        -:   27:    typedef size_t   size_type;
+        -:   28:
+        -:   29:    typedef const E* iterator;
+        -:   30:    typedef const E* const_iterator;
+        -:   31:
+        -:   32:    initializer_list() noexcept; // constexpr in C++14
+        -:   33:
+        -:   34:    size_t   size()  const noexcept; // constexpr in C++14
+        -:   35:    const E* begin() const noexcept; // constexpr in C++14
+        -:   36:    const E* end()   const noexcept; // constexpr in C++14
+        -:   37:};
+        -:   38:
+        -:   39:template<class E> const E* begin(initializer_list<E> il) noexcept; // constexpr in C++14
+        -:   40:template<class E> const E* end(initializer_list<E> il) noexcept; // constexpr in C++14
+        -:   41:
+        -:   42:}  // std
+        -:   43:
+        -:   44:*/
+        -:   45:
+        -:   46:#include <__config>
+        -:   47:#include <cstddef>
+        -:   48:
+        -:   49:#if !defined(_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER)
+        -:   50:#pragma GCC system_header
+        -:   51:#endif
+        -:   52:
+        -:   53:namespace std  // purposefully not versioned
+        -:   54:{
+        -:   55:
+        -:   56:#ifndef _LIBCPP_CXX03_LANG
+        -:   57:
+        -:   58:template<class _Ep>
+        -:   59:class _LIBCPP_TEMPLATE_VIS initializer_list
+        -:   60:{
+        -:   61:    const _Ep* __begin_;
+        -:   62:    size_t    __size_;
+        -:   63:
+        -:   64:    _LIBCPP_INLINE_VISIBILITY
+        -:   65:    _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -:   66:    initializer_list(const _Ep* __b, size_t __s) _NOEXCEPT
+        -:   67:        : __begin_(__b),
+        -:   68:          __size_(__s)
+        -:   69:        {}
+        -:   70:public:
+        -:   71:    typedef _Ep        value_type;
+        -:   72:    typedef const _Ep& reference;
+        -:   73:    typedef const _Ep& const_reference;
+        -:   74:    typedef size_t    size_type;
+        -:   75:
+        -:   76:    typedef const _Ep* iterator;
+        -:   77:    typedef const _Ep* const_iterator;
+        -:   78:
+        -:   79:    _LIBCPP_INLINE_VISIBILITY
+        -:   80:    _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -:   81:    initializer_list() _NOEXCEPT : __begin_(nullptr), __size_(0) {}
+        -:   82:
+        -:   83:    _LIBCPP_INLINE_VISIBILITY
+        -:   84:    _LIBCPP_CONSTEXPR_AFTER_CXX11
+    #####:   85:    size_t    size()  const _NOEXCEPT {return __size_;}
+        -:   86:    
+        -:   87:    _LIBCPP_INLINE_VISIBILITY
+        -:   88:    _LIBCPP_CONSTEXPR_AFTER_CXX11
+    #####:   89:    const _Ep* begin() const _NOEXCEPT {return __begin_;}
+        -:   90:
+        -:   91:    _LIBCPP_INLINE_VISIBILITY
+        -:   92:    _LIBCPP_CONSTEXPR_AFTER_CXX11
+    #####:   93:    const _Ep* end()   const _NOEXCEPT {return __begin_ + __size_;}
+        -:   94:};
+        -:   95:
+        -:   96:template<class _Ep>
+        -:   97:inline _LIBCPP_INLINE_VISIBILITY
+        -:   98:_LIBCPP_CONSTEXPR_AFTER_CXX11
+        -:   99:const _Ep*
+        -:  100:begin(initializer_list<_Ep> __il) _NOEXCEPT
+        -:  101:{
+        -:  102:    return __il.begin();
+        -:  103:}
+        -:  104:
+        -:  105:template<class _Ep>
+        -:  106:inline _LIBCPP_INLINE_VISIBILITY
+        -:  107:_LIBCPP_CONSTEXPR_AFTER_CXX11
+        -:  108:const _Ep*
+        -:  109:end(initializer_list<_Ep> __il) _NOEXCEPT
+        -:  110:{
+        -:  111:    return __il.end();
+        -:  112:}
+        -:  113:
+        -:  114:#endif  // !defined(_LIBCPP_CXX03_LANG)
+        -:  115:
+        -:  116:}  // std
+        -:  117:
+        -:  118:#endif  // _LIBCPP_INITIALIZER_LIST

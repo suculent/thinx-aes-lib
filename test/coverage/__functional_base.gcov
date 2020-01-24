@@ -1,0 +1,658 @@
+        -:    0:Source:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/__functional_base
+        -:    0:Graph:../020-TestCase.gcno
+        -:    0:Data:-
+        -:    0:Runs:0
+        -:    0:Programs:0
+        -:    1:// -*- C++ -*-
+        -:    2://===----------------------------------------------------------------------===//
+        -:    3://
+        -:    4://                     The LLVM Compiler Infrastructure
+        -:    5://
+        -:    6:// This file is dual licensed under the MIT and the University of Illinois Open
+        -:    7:// Source Licenses. See LICENSE.TXT for details.
+        -:    8://
+        -:    9://===----------------------------------------------------------------------===//
+        -:   10:
+        -:   11:#ifndef _LIBCPP_FUNCTIONAL_BASE
+        -:   12:#define _LIBCPP_FUNCTIONAL_BASE
+        -:   13:
+        -:   14:#include <__config>
+        -:   15:#include <type_traits>
+        -:   16:#include <typeinfo>
+        -:   17:#include <exception>
+        -:   18:#include <new>
+        -:   19:#include <utility>
+        -:   20:
+        -:   21:#if !defined(_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER)
+        -:   22:#pragma GCC system_header
+        -:   23:#endif
+        -:   24:
+        -:   25:_LIBCPP_BEGIN_NAMESPACE_STD
+        -:   26:
+        -:   27:template <class _Arg1, class _Arg2, class _Result>
+        -:   28:struct _LIBCPP_TEMPLATE_VIS binary_function
+        -:   29:{
+        -:   30:    typedef _Arg1   first_argument_type;
+        -:   31:    typedef _Arg2   second_argument_type;
+        -:   32:    typedef _Result result_type;
+        -:   33:};
+        -:   34:
+        -:   35:template <class _Tp>
+        -:   36:struct __has_result_type
+        -:   37:{
+        -:   38:private:
+        -:   39:    struct __two {char __lx; char __lxx;};
+        -:   40:    template <class _Up> static __two __test(...);
+        -:   41:    template <class _Up> static char __test(typename _Up::result_type* = 0);
+        -:   42:public:
+        -:   43:    static const bool value = sizeof(__test<_Tp>(0)) == 1;
+        -:   44:};
+        -:   45:
+        -:   46:#if _LIBCPP_STD_VER > 11
+        -:   47:template <class _Tp = void>
+        -:   48:#else
+        -:   49:template <class _Tp>
+        -:   50:#endif
+        -:   51:struct _LIBCPP_TEMPLATE_VIS less : binary_function<_Tp, _Tp, bool>
+        -:   52:{
+        -:   53:    _LIBCPP_CONSTEXPR_AFTER_CXX11 _LIBCPP_INLINE_VISIBILITY 
+        -:   54:    bool operator()(const _Tp& __x, const _Tp& __y) const
+    #####:   55:        {return __x < __y;}
+        -:   56:};
+        -:   57:
+        -:   58:#if _LIBCPP_STD_VER > 11
+        -:   59:template <>
+        -:   60:struct _LIBCPP_TEMPLATE_VIS less<void>
+        -:   61:{
+        -:   62:    template <class _T1, class _T2> 
+        -:   63:    _LIBCPP_CONSTEXPR_AFTER_CXX11 _LIBCPP_INLINE_VISIBILITY
+        -:   64:    auto operator()(_T1&& __t, _T2&& __u) const
+        -:   65:    _NOEXCEPT_(noexcept(_VSTD::forward<_T1>(__t) < _VSTD::forward<_T2>(__u)))
+        -:   66:    -> decltype        (_VSTD::forward<_T1>(__t) < _VSTD::forward<_T2>(__u))
+        -:   67:        { return        _VSTD::forward<_T1>(__t) < _VSTD::forward<_T2>(__u); }
+        -:   68:    typedef void is_transparent;
+        -:   69:};
+        -:   70:#endif
+        -:   71:
+        -:   72:// __weak_result_type
+        -:   73:
+        -:   74:template <class _Tp>
+        -:   75:struct __derives_from_unary_function
+        -:   76:{
+        -:   77:private:
+        -:   78:    struct __two {char __lx; char __lxx;};
+        -:   79:    static __two __test(...);
+        -:   80:    template <class _Ap, class _Rp>
+        -:   81:        static unary_function<_Ap, _Rp>
+        -:   82:        __test(const volatile unary_function<_Ap, _Rp>*);
+        -:   83:public:
+        -:   84:    static const bool value = !is_same<decltype(__test((_Tp*)0)), __two>::value;
+        -:   85:    typedef decltype(__test((_Tp*)0)) type;
+        -:   86:};
+        -:   87:
+        -:   88:template <class _Tp>
+        -:   89:struct __derives_from_binary_function
+        -:   90:{
+        -:   91:private:
+        -:   92:    struct __two {char __lx; char __lxx;};
+        -:   93:    static __two __test(...);
+        -:   94:    template <class _A1, class _A2, class _Rp>
+        -:   95:        static binary_function<_A1, _A2, _Rp>
+        -:   96:        __test(const volatile binary_function<_A1, _A2, _Rp>*);
+        -:   97:public:
+        -:   98:    static const bool value = !is_same<decltype(__test((_Tp*)0)), __two>::value;
+        -:   99:    typedef decltype(__test((_Tp*)0)) type;
+        -:  100:};
+        -:  101:
+        -:  102:template <class _Tp, bool = __derives_from_unary_function<_Tp>::value>
+        -:  103:struct __maybe_derive_from_unary_function  // bool is true
+        -:  104:    : public __derives_from_unary_function<_Tp>::type
+        -:  105:{
+        -:  106:};
+        -:  107:
+        -:  108:template <class _Tp>
+        -:  109:struct __maybe_derive_from_unary_function<_Tp, false>
+        -:  110:{
+        -:  111:};
+        -:  112:
+        -:  113:template <class _Tp, bool = __derives_from_binary_function<_Tp>::value>
+        -:  114:struct __maybe_derive_from_binary_function  // bool is true
+        -:  115:    : public __derives_from_binary_function<_Tp>::type
+        -:  116:{
+        -:  117:};
+        -:  118:
+        -:  119:template <class _Tp>
+        -:  120:struct __maybe_derive_from_binary_function<_Tp, false>
+        -:  121:{
+        -:  122:};
+        -:  123:
+        -:  124:template <class _Tp, bool = __has_result_type<_Tp>::value>
+        -:  125:struct __weak_result_type_imp // bool is true
+        -:  126:    : public __maybe_derive_from_unary_function<_Tp>,
+        -:  127:      public __maybe_derive_from_binary_function<_Tp>
+        -:  128:{
+        -:  129:    typedef typename _Tp::result_type result_type;
+        -:  130:};
+        -:  131:
+        -:  132:template <class _Tp>
+        -:  133:struct __weak_result_type_imp<_Tp, false>
+        -:  134:    : public __maybe_derive_from_unary_function<_Tp>,
+        -:  135:      public __maybe_derive_from_binary_function<_Tp>
+        -:  136:{
+        -:  137:};
+        -:  138:
+        -:  139:template <class _Tp>
+        -:  140:struct __weak_result_type
+        -:  141:    : public __weak_result_type_imp<_Tp>
+        -:  142:{
+        -:  143:};
+        -:  144:
+        -:  145:// 0 argument case
+        -:  146:
+        -:  147:template <class _Rp>
+        -:  148:struct __weak_result_type<_Rp ()>
+        -:  149:{
+        -:  150:    typedef _Rp result_type;
+        -:  151:};
+        -:  152:
+        -:  153:template <class _Rp>
+        -:  154:struct __weak_result_type<_Rp (&)()>
+        -:  155:{
+        -:  156:    typedef _Rp result_type;
+        -:  157:};
+        -:  158:
+        -:  159:template <class _Rp>
+        -:  160:struct __weak_result_type<_Rp (*)()>
+        -:  161:{
+        -:  162:    typedef _Rp result_type;
+        -:  163:};
+        -:  164:
+        -:  165:// 1 argument case
+        -:  166:
+        -:  167:template <class _Rp, class _A1>
+        -:  168:struct __weak_result_type<_Rp (_A1)>
+        -:  169:    : public unary_function<_A1, _Rp>
+        -:  170:{
+        -:  171:};
+        -:  172:
+        -:  173:template <class _Rp, class _A1>
+        -:  174:struct __weak_result_type<_Rp (&)(_A1)>
+        -:  175:    : public unary_function<_A1, _Rp>
+        -:  176:{
+        -:  177:};
+        -:  178:
+        -:  179:template <class _Rp, class _A1>
+        -:  180:struct __weak_result_type<_Rp (*)(_A1)>
+        -:  181:    : public unary_function<_A1, _Rp>
+        -:  182:{
+        -:  183:};
+        -:  184:
+        -:  185:template <class _Rp, class _Cp>
+        -:  186:struct __weak_result_type<_Rp (_Cp::*)()>
+        -:  187:    : public unary_function<_Cp*, _Rp>
+        -:  188:{
+        -:  189:};
+        -:  190:
+        -:  191:template <class _Rp, class _Cp>
+        -:  192:struct __weak_result_type<_Rp (_Cp::*)() const>
+        -:  193:    : public unary_function<const _Cp*, _Rp>
+        -:  194:{
+        -:  195:};
+        -:  196:
+        -:  197:template <class _Rp, class _Cp>
+        -:  198:struct __weak_result_type<_Rp (_Cp::*)() volatile>
+        -:  199:    : public unary_function<volatile _Cp*, _Rp>
+        -:  200:{
+        -:  201:};
+        -:  202:
+        -:  203:template <class _Rp, class _Cp>
+        -:  204:struct __weak_result_type<_Rp (_Cp::*)() const volatile>
+        -:  205:    : public unary_function<const volatile _Cp*, _Rp>
+        -:  206:{
+        -:  207:};
+        -:  208:
+        -:  209:// 2 argument case
+        -:  210:
+        -:  211:template <class _Rp, class _A1, class _A2>
+        -:  212:struct __weak_result_type<_Rp (_A1, _A2)>
+        -:  213:    : public binary_function<_A1, _A2, _Rp>
+        -:  214:{
+        -:  215:};
+        -:  216:
+        -:  217:template <class _Rp, class _A1, class _A2>
+        -:  218:struct __weak_result_type<_Rp (*)(_A1, _A2)>
+        -:  219:    : public binary_function<_A1, _A2, _Rp>
+        -:  220:{
+        -:  221:};
+        -:  222:
+        -:  223:template <class _Rp, class _A1, class _A2>
+        -:  224:struct __weak_result_type<_Rp (&)(_A1, _A2)>
+        -:  225:    : public binary_function<_A1, _A2, _Rp>
+        -:  226:{
+        -:  227:};
+        -:  228:
+        -:  229:template <class _Rp, class _Cp, class _A1>
+        -:  230:struct __weak_result_type<_Rp (_Cp::*)(_A1)>
+        -:  231:    : public binary_function<_Cp*, _A1, _Rp>
+        -:  232:{
+        -:  233:};
+        -:  234:
+        -:  235:template <class _Rp, class _Cp, class _A1>
+        -:  236:struct __weak_result_type<_Rp (_Cp::*)(_A1) const>
+        -:  237:    : public binary_function<const _Cp*, _A1, _Rp>
+        -:  238:{
+        -:  239:};
+        -:  240:
+        -:  241:template <class _Rp, class _Cp, class _A1>
+        -:  242:struct __weak_result_type<_Rp (_Cp::*)(_A1) volatile>
+        -:  243:    : public binary_function<volatile _Cp*, _A1, _Rp>
+        -:  244:{
+        -:  245:};
+        -:  246:
+        -:  247:template <class _Rp, class _Cp, class _A1>
+        -:  248:struct __weak_result_type<_Rp (_Cp::*)(_A1) const volatile>
+        -:  249:    : public binary_function<const volatile _Cp*, _A1, _Rp>
+        -:  250:{
+        -:  251:};
+        -:  252:
+        -:  253:
+        -:  254:#ifndef _LIBCPP_CXX03_LANG
+        -:  255:// 3 or more arguments
+        -:  256:
+        -:  257:template <class _Rp, class _A1, class _A2, class _A3, class ..._A4>
+        -:  258:struct __weak_result_type<_Rp (_A1, _A2, _A3, _A4...)>
+        -:  259:{
+        -:  260:    typedef _Rp result_type;
+        -:  261:};
+        -:  262:
+        -:  263:template <class _Rp, class _A1, class _A2, class _A3, class ..._A4>
+        -:  264:struct __weak_result_type<_Rp (&)(_A1, _A2, _A3, _A4...)>
+        -:  265:{
+        -:  266:    typedef _Rp result_type;
+        -:  267:};
+        -:  268:
+        -:  269:template <class _Rp, class _A1, class _A2, class _A3, class ..._A4>
+        -:  270:struct __weak_result_type<_Rp (*)(_A1, _A2, _A3, _A4...)>
+        -:  271:{
+        -:  272:    typedef _Rp result_type;
+        -:  273:};
+        -:  274:
+        -:  275:template <class _Rp, class _Cp, class _A1, class _A2, class ..._A3>
+        -:  276:struct __weak_result_type<_Rp (_Cp::*)(_A1, _A2, _A3...)>
+        -:  277:{
+        -:  278:    typedef _Rp result_type;
+        -:  279:};
+        -:  280:
+        -:  281:template <class _Rp, class _Cp, class _A1, class _A2, class ..._A3>
+        -:  282:struct __weak_result_type<_Rp (_Cp::*)(_A1, _A2, _A3...) const>
+        -:  283:{
+        -:  284:    typedef _Rp result_type;
+        -:  285:};
+        -:  286:
+        -:  287:template <class _Rp, class _Cp, class _A1, class _A2, class ..._A3>
+        -:  288:struct __weak_result_type<_Rp (_Cp::*)(_A1, _A2, _A3...) volatile>
+        -:  289:{
+        -:  290:    typedef _Rp result_type;
+        -:  291:};
+        -:  292:
+        -:  293:template <class _Rp, class _Cp, class _A1, class _A2, class ..._A3>
+        -:  294:struct __weak_result_type<_Rp (_Cp::*)(_A1, _A2, _A3...) const volatile>
+        -:  295:{
+        -:  296:    typedef _Rp result_type;
+        -:  297:};
+        -:  298:
+        -:  299:template <class _Tp, class ..._Args>
+        -:  300:struct __invoke_return
+        -:  301:{
+        -:  302:    typedef decltype(__invoke(_VSTD::declval<_Tp>(), _VSTD::declval<_Args>()...)) type;
+        -:  303:};
+        -:  304:
+        -:  305:#else // defined(_LIBCPP_CXX03_LANG)
+        -:  306:
+        -:  307:#include <__functional_base_03>
+        -:  308:
+        -:  309:#endif  // !defined(_LIBCPP_CXX03_LANG)
+        -:  310:
+        -:  311:
+        -:  312:template <class _Ret>
+        -:  313:struct __invoke_void_return_wrapper
+        -:  314:{
+        -:  315:#ifndef _LIBCPP_CXX03_LANG
+        -:  316:    template <class ..._Args>
+        -:  317:    static _Ret __call(_Args&&... __args) {
+        -:  318:        return __invoke(_VSTD::forward<_Args>(__args)...);
+        -:  319:    }
+        -:  320:#else
+        -:  321:    template <class _Fn>
+        -:  322:    static _Ret __call(_Fn __f) {
+        -:  323:        return __invoke(__f);
+        -:  324:    }
+        -:  325:
+        -:  326:    template <class _Fn, class _A0>
+        -:  327:    static _Ret __call(_Fn __f, _A0& __a0) {
+        -:  328:        return __invoke(__f, __a0);
+        -:  329:    }
+        -:  330:
+        -:  331:    template <class _Fn, class _A0, class _A1>
+        -:  332:    static _Ret __call(_Fn __f, _A0& __a0, _A1& __a1) {
+        -:  333:        return __invoke(__f, __a0, __a1);
+        -:  334:    }
+        -:  335:
+        -:  336:    template <class _Fn, class _A0, class _A1, class _A2>
+        -:  337:    static _Ret __call(_Fn __f, _A0& __a0, _A1& __a1, _A2& __a2){
+        -:  338:        return __invoke(__f, __a0, __a1, __a2);
+        -:  339:    }
+        -:  340:#endif
+        -:  341:};
+        -:  342:
+        -:  343:template <>
+        -:  344:struct __invoke_void_return_wrapper<void>
+        -:  345:{
+        -:  346:#ifndef _LIBCPP_CXX03_LANG
+        -:  347:    template <class ..._Args>
+        -:  348:    static void __call(_Args&&... __args) {
+        -:  349:        __invoke(_VSTD::forward<_Args>(__args)...);
+        -:  350:    }
+        -:  351:#else
+        -:  352:    template <class _Fn>
+        -:  353:    static void __call(_Fn __f) {
+        -:  354:        __invoke(__f);
+        -:  355:    }
+        -:  356:
+        -:  357:    template <class _Fn, class _A0>
+        -:  358:    static void __call(_Fn __f, _A0& __a0) {
+        -:  359:        __invoke(__f, __a0);
+        -:  360:    }
+        -:  361:
+        -:  362:    template <class _Fn, class _A0, class _A1>
+        -:  363:    static void __call(_Fn __f, _A0& __a0, _A1& __a1) {
+        -:  364:        __invoke(__f, __a0, __a1);
+        -:  365:    }
+        -:  366:
+        -:  367:    template <class _Fn, class _A0, class _A1, class _A2>
+        -:  368:    static void __call(_Fn __f, _A0& __a0, _A1& __a1, _A2& __a2) {
+        -:  369:        __invoke(__f, __a0, __a1, __a2);
+        -:  370:    }
+        -:  371:#endif
+        -:  372:};
+        -:  373:
+        -:  374:template <class _Tp>
+        -:  375:class _LIBCPP_TEMPLATE_VIS reference_wrapper
+        -:  376:    : public __weak_result_type<_Tp>
+        -:  377:{
+        -:  378:public:
+        -:  379:    // types
+        -:  380:    typedef _Tp type;
+        -:  381:private:
+        -:  382:    type* __f_;
+        -:  383:
+        -:  384:public:
+        -:  385:    // construct/copy/destroy
+        -:  386:    _LIBCPP_INLINE_VISIBILITY reference_wrapper(type& __f) _NOEXCEPT
+        -:  387:        : __f_(_VSTD::addressof(__f)) {}
+        -:  388:#ifndef _LIBCPP_CXX03_LANG
+        -:  389:    private: reference_wrapper(type&&); public: // = delete; // do not bind to temps
+        -:  390:#endif
+        -:  391:
+        -:  392:    // access
+        -:  393:    _LIBCPP_INLINE_VISIBILITY operator type&    () const _NOEXCEPT {return *__f_;}
+        -:  394:    _LIBCPP_INLINE_VISIBILITY          type& get() const _NOEXCEPT {return *__f_;}
+        -:  395:
+        -:  396:#ifndef _LIBCPP_CXX03_LANG
+        -:  397:    // invoke
+        -:  398:    template <class... _ArgTypes>
+        -:  399:    _LIBCPP_INLINE_VISIBILITY
+        -:  400:    typename __invoke_of<type&, _ArgTypes...>::type
+        -:  401:    operator() (_ArgTypes&&... __args) const {
+        -:  402:        return __invoke(get(), _VSTD::forward<_ArgTypes>(__args)...);
+        -:  403:    }
+        -:  404:#else
+        -:  405:
+        -:  406:    _LIBCPP_INLINE_VISIBILITY
+        -:  407:    typename __invoke_return<type>::type
+        -:  408:    operator() () const {
+        -:  409:        return __invoke(get());
+        -:  410:    }
+        -:  411:
+        -:  412:    template <class _A0>
+        -:  413:    _LIBCPP_INLINE_VISIBILITY
+        -:  414:    typename __invoke_return0<type, _A0>::type
+        -:  415:    operator() (_A0& __a0) const {
+        -:  416:        return __invoke(get(), __a0);
+        -:  417:    }
+        -:  418:
+        -:  419:    template <class _A0>
+        -:  420:    _LIBCPP_INLINE_VISIBILITY
+        -:  421:    typename __invoke_return0<type, _A0 const>::type
+        -:  422:    operator() (_A0 const& __a0) const {
+        -:  423:        return __invoke(get(), __a0);
+        -:  424:    }
+        -:  425:
+        -:  426:    template <class _A0, class _A1>
+        -:  427:    _LIBCPP_INLINE_VISIBILITY
+        -:  428:    typename __invoke_return1<type, _A0, _A1>::type
+        -:  429:    operator() (_A0& __a0, _A1& __a1) const {
+        -:  430:        return __invoke(get(), __a0, __a1);
+        -:  431:    }
+        -:  432:
+        -:  433:    template <class _A0, class _A1>
+        -:  434:    _LIBCPP_INLINE_VISIBILITY
+        -:  435:    typename __invoke_return1<type, _A0 const, _A1>::type
+        -:  436:    operator() (_A0 const& __a0, _A1& __a1) const {
+        -:  437:        return __invoke(get(), __a0, __a1);
+        -:  438:    }
+        -:  439:
+        -:  440:    template <class _A0, class _A1>
+        -:  441:    _LIBCPP_INLINE_VISIBILITY
+        -:  442:    typename __invoke_return1<type, _A0, _A1 const>::type
+        -:  443:    operator() (_A0& __a0, _A1 const& __a1) const {
+        -:  444:        return __invoke(get(), __a0, __a1);
+        -:  445:    }
+        -:  446:
+        -:  447:    template <class _A0, class _A1>
+        -:  448:    _LIBCPP_INLINE_VISIBILITY
+        -:  449:    typename __invoke_return1<type, _A0 const, _A1 const>::type
+        -:  450:    operator() (_A0 const& __a0, _A1 const& __a1) const {
+        -:  451:        return __invoke(get(), __a0, __a1);
+        -:  452:    }
+        -:  453:
+        -:  454:    template <class _A0, class _A1, class _A2>
+        -:  455:    _LIBCPP_INLINE_VISIBILITY
+        -:  456:    typename __invoke_return2<type, _A0, _A1, _A2>::type
+        -:  457:    operator() (_A0& __a0, _A1& __a1, _A2& __a2) const {
+        -:  458:        return __invoke(get(), __a0, __a1, __a2);
+        -:  459:    }
+        -:  460:
+        -:  461:    template <class _A0, class _A1, class _A2>
+        -:  462:    _LIBCPP_INLINE_VISIBILITY
+        -:  463:    typename __invoke_return2<type, _A0 const, _A1, _A2>::type
+        -:  464:    operator() (_A0 const& __a0, _A1& __a1, _A2& __a2) const {
+        -:  465:        return __invoke(get(), __a0, __a1, __a2);
+        -:  466:    }
+        -:  467:
+        -:  468:    template <class _A0, class _A1, class _A2>
+        -:  469:    _LIBCPP_INLINE_VISIBILITY
+        -:  470:    typename __invoke_return2<type, _A0, _A1 const, _A2>::type
+        -:  471:    operator() (_A0& __a0, _A1 const& __a1, _A2& __a2) const {
+        -:  472:        return __invoke(get(), __a0, __a1, __a2);
+        -:  473:    }
+        -:  474:
+        -:  475:    template <class _A0, class _A1, class _A2>
+        -:  476:    _LIBCPP_INLINE_VISIBILITY
+        -:  477:    typename __invoke_return2<type, _A0, _A1, _A2 const>::type
+        -:  478:    operator() (_A0& __a0, _A1& __a1, _A2 const& __a2) const {
+        -:  479:        return __invoke(get(), __a0, __a1, __a2);
+        -:  480:    }
+        -:  481:
+        -:  482:    template <class _A0, class _A1, class _A2>
+        -:  483:    _LIBCPP_INLINE_VISIBILITY
+        -:  484:    typename __invoke_return2<type, _A0 const, _A1 const, _A2>::type
+        -:  485:    operator() (_A0 const& __a0, _A1 const& __a1, _A2& __a2) const {
+        -:  486:        return __invoke(get(), __a0, __a1, __a2);
+        -:  487:    }
+        -:  488:
+        -:  489:    template <class _A0, class _A1, class _A2>
+        -:  490:    _LIBCPP_INLINE_VISIBILITY
+        -:  491:    typename __invoke_return2<type, _A0 const, _A1, _A2 const>::type
+        -:  492:    operator() (_A0 const& __a0, _A1& __a1, _A2 const& __a2) const {
+        -:  493:        return __invoke(get(), __a0, __a1, __a2);
+        -:  494:    }
+        -:  495:
+        -:  496:    template <class _A0, class _A1, class _A2>
+        -:  497:    _LIBCPP_INLINE_VISIBILITY
+        -:  498:    typename __invoke_return2<type, _A0, _A1 const, _A2 const>::type
+        -:  499:    operator() (_A0& __a0, _A1 const& __a1, _A2 const& __a2) const {
+        -:  500:        return __invoke(get(), __a0, __a1, __a2);
+        -:  501:    }
+        -:  502:
+        -:  503:    template <class _A0, class _A1, class _A2>
+        -:  504:    _LIBCPP_INLINE_VISIBILITY
+        -:  505:    typename __invoke_return2<type, _A0 const, _A1 const, _A2 const>::type
+        -:  506:    operator() (_A0 const& __a0, _A1 const& __a1, _A2 const& __a2) const {
+        -:  507:        return __invoke(get(), __a0, __a1, __a2);
+        -:  508:    }
+        -:  509:#endif // _LIBCPP_CXX03_LANG
+        -:  510:};
+        -:  511:
+        -:  512:
+        -:  513:template <class _Tp>
+        -:  514:inline _LIBCPP_INLINE_VISIBILITY
+        -:  515:reference_wrapper<_Tp>
+        -:  516:ref(_Tp& __t) _NOEXCEPT
+        -:  517:{
+        -:  518:    return reference_wrapper<_Tp>(__t);
+        -:  519:}
+        -:  520:
+        -:  521:template <class _Tp>
+        -:  522:inline _LIBCPP_INLINE_VISIBILITY
+        -:  523:reference_wrapper<_Tp>
+        -:  524:ref(reference_wrapper<_Tp> __t) _NOEXCEPT
+        -:  525:{
+        -:  526:    return ref(__t.get());
+        -:  527:}
+        -:  528:
+        -:  529:template <class _Tp>
+        -:  530:inline _LIBCPP_INLINE_VISIBILITY
+        -:  531:reference_wrapper<const _Tp>
+        -:  532:cref(const _Tp& __t) _NOEXCEPT
+        -:  533:{
+        -:  534:    return reference_wrapper<const _Tp>(__t);
+        -:  535:}
+        -:  536:
+        -:  537:template <class _Tp>
+        -:  538:inline _LIBCPP_INLINE_VISIBILITY
+        -:  539:reference_wrapper<const _Tp>
+        -:  540:cref(reference_wrapper<_Tp> __t) _NOEXCEPT
+        -:  541:{
+        -:  542:    return cref(__t.get());
+        -:  543:}
+        -:  544:
+        -:  545:#ifndef _LIBCPP_CXX03_LANG
+        -:  546:template <class _Tp> void ref(const _Tp&&) = delete;
+        -:  547:template <class _Tp> void cref(const _Tp&&) = delete;
+        -:  548:#endif
+        -:  549:
+        -:  550:#if _LIBCPP_STD_VER > 11
+        -:  551:template <class _Tp, class, class = void>
+        -:  552:struct __is_transparent : false_type {};
+        -:  553:
+        -:  554:template <class _Tp, class _Up>
+        -:  555:struct __is_transparent<_Tp, _Up,  
+        -:  556:                        typename __void_t<typename _Tp::is_transparent>::type>
+        -:  557:   : true_type {};
+        -:  558:#endif
+        -:  559:
+        -:  560:// allocator_arg_t
+        -:  561:
+        -:  562:struct _LIBCPP_TEMPLATE_VIS allocator_arg_t { };
+        -:  563:
+        -:  564:#if defined(_LIBCPP_CXX03_LANG) || defined(_LIBCPP_BUILDING_LIBRARY)
+        -:  565:extern const allocator_arg_t allocator_arg;
+        -:  566:#else
+        -:  567:/* _LIBCPP_INLINE_VAR */ constexpr allocator_arg_t allocator_arg = allocator_arg_t();
+        -:  568:#endif
+        -:  569:
+        -:  570:// uses_allocator
+        -:  571:
+        -:  572:template <class _Tp>
+        -:  573:struct __has_allocator_type
+        -:  574:{
+        -:  575:private:
+        -:  576:    struct __two {char __lx; char __lxx;};
+        -:  577:    template <class _Up> static __two __test(...);
+        -:  578:    template <class _Up> static char __test(typename _Up::allocator_type* = 0);
+        -:  579:public:
+        -:  580:    static const bool value = sizeof(__test<_Tp>(0)) == 1;
+        -:  581:};
+        -:  582:
+        -:  583:template <class _Tp, class _Alloc, bool = __has_allocator_type<_Tp>::value>
+        -:  584:struct __uses_allocator
+        -:  585:    : public integral_constant<bool,
+        -:  586:        is_convertible<_Alloc, typename _Tp::allocator_type>::value>
+        -:  587:{
+        -:  588:};
+        -:  589:
+        -:  590:template <class _Tp, class _Alloc>
+        -:  591:struct __uses_allocator<_Tp, _Alloc, false>
+        -:  592:    : public false_type
+        -:  593:{
+        -:  594:};
+        -:  595:
+        -:  596:template <class _Tp, class _Alloc>
+        -:  597:struct _LIBCPP_TEMPLATE_VIS uses_allocator
+        -:  598:    : public __uses_allocator<_Tp, _Alloc>
+        -:  599:{
+        -:  600:};
+        -:  601:
+        -:  602:#if _LIBCPP_STD_VER > 14
+        -:  603:template <class _Tp, class _Alloc>
+        -:  604:_LIBCPP_INLINE_VAR constexpr size_t uses_allocator_v = uses_allocator<_Tp, _Alloc>::value;
+        -:  605:#endif
+        -:  606:
+        -:  607:#ifndef _LIBCPP_CXX03_LANG
+        -:  608:
+        -:  609:// allocator construction
+        -:  610:
+        -:  611:template <class _Tp, class _Alloc, class ..._Args>
+        -:  612:struct __uses_alloc_ctor_imp
+        -:  613:{
+        -:  614:    typedef typename __uncvref<_Alloc>::type _RawAlloc;
+        -:  615:    static const bool __ua = uses_allocator<_Tp, _RawAlloc>::value;
+        -:  616:    static const bool __ic =
+        -:  617:        is_constructible<_Tp, allocator_arg_t, _Alloc, _Args...>::value;
+        -:  618:    static const int value = __ua ? 2 - __ic : 0;
+        -:  619:};
+        -:  620:
+        -:  621:template <class _Tp, class _Alloc, class ..._Args>
+        -:  622:struct __uses_alloc_ctor
+        -:  623:    : integral_constant<int, __uses_alloc_ctor_imp<_Tp, _Alloc, _Args...>::value>
+        -:  624:    {};
+        -:  625:
+        -:  626:template <class _Tp, class _Allocator, class... _Args>
+        -:  627:inline _LIBCPP_INLINE_VISIBILITY
+        -:  628:void __user_alloc_construct_impl (integral_constant<int, 0>, _Tp *__storage, const _Allocator &, _Args &&... __args )
+        -:  629:{
+        -:  630:    new (__storage) _Tp (_VSTD::forward<_Args>(__args)...);
+        -:  631:}
+        -:  632:
+        -:  633:// FIXME: This should have a version which takes a non-const alloc.
+        -:  634:template <class _Tp, class _Allocator, class... _Args>
+        -:  635:inline _LIBCPP_INLINE_VISIBILITY
+        -:  636:void __user_alloc_construct_impl (integral_constant<int, 1>, _Tp *__storage, const _Allocator &__a, _Args &&... __args )
+        -:  637:{
+        -:  638:    new (__storage) _Tp (allocator_arg, __a, _VSTD::forward<_Args>(__args)...);
+        -:  639:}
+        -:  640:
+        -:  641:// FIXME: This should have a version which takes a non-const alloc.
+        -:  642:template <class _Tp, class _Allocator, class... _Args>
+        -:  643:inline _LIBCPP_INLINE_VISIBILITY
+        -:  644:void __user_alloc_construct_impl (integral_constant<int, 2>, _Tp *__storage, const _Allocator &__a, _Args &&... __args )
+        -:  645:{
+        -:  646:    new (__storage) _Tp (_VSTD::forward<_Args>(__args)..., __a);
+        -:  647:}
+        -:  648:
+        -:  649:#endif  // _LIBCPP_CXX03_LANG
+        -:  650:
+        -:  651:_LIBCPP_END_NAMESPACE_STD
+        -:  652:
+        -:  653:#endif  // _LIBCPP_FUNCTIONAL_BASE

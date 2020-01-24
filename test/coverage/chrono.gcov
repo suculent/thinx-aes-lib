@@ -1,0 +1,1665 @@
+        -:    0:Source:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/chrono
+        -:    0:Graph:../020-TestCase.gcno
+        -:    0:Data:-
+        -:    0:Runs:0
+        -:    0:Programs:0
+        -:    1:// -*- C++ -*-
+        -:    2://===---------------------------- chrono ----------------------------------===//
+        -:    3://
+        -:    4://                     The LLVM Compiler Infrastructure
+        -:    5://
+        -:    6:// This file is dual licensed under the MIT and the University of Illinois Open
+        -:    7:// Source Licenses. See LICENSE.TXT for details.
+        -:    8://
+        -:    9://===----------------------------------------------------------------------===//
+        -:   10:
+        -:   11:#ifndef _LIBCPP_CHRONO
+        -:   12:#define _LIBCPP_CHRONO
+        -:   13:
+        -:   14:/*
+        -:   15:    chrono synopsis
+        -:   16:
+        -:   17:namespace std
+        -:   18:{
+        -:   19:namespace chrono
+        -:   20:{
+        -:   21:
+        -:   22:template <class ToDuration, class Rep, class Period>
+        -:   23:constexpr
+        -:   24:ToDuration
+        -:   25:duration_cast(const duration<Rep, Period>& fd);
+        -:   26:
+        -:   27:template <class Rep> struct treat_as_floating_point : is_floating_point<Rep> {};
+        -:   28:
+        -:   29:template <class Rep> inline constexpr bool treat_as_floating_point_v
+        -:   30:    = treat_as_floating_point<Rep>::value;                       // C++17
+        -:   31:
+        -:   32:template <class Rep>
+        -:   33:struct duration_values
+        -:   34:{
+        -:   35:public:
+        -:   36:    static constexpr Rep zero();
+        -:   37:    static constexpr Rep max();
+        -:   38:    static constexpr Rep min();
+        -:   39:};
+        -:   40:
+        -:   41:// duration
+        -:   42:
+        -:   43:template <class Rep, class Period = ratio<1>>
+        -:   44:class duration
+        -:   45:{
+        -:   46:    static_assert(!__is_duration<Rep>::value, "A duration representation can not be a duration");
+        -:   47:    static_assert(__is_ratio<Period>::value, "Second template parameter of duration must be a std::ratio");
+        -:   48:    static_assert(Period::num > 0, "duration period must be positive");
+        -:   49:public:
+        -:   50:    typedef Rep rep;
+        -:   51:    typedef typename _Period::type period;
+        -:   52:
+        -:   53:    constexpr duration() = default;
+        -:   54:    template <class Rep2>
+        -:   55:        constexpr explicit duration(const Rep2& r,
+        -:   56:            typename enable_if
+        -:   57:            <
+        -:   58:               is_convertible<Rep2, rep>::value &&
+        -:   59:               (treat_as_floating_point<rep>::value ||
+        -:   60:               !treat_as_floating_point<rep>::value && !treat_as_floating_point<Rep2>::value)
+        -:   61:            >::type* = 0);
+        -:   62:
+        -:   63:    // conversions
+        -:   64:    template <class Rep2, class Period2>
+        -:   65:        constexpr duration(const duration<Rep2, Period2>& d,
+        -:   66:            typename enable_if
+        -:   67:            <
+        -:   68:                treat_as_floating_point<rep>::value ||
+        -:   69:                ratio_divide<Period2, period>::type::den == 1
+        -:   70:            >::type* = 0);
+        -:   71:
+        -:   72:    // observer
+        -:   73:
+        -:   74:    constexpr rep count() const;
+        -:   75:
+        -:   76:    // arithmetic
+        -:   77:
+        -:   78:    constexpr common_type<duration>::type  operator+() const;
+        -:   79:    constexpr common_type<duration>::type  operator-() const;
+        -:   80:    constexpr duration& operator++();
+        -:   81:    constexpr duration  operator++(int);
+        -:   82:    constexpr duration& operator--();
+        -:   83:    constexpr duration  operator--(int);
+        -:   84:
+        -:   85:    constexpr duration& operator+=(const duration& d);
+        -:   86:    constexpr duration& operator-=(const duration& d);
+        -:   87:
+        -:   88:    duration& operator*=(const rep& rhs);
+        -:   89:    duration& operator/=(const rep& rhs);
+        -:   90:
+        -:   91:    // special values
+        -:   92:
+        -:   93:    static constexpr duration zero();
+        -:   94:    static constexpr duration min();
+        -:   95:    static constexpr duration max();
+        -:   96:};
+        -:   97:
+        -:   98:typedef duration<long long,         nano> nanoseconds;
+        -:   99:typedef duration<long long,        micro> microseconds;
+        -:  100:typedef duration<long long,        milli> milliseconds;
+        -:  101:typedef duration<long long              > seconds;
+        -:  102:typedef duration<     long, ratio<  60> > minutes;
+        -:  103:typedef duration<     long, ratio<3600> > hours;
+        -:  104:
+        -:  105:template <class Clock, class Duration = typename Clock::duration>
+        -:  106:class time_point
+        -:  107:{
+        -:  108:public:
+        -:  109:    typedef Clock                     clock;
+        -:  110:    typedef Duration                  duration;
+        -:  111:    typedef typename duration::rep    rep;
+        -:  112:    typedef typename duration::period period;
+        -:  113:private:
+        -:  114:    duration d_;  // exposition only
+        -:  115:
+        -:  116:public:
+        -:  117:    time_point();  // has value "epoch" // constexpr in C++14
+        -:  118:    explicit time_point(const duration& d);  // same as time_point() + d // constexpr in C++14
+        -:  119:
+        -:  120:    // conversions
+        -:  121:    template <class Duration2>
+        -:  122:       time_point(const time_point<clock, Duration2>& t); // constexpr in C++14
+        -:  123:
+        -:  124:    // observer
+        -:  125:
+        -:  126:    duration time_since_epoch() const; // constexpr in C++14
+        -:  127:
+        -:  128:    // arithmetic
+        -:  129:
+        -:  130:    time_point& operator+=(const duration& d);
+        -:  131:    time_point& operator-=(const duration& d);
+        -:  132:
+        -:  133:    // special values
+        -:  134:
+        -:  135:    static constexpr time_point min();
+        -:  136:    static constexpr time_point max();
+        -:  137:};
+        -:  138:
+        -:  139:} // chrono
+        -:  140:
+        -:  141:// common_type traits
+        -:  142:template <class Rep1, class Period1, class Rep2, class Period2>
+        -:  143:  struct common_type<chrono::duration<Rep1, Period1>, chrono::duration<Rep2, Period2>>;
+        -:  144:
+        -:  145:template <class Clock, class Duration1, class Duration2>
+        -:  146:  struct common_type<chrono::time_point<Clock, Duration1>, chrono::time_point<Clock, Duration2>>;
+        -:  147:
+        -:  148:namespace chrono {
+        -:  149:
+        -:  150:
+        -:  151:template<class T> struct is_clock;  // C++20
+        -:  152:template<class T> inline constexpr bool is_clock_v = is_clock<T>::value;   // C++20
+        -:  153:
+        -:  154:
+        -:  155:// duration arithmetic
+        -:  156:template <class Rep1, class Period1, class Rep2, class Period2>
+        -:  157:  constexpr
+        -:  158:  typename common_type<duration<Rep1, Period1>, duration<Rep2, Period2>>::type
+        -:  159:  operator+(const duration<Rep1, Period1>& lhs, const duration<Rep2, Period2>& rhs);
+        -:  160:template <class Rep1, class Period1, class Rep2, class Period2>
+        -:  161:  constexpr
+        -:  162:  typename common_type<duration<Rep1, Period1>, duration<Rep2, Period2>>::type
+        -:  163:  operator-(const duration<Rep1, Period1>& lhs, const duration<Rep2, Period2>& rhs);
+        -:  164:template <class Rep1, class Period, class Rep2>
+        -:  165:  constexpr
+        -:  166:  duration<typename common_type<Rep1, Rep2>::type, Period>
+        -:  167:  operator*(const duration<Rep1, Period>& d, const Rep2& s);
+        -:  168:template <class Rep1, class Period, class Rep2>
+        -:  169:  constexpr
+        -:  170:  duration<typename common_type<Rep1, Rep2>::type, Period>
+        -:  171:  operator*(const Rep1& s, const duration<Rep2, Period>& d);
+        -:  172:template <class Rep1, class Period, class Rep2>
+        -:  173:  constexpr
+        -:  174:  duration<typename common_type<Rep1, Rep2>::type, Period>
+        -:  175:  operator/(const duration<Rep1, Period>& d, const Rep2& s);
+        -:  176:template <class Rep1, class Period1, class Rep2, class Period2>
+        -:  177:  constexpr
+        -:  178:  typename common_type<Rep1, Rep2>::type
+        -:  179:  operator/(const duration<Rep1, Period1>& lhs, const duration<Rep2, Period2>& rhs);
+        -:  180:
+        -:  181:// duration comparisons
+        -:  182:template <class Rep1, class Period1, class Rep2, class Period2>
+        -:  183:   constexpr
+        -:  184:   bool operator==(const duration<Rep1, Period1>& lhs, const duration<Rep2, Period2>& rhs);
+        -:  185:template <class Rep1, class Period1, class Rep2, class Period2>
+        -:  186:   constexpr
+        -:  187:   bool operator!=(const duration<Rep1, Period1>& lhs, const duration<Rep2, Period2>& rhs);
+        -:  188:template <class Rep1, class Period1, class Rep2, class Period2>
+        -:  189:   constexpr
+        -:  190:   bool operator< (const duration<Rep1, Period1>& lhs, const duration<Rep2, Period2>& rhs);
+        -:  191:template <class Rep1, class Period1, class Rep2, class Period2>
+        -:  192:   constexpr
+        -:  193:   bool operator<=(const duration<Rep1, Period1>& lhs, const duration<Rep2, Period2>& rhs);
+        -:  194:template <class Rep1, class Period1, class Rep2, class Period2>
+        -:  195:   constexpr
+        -:  196:   bool operator> (const duration<Rep1, Period1>& lhs, const duration<Rep2, Period2>& rhs);
+        -:  197:template <class Rep1, class Period1, class Rep2, class Period2>
+        -:  198:   constexpr
+        -:  199:   bool operator>=(const duration<Rep1, Period1>& lhs, const duration<Rep2, Period2>& rhs);
+        -:  200:
+        -:  201:// duration_cast
+        -:  202:template <class ToDuration, class Rep, class Period>
+        -:  203:  ToDuration duration_cast(const duration<Rep, Period>& d);
+        -:  204:
+        -:  205:template <class ToDuration, class Rep, class Period>
+        -:  206:    constexpr ToDuration floor(const duration<Rep, Period>& d);    // C++17
+        -:  207:template <class ToDuration, class Rep, class Period>
+        -:  208:    constexpr ToDuration ceil(const duration<Rep, Period>& d);     // C++17
+        -:  209:template <class ToDuration, class Rep, class Period>
+        -:  210:    constexpr ToDuration round(const duration<Rep, Period>& d);    // C++17
+        -:  211:
+        -:  212:// duration I/O is elsewhere
+        -:  213:
+        -:  214:// time_point arithmetic (all constexpr in C++14)
+        -:  215:template <class Clock, class Duration1, class Rep2, class Period2>
+        -:  216:  time_point<Clock, typename common_type<Duration1, duration<Rep2, Period2>>::type>
+        -:  217:  operator+(const time_point<Clock, Duration1>& lhs, const duration<Rep2, Period2>& rhs);
+        -:  218:template <class Rep1, class Period1, class Clock, class Duration2>
+        -:  219:  time_point<Clock, typename common_type<duration<Rep1, Period1>, Duration2>::type>
+        -:  220:  operator+(const duration<Rep1, Period1>& lhs, const time_point<Clock, Duration2>& rhs);
+        -:  221:template <class Clock, class Duration1, class Rep2, class Period2>
+        -:  222:  time_point<Clock, typename common_type<Duration1, duration<Rep2, Period2>>::type>
+        -:  223:  operator-(const time_point<Clock, Duration1>& lhs, const duration<Rep2, Period2>& rhs);
+        -:  224:template <class Clock, class Duration1, class Duration2>
+        -:  225:  typename common_type<Duration1, Duration2>::type
+        -:  226:  operator-(const time_point<Clock, Duration1>& lhs, const time_point<Clock, Duration2>& rhs);
+        -:  227:
+        -:  228:// time_point comparisons (all constexpr in C++14)
+        -:  229:template <class Clock, class Duration1, class Duration2>
+        -:  230:   bool operator==(const time_point<Clock, Duration1>& lhs, const time_point<Clock, Duration2>& rhs);
+        -:  231:template <class Clock, class Duration1, class Duration2>
+        -:  232:   bool operator!=(const time_point<Clock, Duration1>& lhs, const time_point<Clock, Duration2>& rhs);
+        -:  233:template <class Clock, class Duration1, class Duration2>
+        -:  234:   bool operator< (const time_point<Clock, Duration1>& lhs, const time_point<Clock, Duration2>& rhs);
+        -:  235:template <class Clock, class Duration1, class Duration2>
+        -:  236:   bool operator<=(const time_point<Clock, Duration1>& lhs, const time_point<Clock, Duration2>& rhs);
+        -:  237:template <class Clock, class Duration1, class Duration2>
+        -:  238:   bool operator> (const time_point<Clock, Duration1>& lhs, const time_point<Clock, Duration2>& rhs);
+        -:  239:template <class Clock, class Duration1, class Duration2>
+        -:  240:   bool operator>=(const time_point<Clock, Duration1>& lhs, const time_point<Clock, Duration2>& rhs);
+        -:  241:
+        -:  242:// time_point_cast (constexpr in C++14)
+        -:  243:
+        -:  244:template <class ToDuration, class Clock, class Duration>
+        -:  245:  time_point<Clock, ToDuration> time_point_cast(const time_point<Clock, Duration>& t);
+        -:  246:
+        -:  247:template <class ToDuration, class Clock, class Duration>
+        -:  248:    constexpr time_point<Clock, ToDuration>
+        -:  249:    floor(const time_point<Clock, Duration>& tp);                  // C++17
+        -:  250:
+        -:  251:template <class ToDuration, class Clock, class Duration>
+        -:  252:    constexpr time_point<Clock, ToDuration>
+        -:  253:    ceil(const time_point<Clock, Duration>& tp);                   // C++17
+        -:  254:
+        -:  255:template <class ToDuration, class Clock, class Duration>
+        -:  256:    constexpr time_point<Clock, ToDuration>
+        -:  257:    round(const time_point<Clock, Duration>& tp);                  // C++17
+        -:  258:
+        -:  259:template <class Rep, class Period>
+        -:  260:    constexpr duration<Rep, Period> abs(duration<Rep, Period> d);  // C++17
+        -:  261:
+        -:  262:// Clocks
+        -:  263:
+        -:  264:class system_clock
+        -:  265:{
+        -:  266:public:
+        -:  267:    typedef microseconds                     duration;
+        -:  268:    typedef duration::rep                    rep;
+        -:  269:    typedef duration::period                 period;
+        -:  270:    typedef chrono::time_point<system_clock> time_point;
+        -:  271:    static const bool is_steady =            false; // constexpr in C++14
+        -:  272:
+        -:  273:    static time_point now() noexcept;
+        -:  274:    static time_t     to_time_t  (const time_point& __t) noexcept;
+        -:  275:    static time_point from_time_t(time_t __t) noexcept;
+        -:  276:};
+        -:  277:
+        -:  278:template <class Duration>
+        -:  279:  using sys_time  = time_point<system_clock, Duration>; // C++20
+        -:  280:using sys_seconds = sys_time<seconds>;                  // C++20
+        -:  281:using sys_days    = sys_time<days>;                     // C++20
+        -:  282:
+        -:  283:class utc_clock;                                        // C++20
+        -:  284:
+        -:  285:template <class Duration>
+        -:  286:  using utc_time  = time_point<utc_clock, Duration>;    // C++20
+        -:  287:using utc_seconds = utc_time<seconds>;                  // C++20
+        -:  288:
+        -:  289:class tai_clock;                                        // C++20
+        -:  290:
+        -:  291:template <class Duration>
+        -:  292:  using tai_time  = time_point<tai_clock, Duration>;    // C++20
+        -:  293:using tai_seconds = tai_time<seconds>;                  // C++20
+        -:  294:
+        -:  295:class file_clock;                                       // C++20
+        -:  296:
+        -:  297:template<class Duration>
+        -:  298:  using file_time = time_point<file_clock, Duration>;   // C++20
+        -:  299:
+        -:  300:class steady_clock
+        -:  301:{
+        -:  302:public:
+        -:  303:    typedef nanoseconds                                   duration;
+        -:  304:    typedef duration::rep                                 rep;
+        -:  305:    typedef duration::period                              period;
+        -:  306:    typedef chrono::time_point<steady_clock, duration>    time_point;
+        -:  307:    static const bool is_steady =                         true; // constexpr in C++14
+        -:  308:
+        -:  309:    static time_point now() noexcept;
+        -:  310:};
+        -:  311:
+        -:  312:typedef steady_clock high_resolution_clock;
+        -:  313:
+        -:  314:// 25.7.8, local time           // C++20
+        -:  315:struct local_t {};
+        -:  316:template<class Duration>
+        -:  317:  using local_time  = time_point<local_t, Duration>;
+        -:  318:using local_seconds = local_time<seconds>;
+        -:  319:using local_days    = local_time<days>;
+        -:  320:
+        -:  321:// 25.7.9, time_point conversions template<class DestClock, class SourceClock>    // C++20
+        -:  322:struct clock_time_conversion;
+        -:  323:
+        -:  324:template<class DestClock, class SourceClock, class Duration>
+        -:  325:  auto clock_cast(const time_point<SourceClock, Duration>& t);
+        -:  326:  
+        -:  327:// 25.8.2, class last_spec    // C++20
+        -:  328:struct last_spec;
+        -:  329:
+        -:  330:// 25.8.3, class day          // C++20
+        -:  331:
+        -:  332:class day;
+        -:  333:constexpr bool operator==(const day& x, const day& y) noexcept;
+        -:  334:constexpr bool operator!=(const day& x, const day& y) noexcept;
+        -:  335:constexpr bool operator< (const day& x, const day& y) noexcept;
+        -:  336:constexpr bool operator> (const day& x, const day& y) noexcept;
+        -:  337:constexpr bool operator<=(const day& x, const day& y) noexcept;
+        -:  338:constexpr bool operator>=(const day& x, const day& y) noexcept;
+        -:  339:constexpr day  operator+(const day&  x, const days& y) noexcept;
+        -:  340:constexpr day  operator+(const days& x, const day&  y) noexcept;
+        -:  341:constexpr day  operator-(const day&  x, const days& y) noexcept;
+        -:  342:constexpr days operator-(const day&  x, const day&  y) noexcept;
+        -:  343:
+        -:  344:// 25.8.4, class month    // C++20
+        -:  345:class month;
+        -:  346:constexpr bool operator==(const month& x, const month& y) noexcept;
+        -:  347:constexpr bool operator!=(const month& x, const month& y) noexcept;
+        -:  348:constexpr bool operator< (const month& x, const month& y) noexcept;
+        -:  349:constexpr bool operator> (const month& x, const month& y) noexcept;
+        -:  350:constexpr bool operator<=(const month& x, const month& y) noexcept;
+        -:  351:constexpr bool operator>=(const month& x, const month& y) noexcept;
+        -:  352:constexpr month  operator+(const month&  x, const months& y) noexcept;
+        -:  353:constexpr month  operator+(const months& x,  const month& y) noexcept;
+        -:  354:constexpr month  operator-(const month&  x, const months& y) noexcept;
+        -:  355:constexpr months operator-(const month&  x,  const month& y) noexcept;
+        -:  356:
+        -:  357:// 25.8.5, class year    // C++20
+        -:  358:class year;
+        -:  359:constexpr bool operator==(const year& x, const year& y) noexcept;
+        -:  360:constexpr bool operator!=(const year& x, const year& y) noexcept;
+        -:  361:constexpr bool operator< (const year& x, const year& y) noexcept;
+        -:  362:constexpr bool operator> (const year& x, const year& y) noexcept;
+        -:  363:constexpr bool operator<=(const year& x, const year& y) noexcept;
+        -:  364:constexpr bool operator>=(const year& x, const year& y) noexcept;
+        -:  365:constexpr year  operator+(const year&  x, const years& y) noexcept;
+        -:  366:constexpr year  operator+(const years& x, const year&  y) noexcept;
+        -:  367:constexpr year  operator-(const year&  x, const years& y) noexcept;
+        -:  368:constexpr years operator-(const year&  x, const year&  y) noexcept;
+        -:  369:
+        -:  370:// 25.8.6, class weekday    // C++20
+        -:  371:class weekday;
+        -:  372:
+        -:  373:constexpr bool operator==(const weekday& x, const weekday& y) noexcept;
+        -:  374:constexpr bool operator!=(const weekday& x, const weekday& y) noexcept;
+        -:  375:constexpr weekday operator+(const weekday& x, const days&    y) noexcept;
+        -:  376:constexpr weekday operator+(const days&    x, const weekday& y) noexcept;
+        -:  377:constexpr weekday operator-(const weekday& x, const days&    y) noexcept;
+        -:  378:constexpr days    operator-(const weekday& x, const weekday& y) noexcept;
+        -:  379:
+        -:  380:// 25.8.7, class weekday_indexed    // C++20
+        -:  381:
+        -:  382:class weekday_indexed;
+        -:  383:constexpr bool operator==(const weekday_indexed& x, const weekday_indexed& y) noexcept;
+        -:  384:constexpr bool operator!=(const weekday_indexed& x, const weekday_indexed& y) noexcept;
+        -:  385:
+        -:  386:// 25.8.8, class weekday_last    // C++20
+        -:  387:class weekday_last;
+        -:  388:
+        -:  389:constexpr bool operator==(const weekday_last& x, const weekday_last& y) noexcept;
+        -:  390:constexpr bool operator!=(const weekday_last& x, const weekday_last& y) noexcept;
+        -:  391:
+        -:  392:// 25.8.9, class month_day    // C++20
+        -:  393:class month_day;
+        -:  394:
+        -:  395:constexpr bool operator==(const month_day& x, const month_day& y) noexcept;
+        -:  396:constexpr bool operator!=(const month_day& x, const month_day& y) noexcept;
+        -:  397:constexpr bool operator< (const month_day& x, const month_day& y) noexcept;
+        -:  398:constexpr bool operator> (const month_day& x, const month_day& y) noexcept;
+        -:  399:constexpr bool operator<=(const month_day& x, const month_day& y) noexcept;
+        -:  400:constexpr bool operator>=(const month_day& x, const month_day& y) noexcept;
+        -:  401:
+        -:  402:
+        -:  403:// 25.8.10, class month_day_last    // C++20
+        -:  404:class month_day_last;
+        -:  405:
+        -:  406:constexpr bool operator==(const month_day_last& x, const month_day_last& y) noexcept;
+        -:  407:constexpr bool operator!=(const month_day_last& x, const month_day_last& y) noexcept;
+        -:  408:constexpr bool operator< (const month_day_last& x, const month_day_last& y) noexcept;
+        -:  409:constexpr bool operator> (const month_day_last& x, const month_day_last& y) noexcept;
+        -:  410:constexpr bool operator<=(const month_day_last& x, const month_day_last& y) noexcept;
+        -:  411:constexpr bool operator>=(const month_day_last& x, const month_day_last& y) noexcept;
+        -:  412:
+        -:  413:// 25.8.11, class month_weekday    // C++20
+        -:  414:class month_weekday;
+        -:  415:
+        -:  416:constexpr bool operator==(const month_weekday& x, const month_weekday& y) noexcept;
+        -:  417:constexpr bool operator!=(const month_weekday& x, const month_weekday& y) noexcept;
+        -:  418:
+        -:  419:// 25.8.12, class month_weekday_last    // C++20
+        -:  420:class month_weekday_last;
+        -:  421:
+        -:  422:constexpr bool operator==(const month_weekday_last& x, const month_weekday_last& y) noexcept;
+        -:  423:constexpr bool operator!=(const month_weekday_last& x, const month_weekday_last& y) noexcept;
+        -:  424:
+        -:  425:
+        -:  426:// 25.8.13, class year_month    // C++20
+        -:  427:class year_month;
+        -:  428:
+        -:  429:constexpr bool operator==(const year_month& x, const year_month& y) noexcept;
+        -:  430:constexpr bool operator!=(const year_month& x, const year_month& y) noexcept;
+        -:  431:constexpr bool operator< (const year_month& x, const year_month& y) noexcept;
+        -:  432:constexpr bool operator> (const year_month& x, const year_month& y) noexcept;
+        -:  433:constexpr bool operator<=(const year_month& x, const year_month& y) noexcept;
+        -:  434:constexpr bool operator>=(const year_month& x, const year_month& y) noexcept;
+        -:  435:
+        -:  436:constexpr year_month operator+(const year_month& ym, const months& dm) noexcept;
+        -:  437:constexpr year_month operator+(const months& dm, const year_month& ym) noexcept;
+        -:  438:constexpr year_month operator-(const year_month& ym, const months& dm) noexcept;
+        -:  439:constexpr months operator-(const year_month& x, const year_month& y) noexcept;
+        -:  440:constexpr year_month operator+(const year_month& ym, const years& dy) noexcept;
+        -:  441:constexpr year_month operator+(const years& dy, const year_month& ym) noexcept;
+        -:  442:constexpr year_month operator-(const year_month& ym, const years& dy) noexcept;
+        -:  443:
+        -:  444:// 25.8.14, class year_month_day class    // C++20
+        -:  445:year_month_day;
+        -:  446:
+        -:  447:constexpr bool operator==(const year_month_day& x, const year_month_day& y) noexcept;
+        -:  448:constexpr bool operator!=(const year_month_day& x, const year_month_day& y) noexcept;
+        -:  449:constexpr bool operator< (const year_month_day& x, const year_month_day& y) noexcept;
+        -:  450:constexpr bool operator> (const year_month_day& x, const year_month_day& y) noexcept;
+        -:  451:constexpr bool operator<=(const year_month_day& x, const year_month_day& y) noexcept;
+        -:  452:constexpr bool operator>=(const year_month_day& x, const year_month_day& y) noexcept;
+        -:  453:
+        -:  454:constexpr year_month_day operator+(const year_month_day& ymd, const months& dm) noexcept;
+        -:  455:constexpr year_month_day operator+(const months& dm, const year_month_day& ymd) noexcept;
+        -:  456:constexpr year_month_day operator+(const year_month_day& ymd, const years& dy) noexcept;
+        -:  457:constexpr year_month_day operator+(const years& dy, const year_month_day& ymd) noexcept;
+        -:  458:constexpr year_month_day operator-(const year_month_day& ymd, const months& dm) noexcept;
+        -:  459:constexpr year_month_day operator-(const year_month_day& ymd, const years& dy) noexcept;
+        -:  460:
+        -:  461:
+        -:  462:// 25.8.15, class year_month_day_last    // C++20
+        -:  463:class year_month_day_last;
+        -:  464:
+        -:  465:constexpr bool operator==(const year_month_day_last& x,
+        -:  466:                          const year_month_day_last& y) noexcept;
+        -:  467:constexpr bool operator!=(const year_month_day_last& x,
+        -:  468:                          const year_month_day_last& y) noexcept;
+        -:  469:constexpr bool operator< (const year_month_day_last& x,
+        -:  470:                          const year_month_day_last& y) noexcept;
+        -:  471:constexpr bool operator> (const year_month_day_last& x,
+        -:  472:                          const year_month_day_last& y) noexcept;
+        -:  473:constexpr bool operator<=(const year_month_day_last& x,
+        -:  474:                          const year_month_day_last& y) noexcept;
+        -:  475:constexpr bool operator>=(const year_month_day_last& x,
+        -:  476:                          const year_month_day_last& y) noexcept;
+        -:  477:
+        -:  478:constexpr year_month_day_last
+        -:  479:  operator+(const year_month_day_last& ymdl, const months& dm) noexcept;
+        -:  480:constexpr year_month_day_last
+        -:  481:  operator+(const months& dm, const year_month_day_last& ymdl) noexcept;
+        -:  482:constexpr year_month_day_last
+        -:  483:  operator+(const year_month_day_last& ymdl, const years& dy) noexcept;
+        -:  484:constexpr year_month_day_last
+        -:  485:  operator+(const years& dy, const year_month_day_last& ymdl) noexcept;
+        -:  486:constexpr year_month_day_last
+        -:  487:  operator-(const year_month_day_last& ymdl, const months& dm) noexcept;
+        -:  488:constexpr year_month_day_last
+        -:  489:  operator-(const year_month_day_last& ymdl, const years& dy) noexcept;
+        -:  490:
+        -:  491:// 25.8.16, class year_month_weekday    // C++20
+        -:  492:class year_month_weekday;
+        -:  493:
+        -:  494:constexpr bool operator==(const year_month_weekday& x,
+        -:  495:                          const year_month_weekday& y) noexcept;
+        -:  496:constexpr bool operator!=(const year_month_weekday& x,
+        -:  497:                          const year_month_weekday& y) noexcept;
+        -:  498:
+        -:  499:constexpr year_month_weekday
+        -:  500:  operator+(const year_month_weekday& ymwd, const months& dm) noexcept;
+        -:  501:constexpr year_month_weekday
+        -:  502:  operator+(const months& dm, const year_month_weekday& ymwd) noexcept;
+        -:  503:constexpr year_month_weekday
+        -:  504:  operator+(const year_month_weekday& ymwd, const years& dy) noexcept;
+        -:  505:constexpr year_month_weekday
+        -:  506:  operator+(const years& dy, const year_month_weekday& ymwd) noexcept;
+        -:  507:constexpr year_month_weekday
+        -:  508:  operator-(const year_month_weekday& ymwd, const months& dm) noexcept;
+        -:  509:constexpr year_month_weekday
+        -:  510:  operator-(const year_month_weekday& ymwd, const years& dy) noexcept;
+        -:  511:
+        -:  512:// 25.8.17, class year_month_weekday_last    // C++20
+        -:  513:class year_month_weekday_last;
+        -:  514:
+        -:  515:constexpr bool operator==(const year_month_weekday_last& x,
+        -:  516:                          const year_month_weekday_last& y) noexcept;
+        -:  517:constexpr bool operator!=(const year_month_weekday_last& x,
+        -:  518:                          const year_month_weekday_last& y) noexcept;
+        -:  519:constexpr year_month_weekday_last
+        -:  520:  operator+(const year_month_weekday_last& ymwdl, const months& dm) noexcept;
+        -:  521:constexpr year_month_weekday_last
+        -:  522:  operator+(const months& dm, const year_month_weekday_last& ymwdl) noexcept;
+        -:  523:constexpr year_month_weekday_last
+        -:  524:  operator+(const year_month_weekday_last& ymwdl, const years& dy) noexcept;
+        -:  525:constexpr year_month_weekday_last
+        -:  526:  operator+(const years& dy, const year_month_weekday_last& ymwdl) noexcept;
+        -:  527:constexpr year_month_weekday_last
+        -:  528:  operator-(const year_month_weekday_last& ymwdl, const months& dm) noexcept;
+        -:  529:constexpr year_month_weekday_last
+        -:  530:  operator-(const year_month_weekday_last& ymwdl, const years& dy) noexcept;
+        -:  531:  
+        -:  532:// 25.8.18, civil calendar conventional syntax operators    // C++20
+        -:  533:constexpr year_month
+        -:  534:  operator/(const year& y, const month& m) noexcept;
+        -:  535:constexpr year_month
+        -:  536:  operator/(const year& y, int m) noexcept;
+        -:  537:constexpr month_day
+        -:  538:  operator/(const month& m, const day& d) noexcept;
+        -:  539:constexpr month_day
+        -:  540:  operator/(const month& m, int d) noexcept;
+        -:  541:constexpr month_day
+        -:  542:  operator/(int m, const day& d) noexcept;
+        -:  543:constexpr month_day
+        -:  544:  operator/(const day& d, const month& m) noexcept;
+        -:  545:constexpr month_day
+        -:  546:  operator/(const day& d, int m) noexcept;
+        -:  547:constexpr month_day_last
+        -:  548:  operator/(const month& m, last_spec) noexcept;
+        -:  549:constexpr month_day_last
+        -:  550:  operator/(int m, last_spec) noexcept;
+        -:  551:constexpr month_day_last
+        -:  552:  operator/(last_spec, const month& m) noexcept;
+        -:  553:constexpr month_day_last
+        -:  554:  operator/(last_spec, int m) noexcept;
+        -:  555:constexpr month_weekday
+        -:  556:  operator/(const month& m, const weekday_indexed& wdi) noexcept;
+        -:  557:constexpr month_weekday
+        -:  558:  operator/(int m, const weekday_indexed& wdi) noexcept;
+        -:  559:constexpr month_weekday
+        -:  560:  operator/(const weekday_indexed& wdi, const month& m) noexcept;
+        -:  561:constexpr month_weekday
+        -:  562:  operator/(const weekday_indexed& wdi, int m) noexcept;
+        -:  563:constexpr month_weekday_last
+        -:  564:  operator/(const month& m, const weekday_last& wdl) noexcept;
+        -:  565:constexpr month_weekday_last
+        -:  566:  operator/(int m, const weekday_last& wdl) noexcept;
+        -:  567:constexpr month_weekday_last
+        -:  568:  operator/(const weekday_last& wdl, const month& m) noexcept;
+        -:  569:constexpr month_weekday_last
+        -:  570:  operator/(const weekday_last& wdl, int m) noexcept;
+        -:  571:constexpr year_month_day
+        -:  572:  operator/(const year_month& ym, const day& d) noexcept;
+        -:  573:constexpr year_month_day
+        -:  574:  operator/(const year_month& ym, int d) noexcept;
+        -:  575:constexpr year_month_day
+        -:  576:  operator/(const year& y, const month_day& md) noexcept;
+        -:  577:constexpr year_month_day
+        -:  578:  operator/(int y, const month_day& md) noexcept;
+        -:  579:constexpr year_month_day
+        -:  580:  operator/(const month_day& md, const year& y) noexcept;
+        -:  581:constexpr year_month_day
+        -:  582:  operator/(const month_day& md, int y) noexcept;
+        -:  583:constexpr year_month_day_last
+        -:  584:  operator/(const year_month& ym, last_spec) noexcept;
+        -:  585:constexpr year_month_day_last
+        -:  586:  operator/(const year& y, const month_day_last& mdl) noexcept;
+        -:  587:constexpr year_month_day_last
+        -:  588:  operator/(int y, const month_day_last& mdl) noexcept;
+        -:  589:constexpr year_month_day_last
+        -:  590:  operator/(const month_day_last& mdl, const year& y) noexcept;
+        -:  591:constexpr year_month_day_last
+        -:  592:  operator/(const month_day_last& mdl, int y) noexcept;
+        -:  593:constexpr year_month_weekday
+        -:  594:  operator/(const year_month& ym, const weekday_indexed& wdi) noexcept;
+        -:  595:constexpr year_month_weekday
+        -:  596:  operator/(const year& y, const month_weekday& mwd) noexcept;
+        -:  597:constexpr year_month_weekday
+        -:  598:  operator/(int y, const month_weekday& mwd) noexcept;
+        -:  599:constexpr year_month_weekday
+        -:  600:  operator/(const month_weekday& mwd, const year& y) noexcept;
+        -:  601:constexpr year_month_weekday
+        -:  602:  operator/(const month_weekday& mwd, int y) noexcept;
+        -:  603:constexpr year_month_weekday_last
+        -:  604:  operator/(const year_month& ym, const weekday_last& wdl) noexcept;
+        -:  605:constexpr year_month_weekday_last
+        -:  606:  operator/(const year& y, const month_weekday_last& mwdl) noexcept;
+        -:  607:constexpr year_month_weekday_last
+        -:  608:  operator/(int y, const month_weekday_last& mwdl) noexcept;
+        -:  609:constexpr year_month_weekday_last
+        -:  610:  operator/(const month_weekday_last& mwdl, const year& y) noexcept;
+        -:  611:constexpr year_month_weekday_last
+        -:  612:  operator/(const month_weekday_last& mwdl, int y) noexcept;  
+        -:  613:
+        -:  614:// 25.9, class template time_of_day    // C++20
+        -:  615:template<class Duration> class time_of_day;
+        -:  616:
+        -:  617:template<> class time_of_day<hours>;
+        -:  618:template<> class time_of_day<minutes>;
+        -:  619:template<> class time_of_day<seconds>;
+        -:  620:template<class Rep, class Period> class time_of_day<duration<Rep, Period>>;
+        -:  621:
+        -:  622:// 25.10.2, time zone database     // C++20
+        -:  623:struct tzdb;
+        -:  624:class tzdb_list;
+        -:  625:
+        -:  626:// 25.10.2.3, time zone database access    // C++20
+        -:  627:const tzdb& get_tzdb();
+        -:  628:tzdb_list& get_tzdb_list();
+        -:  629:const time_zone* locate_zone(string_view tz_name);
+        -:  630:const time_zone* current_zone();
+        -:  631:
+        -:  632:// 25.10.2.4, remote time zone database support    // C++20
+        -:  633:const tzdb& reload_tzdb();
+        -:  634:string remote_version();
+        -:  635:
+        -:  636:// 25.10.3, exception classes    // C++20
+        -:  637:class nonexistent_local_time;
+        -:  638:class ambiguous_local_time;
+        -:  639:
+        -:  640:// 25.10.4, information classes    // C++20
+        -:  641:struct sys_info;
+        -:  642:struct local_info;
+        -:  643:    
+        -:  644:// 25.10.5, class time_zone    // C++20
+        -:  645:enum class choose {earliest, latest};
+        -:  646:class time_zone;
+        -:  647:bool operator==(const time_zone& x, const time_zone& y) noexcept;
+        -:  648:bool operator!=(const time_zone& x, const time_zone& y) noexcept;
+        -:  649:bool operator<(const time_zone& x, const time_zone& y) noexcept;
+        -:  650:bool operator>(const time_zone& x, const time_zone& y) noexcept;
+        -:  651:bool operator<=(const time_zone& x, const time_zone& y) noexcept;
+        -:  652:bool operator>=(const time_zone& x, const time_zone& y) noexcept;
+        -:  653:  
+        -:  654:// 25.10.6, class template zoned_traits    // C++20
+        -:  655:template<class T> struct zoned_traits;
+        -:  656:
+        -:  657:// 25.10.7, class template zoned_time    // C++20
+        -:  658:template<class Duration, class TimeZonePtr = const time_zone*> class zoned_time;
+        -:  659:using zoned_seconds = zoned_time<seconds>;
+        -:  660:
+        -:  661:template<class Duration1, class Duration2, class TimeZonePtr>
+        -:  662:  bool operator==(const zoned_time<Duration1, TimeZonePtr>& x,
+        -:  663:                  const zoned_time<Duration2, TimeZonePtr>& y);
+        -:  664:template<class Duration1, class Duration2, class TimeZonePtr>
+        -:  665:  bool operator!=(const zoned_time<Duration1, TimeZonePtr>& x,
+        -:  666:                  const zoned_time<Duration2, TimeZonePtr>& y);
+        -:  667:
+        -:  668:// 25.10.8, leap second support    // C++20
+        -:  669:class leap;
+        -:  670:
+        -:  671:bool operator==(const leap& x, const leap& y);
+        -:  672:bool operator!=(const leap& x, const leap& y);
+        -:  673:bool operator< (const leap& x, const leap& y);
+        -:  674:bool operator> (const leap& x, const leap& y);
+        -:  675:bool operator<=(const leap& x, const leap& y);
+        -:  676:bool operator>=(const leap& x, const leap& y);
+        -:  677:template<class Duration>
+        -:  678:  bool operator==(const leap& x, const sys_time<Duration>& y);
+        -:  679:template<class Duration>
+        -:  680:  bool operator==(const sys_time<Duration>& x, const leap& y);
+        -:  681:template<class Duration>
+        -:  682:  bool operator!=(const leap& x, const sys_time<Duration>& y);
+        -:  683:template<class Duration>
+        -:  684:  bool operator!=(const sys_time<Duration>& x, const leap& y);
+        -:  685:template<class Duration>
+        -:  686:  bool operator< (const leap& x, const sys_time<Duration>& y);
+        -:  687:template<class Duration>
+        -:  688:  bool operator< (const sys_time<Duration>& x, const leap& y);
+        -:  689:template<class Duration>
+        -:  690:  bool operator> (const leap& x, const sys_time<Duration>& y);
+        -:  691:template<class Duration>
+        -:  692:  bool operator> (const sys_time<Duration>& x, const leap& y);
+        -:  693:template<class Duration>
+        -:  694:  bool operator<=(const leap& x, const sys_time<Duration>& y);
+        -:  695:template<class Duration>
+        -:  696:  bool operator<=(const sys_time<Duration>& x, const leap& y);
+        -:  697:template<class Duration>
+        -:  698:  bool operator>=(const leap& x, const sys_time<Duration>& y);
+        -:  699:template<class Duration>
+        -:  700:  bool operator>=(const sys_time<Duration>& x, const leap& y);
+        -:  701:
+        -:  702:// 25.10.9, class link    // C++20
+        -:  703:class link;
+        -:  704:bool operator==(const link& x, const link& y);
+        -:  705:bool operator!=(const link& x, const link& y);
+        -:  706:bool operator< (const link& x, const link& y);
+        -:  707:bool operator> (const link& x, const link& y);
+        -:  708:bool operator<=(const link& x, const link& y);
+        -:  709:bool operator>=(const link& x, const link& y);
+        -:  710:
+        -:  711:// 25.11, formatting    // C++20
+        -:  712:template<class charT, class Streamable>
+        -:  713:  basic_string<charT>
+        -:  714:    format(const charT* fmt, const Streamable& s);
+        -:  715:
+        -:  716:template<class charT, class Streamable>
+        -:  717:  basic_string<charT>
+        -:  718:    format(const locale& loc, const charT* fmt, const Streamable& s);
+        -:  719:
+        -:  720:template<class charT, class traits, class Alloc, class Streamable>
+        -:  721:  basic_string<charT, traits, Alloc>
+        -:  722:    format(const basic_string<charT, traits, Alloc>& fmt, const Streamable& s);
+        -:  723:
+        -:  724:template<class charT, class traits, class Alloc, class Streamable>
+        -:  725:  basic_string<charT, traits, Alloc>
+        -:  726:    format(const locale& loc, const basic_string<charT, traits, Alloc>& fmt,
+        -:  727:           const Streamable& s);             
+        -:  728:
+        -:  729:// 25.12, parsing    // C++20
+        -:  730:template<class charT, class traits, class Alloc, class Parsable>
+        -:  731:unspecified
+        -:  732:    parse(const basic_string<charT, traits, Alloc>& format, Parsable& tp);
+        -:  733:
+        -:  734:template<class charT, class traits, class Alloc, class Parsable>
+        -:  735:unspecified
+        -:  736:    parse(const basic_string<charT, traits, Alloc>& format, Parsable& tp,
+        -:  737:          basic_string<charT, traits, Alloc>& abbrev);
+        -:  738:
+        -:  739:template<class charT, class traits, class Alloc, class Parsable>
+        -:  740:unspecified
+        -:  741:    parse(const basic_string<charT, traits, Alloc>& format, Parsable& tp,
+        -:  742:          minutes& offset);
+        -:  743:
+        -:  744:template<class charT, class traits, class Alloc, class Parsable>
+        -:  745:unspecified
+        -:  746:    parse(const basic_string<charT, traits, Alloc>& format, Parsable& tp,
+        -:  747:          basic_string<charT, traits, Alloc>& abbrev, minutes& offset);
+        -:  748:
+        -:  749:inline constexpr last_spec								last{};       // C++20
+        -:  750:inline constexpr chrono::weekday                        Sunday{0};    // C++20
+        -:  751:inline constexpr chrono::weekday                        Monday{1};    // C++20
+        -:  752:inline constexpr chrono::weekday                        Tuesday{2};   // C++20
+        -:  753:inline constexpr chrono::weekday                        Wednesday{3}; // C++20
+        -:  754:inline constexpr chrono::weekday                        Thursday{4};  // C++20
+        -:  755:inline constexpr chrono::weekday                        Friday{5};    // C++20
+        -:  756:inline constexpr chrono::weekday                        Saturday{6};  // C++20
+        -:  757:
+        -:  758:inline constexpr chrono::month                          January{1};   // C++20
+        -:  759:inline constexpr chrono::month                          February{2};  // C++20
+        -:  760:inline constexpr chrono::month                          March{3};     // C++20
+        -:  761:inline constexpr chrono::month                          April{4};     // C++20
+        -:  762:inline constexpr chrono::month                          May{5};       // C++20
+        -:  763:inline constexpr chrono::month                          June{6};      // C++20
+        -:  764:inline constexpr chrono::month                          July{7};      // C++20
+        -:  765:inline constexpr chrono::month                          August{8};    // C++20
+        -:  766:inline constexpr chrono::month                          September{9}; // C++20
+        -:  767:inline constexpr chrono::month                          October{10};  // C++20
+        -:  768:inline constexpr chrono::month                          November{11}; // C++20
+        -:  769:inline constexpr chrono::month                          December{12}; // C++20
+        -:  770:}  // chrono
+        -:  771:
+        -:  772:inline namespace literals {
+        -:  773:  inline namespace chrono_literals {
+        -:  774:constexpr chrono::hours                                 operator ""h(unsigned long long); // C++14
+        -:  775:constexpr chrono::duration<unspecified , ratio<3600,1>> operator ""h(long double); // C++14
+        -:  776:constexpr chrono::minutes                               operator ""min(unsigned long long); // C++14
+        -:  777:constexpr chrono::duration<unspecified , ratio<60,1>>   operator ""min(long double); // C++14
+        -:  778:constexpr chrono::seconds                               operator ""s(unsigned long long); // C++14
+        -:  779:constexpr chrono::duration<unspecified >                operator ""s(long double); // C++14
+        -:  780:constexpr chrono::milliseconds                          operator ""ms(unsigned long long); // C++14
+        -:  781:constexpr chrono::duration<unspecified , milli>         operator ""ms(long double); // C++14
+        -:  782:constexpr chrono::microseconds                          operator ""us(unsigned long long); // C++14
+        -:  783:constexpr chrono::duration<unspecified , micro>         operator ""us(long double); // C++14
+        -:  784:constexpr chrono::nanoseconds                           operator ""ns(unsigned long long); // C++14
+        -:  785:constexpr chrono::duration<unspecified , nano>          operator ""ns(long double); // C++14
+        -:  786:constexpr chrono::day                                   operator ""d(unsigned long long d) noexcept; // C++20
+        -:  787:constexpr chrono::year                                  operator ""y(unsigned long long y) noexcept; // C++20
+        -:  788:}  // chrono_literals
+        -:  789:}  // literals
+        -:  790:
+        -:  791:}  // std
+        -:  792:*/
+        -:  793:
+        -:  794:#include <__config>
+        -:  795:#include <ctime>
+        -:  796:#include <type_traits>
+        -:  797:#include <ratio>
+        -:  798:#include <limits>
+        -:  799:
+        -:  800:#if !defined(_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER)
+        -:  801:#pragma GCC system_header
+        -:  802:#endif
+        -:  803:
+        -:  804:_LIBCPP_PUSH_MACROS
+        -:  805:#include <__undef_macros>
+        -:  806:
+        -:  807:
+        -:  808:_LIBCPP_BEGIN_NAMESPACE_STD
+        -:  809:
+        -:  810:namespace chrono
+        -:  811:{
+        -:  812:
+        -:  813:template <class _Rep, class _Period = ratio<1> > class _LIBCPP_TEMPLATE_VIS duration;
+        -:  814:
+        -:  815:template <class _Tp>
+        -:  816:struct __is_duration : false_type {};
+        -:  817:
+        -:  818:template <class _Rep, class _Period>
+        -:  819:struct __is_duration<duration<_Rep, _Period> > : true_type  {};
+        -:  820:
+        -:  821:template <class _Rep, class _Period>
+        -:  822:struct __is_duration<const duration<_Rep, _Period> > : true_type  {};
+        -:  823:
+        -:  824:template <class _Rep, class _Period>
+        -:  825:struct __is_duration<volatile duration<_Rep, _Period> > : true_type  {};
+        -:  826:
+        -:  827:template <class _Rep, class _Period>
+        -:  828:struct __is_duration<const volatile duration<_Rep, _Period> > : true_type  {};
+        -:  829:
+        -:  830:} // chrono
+        -:  831:
+        -:  832:template <class _Rep1, class _Period1, class _Rep2, class _Period2>
+        -:  833:struct _LIBCPP_TEMPLATE_VIS common_type<chrono::duration<_Rep1, _Period1>,
+        -:  834:                                         chrono::duration<_Rep2, _Period2> >
+        -:  835:{
+        -:  836:    typedef chrono::duration<typename common_type<_Rep1, _Rep2>::type,
+        -:  837:                             typename __ratio_gcd<_Period1, _Period2>::type> type;
+        -:  838:};
+        -:  839:
+        -:  840:namespace chrono {
+        -:  841:
+        -:  842:// duration_cast
+        -:  843:
+        -:  844:template <class _FromDuration, class _ToDuration,
+        -:  845:          class _Period = typename ratio_divide<typename _FromDuration::period, typename _ToDuration::period>::type,
+        -:  846:          bool = _Period::num == 1,
+        -:  847:          bool = _Period::den == 1>
+        -:  848:struct __duration_cast;
+        -:  849:
+        -:  850:template <class _FromDuration, class _ToDuration, class _Period>
+        -:  851:struct __duration_cast<_FromDuration, _ToDuration, _Period, true, true>
+        -:  852:{
+        -:  853:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR
+        -:  854:    _ToDuration operator()(const _FromDuration& __fd) const
+        -:  855:    {
+    #####:  856:        return _ToDuration(static_cast<typename _ToDuration::rep>(__fd.count()));
+        -:  857:    }
+        -:  858:};
+        -:  859:
+        -:  860:template <class _FromDuration, class _ToDuration, class _Period>
+        -:  861:struct __duration_cast<_FromDuration, _ToDuration, _Period, true, false>
+        -:  862:{
+        -:  863:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR
+        -:  864:    _ToDuration operator()(const _FromDuration& __fd) const
+        -:  865:    {
+        -:  866:        typedef typename common_type<typename _ToDuration::rep, typename _FromDuration::rep, intmax_t>::type _Ct;
+        -:  867:        return _ToDuration(static_cast<typename _ToDuration::rep>(
+        -:  868:                           static_cast<_Ct>(__fd.count()) / static_cast<_Ct>(_Period::den)));
+        -:  869:    }
+        -:  870:};
+        -:  871:
+        -:  872:template <class _FromDuration, class _ToDuration, class _Period>
+        -:  873:struct __duration_cast<_FromDuration, _ToDuration, _Period, false, true>
+        -:  874:{
+        -:  875:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR
+        -:  876:    _ToDuration operator()(const _FromDuration& __fd) const
+        -:  877:    {
+        -:  878:        typedef typename common_type<typename _ToDuration::rep, typename _FromDuration::rep, intmax_t>::type _Ct;
+        -:  879:        return _ToDuration(static_cast<typename _ToDuration::rep>(
+        -:  880:                           static_cast<_Ct>(__fd.count()) * static_cast<_Ct>(_Period::num)));
+        -:  881:    }
+        -:  882:};
+        -:  883:
+        -:  884:template <class _FromDuration, class _ToDuration, class _Period>
+        -:  885:struct __duration_cast<_FromDuration, _ToDuration, _Period, false, false>
+        -:  886:{
+        -:  887:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR
+        -:  888:    _ToDuration operator()(const _FromDuration& __fd) const
+        -:  889:    {
+        -:  890:        typedef typename common_type<typename _ToDuration::rep, typename _FromDuration::rep, intmax_t>::type _Ct;
+        -:  891:        return _ToDuration(static_cast<typename _ToDuration::rep>(
+        -:  892:                           static_cast<_Ct>(__fd.count()) * static_cast<_Ct>(_Period::num)
+        -:  893:                                                          / static_cast<_Ct>(_Period::den)));
+        -:  894:    }
+        -:  895:};
+        -:  896:
+        -:  897:template <class _ToDuration, class _Rep, class _Period>
+        -:  898:inline _LIBCPP_INLINE_VISIBILITY
+        -:  899:_LIBCPP_CONSTEXPR
+        -:  900:typename enable_if
+        -:  901:<
+        -:  902:    __is_duration<_ToDuration>::value,
+        -:  903:    _ToDuration
+        -:  904:>::type
+        -:  905:duration_cast(const duration<_Rep, _Period>& __fd)
+        -:  906:{
+    #####:  907:    return __duration_cast<duration<_Rep, _Period>, _ToDuration>()(__fd);
+        -:  908:}
+        -:  909:
+        -:  910:template <class _Rep>
+        -:  911:struct _LIBCPP_TEMPLATE_VIS treat_as_floating_point : is_floating_point<_Rep> {};
+        -:  912:
+        -:  913:#if _LIBCPP_STD_VER > 14 && !defined(_LIBCPP_HAS_NO_VARIABLE_TEMPLATES)
+        -:  914:template <class _Rep>
+        -:  915:_LIBCPP_INLINE_VAR _LIBCPP_CONSTEXPR bool treat_as_floating_point_v
+        -:  916:    = treat_as_floating_point<_Rep>::value;
+        -:  917:#endif
+        -:  918:
+        -:  919:template <class _Rep>
+        -:  920:struct _LIBCPP_TEMPLATE_VIS duration_values
+        -:  921:{
+        -:  922:public:
+        -:  923:    _LIBCPP_INLINE_VISIBILITY static _LIBCPP_CONSTEXPR _Rep zero() {return _Rep(0);}
+        -:  924:    _LIBCPP_INLINE_VISIBILITY static _LIBCPP_CONSTEXPR _Rep max()  {return numeric_limits<_Rep>::max();}
+        -:  925:    _LIBCPP_INLINE_VISIBILITY static _LIBCPP_CONSTEXPR _Rep min()  {return numeric_limits<_Rep>::lowest();}
+        -:  926:};
+        -:  927:
+        -:  928:#if _LIBCPP_STD_VER > 14
+        -:  929:template <class _ToDuration, class _Rep, class _Period>
+        -:  930:inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR
+        -:  931:typename enable_if
+        -:  932:<
+        -:  933:    __is_duration<_ToDuration>::value,
+        -:  934:    _ToDuration
+        -:  935:>::type
+        -:  936:floor(const duration<_Rep, _Period>& __d)
+        -:  937:{
+        -:  938:    _ToDuration __t = duration_cast<_ToDuration>(__d);
+        -:  939:    if (__t > __d)
+        -:  940:        __t = __t - _ToDuration{1};
+        -:  941:    return __t;
+        -:  942:}
+        -:  943:
+        -:  944:template <class _ToDuration, class _Rep, class _Period>
+        -:  945:inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR
+        -:  946:typename enable_if
+        -:  947:<
+        -:  948:    __is_duration<_ToDuration>::value,
+        -:  949:    _ToDuration
+        -:  950:>::type
+        -:  951:ceil(const duration<_Rep, _Period>& __d)
+        -:  952:{
+        -:  953:    _ToDuration __t = duration_cast<_ToDuration>(__d);
+        -:  954:    if (__t < __d)
+        -:  955:        __t = __t + _ToDuration{1};
+        -:  956:    return __t;
+        -:  957:}
+        -:  958:
+        -:  959:template <class _ToDuration, class _Rep, class _Period>
+        -:  960:inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR
+        -:  961:typename enable_if
+        -:  962:<
+        -:  963:    __is_duration<_ToDuration>::value,
+        -:  964:    _ToDuration
+        -:  965:>::type
+        -:  966:round(const duration<_Rep, _Period>& __d)
+        -:  967:{
+        -:  968:    _ToDuration __lower = floor<_ToDuration>(__d);
+        -:  969:    _ToDuration __upper = __lower + _ToDuration{1};
+        -:  970:    auto __lowerDiff = __d - __lower;
+        -:  971:    auto __upperDiff = __upper - __d;
+        -:  972:    if (__lowerDiff < __upperDiff)
+        -:  973:        return __lower;
+        -:  974:    if (__lowerDiff > __upperDiff)
+        -:  975:        return __upper;
+        -:  976:    return __lower.count() & 1 ? __upper : __lower;
+        -:  977:}
+        -:  978:#endif
+        -:  979:
+        -:  980:// duration
+        -:  981:
+        -:  982:template <class _Rep, class _Period>
+        -:  983:class _LIBCPP_TEMPLATE_VIS duration
+        -:  984:{
+        -:  985:    static_assert(!__is_duration<_Rep>::value, "A duration representation can not be a duration");
+        -:  986:    static_assert(__is_ratio<_Period>::value, "Second template parameter of duration must be a std::ratio");
+        -:  987:    static_assert(_Period::num > 0, "duration period must be positive");
+        -:  988:
+        -:  989:    template <class _R1, class _R2>
+        -:  990:    struct __no_overflow
+        -:  991:    {
+        -:  992:    private:
+        -:  993:        static const intmax_t __gcd_n1_n2 = __static_gcd<_R1::num, _R2::num>::value;
+        -:  994:        static const intmax_t __gcd_d1_d2 = __static_gcd<_R1::den, _R2::den>::value;
+        -:  995:        static const intmax_t __n1 = _R1::num / __gcd_n1_n2;
+        -:  996:        static const intmax_t __d1 = _R1::den / __gcd_d1_d2;
+        -:  997:        static const intmax_t __n2 = _R2::num / __gcd_n1_n2;
+        -:  998:        static const intmax_t __d2 = _R2::den / __gcd_d1_d2;
+        -:  999:        static const intmax_t max = -((intmax_t(1) << (sizeof(intmax_t) * CHAR_BIT - 1)) + 1);
+        -: 1000:
+        -: 1001:        template <intmax_t _Xp, intmax_t _Yp, bool __overflow>
+        -: 1002:        struct __mul    // __overflow == false
+        -: 1003:        {
+        -: 1004:            static const intmax_t value = _Xp * _Yp;
+        -: 1005:        };
+        -: 1006:
+        -: 1007:        template <intmax_t _Xp, intmax_t _Yp>
+        -: 1008:        struct __mul<_Xp, _Yp, true>
+        -: 1009:        {
+        -: 1010:            static const intmax_t value = 1;
+        -: 1011:        };
+        -: 1012:
+        -: 1013:    public:
+        -: 1014:        static const bool value = (__n1 <= max / __d2) && (__n2 <= max / __d1);
+        -: 1015:        typedef ratio<__mul<__n1, __d2, !value>::value,
+        -: 1016:                      __mul<__n2, __d1, !value>::value> type;
+        -: 1017:    };
+        -: 1018:    
+        -: 1019:public:
+        -: 1020:    typedef _Rep rep;
+        -: 1021:    typedef typename _Period::type period;
+        -: 1022:private:
+        -: 1023:    rep __rep_;
+        -: 1024:public:
+        -: 1025:
+        -: 1026:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR
+        -: 1027:#ifndef _LIBCPP_CXX03_LANG
+        -: 1028:        duration() = default;
+        -: 1029:#else
+        -: 1030:        duration() {}
+        -: 1031:#endif
+        -: 1032:
+        -: 1033:    template <class _Rep2>
+        -: 1034:        _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR
+        -: 1035:        explicit duration(const _Rep2& __r,
+        -: 1036:            typename enable_if
+        -: 1037:            <
+        -: 1038:               is_convertible<_Rep2, rep>::value &&
+        -: 1039:               (treat_as_floating_point<rep>::value ||
+        -: 1040:               !treat_as_floating_point<_Rep2>::value)
+        -: 1041:            >::type* = 0)
+    #####: 1042:                : __rep_(__r) {}
+        -: 1043:
+        -: 1044:    // conversions
+        -: 1045:    template <class _Rep2, class _Period2>
+        -: 1046:        _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR
+        -: 1047:        duration(const duration<_Rep2, _Period2>& __d,
+        -: 1048:            typename enable_if
+        -: 1049:            <
+        -: 1050:                __no_overflow<_Period2, period>::value && (
+        -: 1051:                treat_as_floating_point<rep>::value ||
+        -: 1052:                (__no_overflow<_Period2, period>::type::den == 1 &&
+        -: 1053:                 !treat_as_floating_point<_Rep2>::value))
+        -: 1054:            >::type* = 0)
+        -: 1055:                : __rep_(_VSTD::chrono::duration_cast<duration>(__d).count()) {}
+        -: 1056:
+        -: 1057:    // observer
+        -: 1058:
+    #####: 1059:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR rep count() const {return __rep_;}
+        -: 1060:
+        -: 1061:    // arithmetic
+        -: 1062:
+        -: 1063:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR typename common_type<duration>::type operator+() const {return typename common_type<duration>::type(*this);}
+        -: 1064:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR typename common_type<duration>::type operator-() const {return typename common_type<duration>::type(-__rep_);}
+        -: 1065:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX14 duration& operator++()      {++__rep_; return *this;}
+        -: 1066:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX14 duration  operator++(int)   {return duration(__rep_++);}
+        -: 1067:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX14 duration& operator--()      {--__rep_; return *this;}
+        -: 1068:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX14 duration  operator--(int)   {return duration(__rep_--);}
+        -: 1069:
+        -: 1070:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX14 duration& operator+=(const duration& __d) {__rep_ += __d.count(); return *this;}
+        -: 1071:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX14 duration& operator-=(const duration& __d) {__rep_ -= __d.count(); return *this;}
+        -: 1072:
+        -: 1073:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX14 duration& operator*=(const rep& rhs) {__rep_ *= rhs; return *this;}
+        -: 1074:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX14 duration& operator/=(const rep& rhs) {__rep_ /= rhs; return *this;}
+        -: 1075:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX14 duration& operator%=(const rep& rhs) {__rep_ %= rhs; return *this;}
+        -: 1076:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX14 duration& operator%=(const duration& rhs) {__rep_ %= rhs.count(); return *this;}
+        -: 1077:
+        -: 1078:    // special values
+        -: 1079:
+        -: 1080:    _LIBCPP_INLINE_VISIBILITY static _LIBCPP_CONSTEXPR duration zero() {return duration(duration_values<rep>::zero());}
+        -: 1081:    _LIBCPP_INLINE_VISIBILITY static _LIBCPP_CONSTEXPR duration min()  {return duration(duration_values<rep>::min());}
+        -: 1082:    _LIBCPP_INLINE_VISIBILITY static _LIBCPP_CONSTEXPR duration max()  {return duration(duration_values<rep>::max());}
+        -: 1083:};
+        -: 1084:
+        -: 1085:typedef duration<long long,         nano> nanoseconds;
+        -: 1086:typedef duration<long long,        micro> microseconds;
+        -: 1087:typedef duration<long long,        milli> milliseconds;
+        -: 1088:typedef duration<long long              > seconds;
+        -: 1089:typedef duration<     long, ratio<  60> > minutes;
+        -: 1090:typedef duration<     long, ratio<3600> > hours;
+        -: 1091:
+        -: 1092:// Duration ==
+        -: 1093:
+        -: 1094:template <class _LhsDuration, class _RhsDuration>
+        -: 1095:struct __duration_eq
+        -: 1096:{
+        -: 1097:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR
+        -: 1098:    bool operator()(const _LhsDuration& __lhs, const _RhsDuration& __rhs) const
+        -: 1099:        {
+        -: 1100:            typedef typename common_type<_LhsDuration, _RhsDuration>::type _Ct;
+        -: 1101:            return _Ct(__lhs).count() == _Ct(__rhs).count();
+        -: 1102:        }
+        -: 1103:};
+        -: 1104:
+        -: 1105:template <class _LhsDuration>
+        -: 1106:struct __duration_eq<_LhsDuration, _LhsDuration>
+        -: 1107:{
+        -: 1108:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR
+        -: 1109:    bool operator()(const _LhsDuration& __lhs, const _LhsDuration& __rhs) const
+        -: 1110:        {return __lhs.count() == __rhs.count();}
+        -: 1111:};
+        -: 1112:
+        -: 1113:template <class _Rep1, class _Period1, class _Rep2, class _Period2>
+        -: 1114:inline _LIBCPP_INLINE_VISIBILITY
+        -: 1115:_LIBCPP_CONSTEXPR
+        -: 1116:bool
+        -: 1117:operator==(const duration<_Rep1, _Period1>& __lhs, const duration<_Rep2, _Period2>& __rhs)
+        -: 1118:{
+        -: 1119:    return __duration_eq<duration<_Rep1, _Period1>, duration<_Rep2, _Period2> >()(__lhs, __rhs);
+        -: 1120:}
+        -: 1121:
+        -: 1122:// Duration !=
+        -: 1123:
+        -: 1124:template <class _Rep1, class _Period1, class _Rep2, class _Period2>
+        -: 1125:inline _LIBCPP_INLINE_VISIBILITY
+        -: 1126:_LIBCPP_CONSTEXPR
+        -: 1127:bool
+        -: 1128:operator!=(const duration<_Rep1, _Period1>& __lhs, const duration<_Rep2, _Period2>& __rhs)
+        -: 1129:{
+        -: 1130:    return !(__lhs == __rhs);
+        -: 1131:}
+        -: 1132:
+        -: 1133:// Duration <
+        -: 1134:
+        -: 1135:template <class _LhsDuration, class _RhsDuration>
+        -: 1136:struct __duration_lt
+        -: 1137:{
+        -: 1138:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR
+        -: 1139:    bool operator()(const _LhsDuration& __lhs, const _RhsDuration& __rhs) const
+        -: 1140:        {
+        -: 1141:            typedef typename common_type<_LhsDuration, _RhsDuration>::type _Ct;
+        -: 1142:            return _Ct(__lhs).count() < _Ct(__rhs).count();
+        -: 1143:        }
+        -: 1144:};
+        -: 1145:
+        -: 1146:template <class _LhsDuration>
+        -: 1147:struct __duration_lt<_LhsDuration, _LhsDuration>
+        -: 1148:{
+        -: 1149:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR
+        -: 1150:    bool operator()(const _LhsDuration& __lhs, const _LhsDuration& __rhs) const
+        -: 1151:        {return __lhs.count() < __rhs.count();}
+        -: 1152:};
+        -: 1153:
+        -: 1154:template <class _Rep1, class _Period1, class _Rep2, class _Period2>
+        -: 1155:inline _LIBCPP_INLINE_VISIBILITY
+        -: 1156:_LIBCPP_CONSTEXPR
+        -: 1157:bool
+        -: 1158:operator< (const duration<_Rep1, _Period1>& __lhs, const duration<_Rep2, _Period2>& __rhs)
+        -: 1159:{
+        -: 1160:    return __duration_lt<duration<_Rep1, _Period1>, duration<_Rep2, _Period2> >()(__lhs, __rhs);
+        -: 1161:}
+        -: 1162:
+        -: 1163:// Duration >
+        -: 1164:
+        -: 1165:template <class _Rep1, class _Period1, class _Rep2, class _Period2>
+        -: 1166:inline _LIBCPP_INLINE_VISIBILITY
+        -: 1167:_LIBCPP_CONSTEXPR
+        -: 1168:bool
+        -: 1169:operator> (const duration<_Rep1, _Period1>& __lhs, const duration<_Rep2, _Period2>& __rhs)
+        -: 1170:{
+        -: 1171:    return __rhs < __lhs;
+        -: 1172:}
+        -: 1173:
+        -: 1174:// Duration <=
+        -: 1175:
+        -: 1176:template <class _Rep1, class _Period1, class _Rep2, class _Period2>
+        -: 1177:inline _LIBCPP_INLINE_VISIBILITY
+        -: 1178:_LIBCPP_CONSTEXPR
+        -: 1179:bool
+        -: 1180:operator<=(const duration<_Rep1, _Period1>& __lhs, const duration<_Rep2, _Period2>& __rhs)
+        -: 1181:{
+        -: 1182:    return !(__rhs < __lhs);
+        -: 1183:}
+        -: 1184:
+        -: 1185:// Duration >=
+        -: 1186:
+        -: 1187:template <class _Rep1, class _Period1, class _Rep2, class _Period2>
+        -: 1188:inline _LIBCPP_INLINE_VISIBILITY
+        -: 1189:_LIBCPP_CONSTEXPR
+        -: 1190:bool
+        -: 1191:operator>=(const duration<_Rep1, _Period1>& __lhs, const duration<_Rep2, _Period2>& __rhs)
+        -: 1192:{
+        -: 1193:    return !(__lhs < __rhs);
+        -: 1194:}
+        -: 1195:
+        -: 1196:// Duration +
+        -: 1197:
+        -: 1198:template <class _Rep1, class _Period1, class _Rep2, class _Period2>
+        -: 1199:inline _LIBCPP_INLINE_VISIBILITY
+        -: 1200:_LIBCPP_CONSTEXPR
+        -: 1201:typename common_type<duration<_Rep1, _Period1>, duration<_Rep2, _Period2> >::type
+        -: 1202:operator+(const duration<_Rep1, _Period1>& __lhs, const duration<_Rep2, _Period2>& __rhs)
+        -: 1203:{
+        -: 1204:    typedef typename common_type<duration<_Rep1, _Period1>, duration<_Rep2, _Period2> >::type _Cd;
+        -: 1205:    return _Cd(_Cd(__lhs).count() + _Cd(__rhs).count());
+        -: 1206:}
+        -: 1207:
+        -: 1208:// Duration -
+        -: 1209:
+        -: 1210:template <class _Rep1, class _Period1, class _Rep2, class _Period2>
+        -: 1211:inline _LIBCPP_INLINE_VISIBILITY
+        -: 1212:_LIBCPP_CONSTEXPR
+        -: 1213:typename common_type<duration<_Rep1, _Period1>, duration<_Rep2, _Period2> >::type
+        -: 1214:operator-(const duration<_Rep1, _Period1>& __lhs, const duration<_Rep2, _Period2>& __rhs)
+        -: 1215:{
+        -: 1216:    typedef typename common_type<duration<_Rep1, _Period1>, duration<_Rep2, _Period2> >::type _Cd;
+        -: 1217:    return _Cd(_Cd(__lhs).count() - _Cd(__rhs).count());
+        -: 1218:}
+        -: 1219:
+        -: 1220:// Duration *
+        -: 1221:
+        -: 1222:template <class _Rep1, class _Period, class _Rep2>
+        -: 1223:inline _LIBCPP_INLINE_VISIBILITY
+        -: 1224:_LIBCPP_CONSTEXPR
+        -: 1225:typename enable_if
+        -: 1226:<
+        -: 1227:    is_convertible<_Rep2, typename common_type<_Rep1, _Rep2>::type>::value,
+        -: 1228:    duration<typename common_type<_Rep1, _Rep2>::type, _Period>
+        -: 1229:>::type
+        -: 1230:operator*(const duration<_Rep1, _Period>& __d, const _Rep2& __s)
+        -: 1231:{
+        -: 1232:    typedef typename common_type<_Rep1, _Rep2>::type _Cr;
+        -: 1233:    typedef duration<_Cr, _Period> _Cd;
+        -: 1234:    return _Cd(_Cd(__d).count() * static_cast<_Cr>(__s));
+        -: 1235:}
+        -: 1236:
+        -: 1237:template <class _Rep1, class _Period, class _Rep2>
+        -: 1238:inline _LIBCPP_INLINE_VISIBILITY
+        -: 1239:_LIBCPP_CONSTEXPR
+        -: 1240:typename enable_if
+        -: 1241:<
+        -: 1242:    is_convertible<_Rep1, typename common_type<_Rep1, _Rep2>::type>::value,
+        -: 1243:    duration<typename common_type<_Rep1, _Rep2>::type, _Period>
+        -: 1244:>::type
+        -: 1245:operator*(const _Rep1& __s, const duration<_Rep2, _Period>& __d)
+        -: 1246:{
+        -: 1247:    return __d * __s;
+        -: 1248:}
+        -: 1249:
+        -: 1250:// Duration /
+        -: 1251:
+        -: 1252:template <class _Duration, class _Rep, bool = __is_duration<_Rep>::value>
+        -: 1253:struct __duration_divide_result
+        -: 1254:{
+        -: 1255:};
+        -: 1256:
+        -: 1257:template <class _Duration, class _Rep2,
+        -: 1258:    bool = is_convertible<_Rep2,
+        -: 1259:                          typename common_type<typename _Duration::rep, _Rep2>::type>::value>
+        -: 1260:struct __duration_divide_imp
+        -: 1261:{
+        -: 1262:};
+        -: 1263:
+        -: 1264:template <class _Rep1, class _Period, class _Rep2>
+        -: 1265:struct __duration_divide_imp<duration<_Rep1, _Period>, _Rep2, true>
+        -: 1266:{
+        -: 1267:    typedef duration<typename common_type<_Rep1, _Rep2>::type, _Period> type;
+        -: 1268:};
+        -: 1269:
+        -: 1270:template <class _Rep1, class _Period, class _Rep2>
+        -: 1271:struct __duration_divide_result<duration<_Rep1, _Period>, _Rep2, false>
+        -: 1272:    : __duration_divide_imp<duration<_Rep1, _Period>, _Rep2>
+        -: 1273:{
+        -: 1274:};
+        -: 1275:
+        -: 1276:template <class _Rep1, class _Period, class _Rep2>
+        -: 1277:inline _LIBCPP_INLINE_VISIBILITY
+        -: 1278:_LIBCPP_CONSTEXPR
+        -: 1279:typename __duration_divide_result<duration<_Rep1, _Period>, _Rep2>::type
+        -: 1280:operator/(const duration<_Rep1, _Period>& __d, const _Rep2& __s)
+        -: 1281:{
+        -: 1282:    typedef typename common_type<_Rep1, _Rep2>::type _Cr;
+        -: 1283:    typedef duration<_Cr, _Period> _Cd;
+        -: 1284:    return _Cd(_Cd(__d).count() / static_cast<_Cr>(__s));
+        -: 1285:}
+        -: 1286:
+        -: 1287:template <class _Rep1, class _Period1, class _Rep2, class _Period2>
+        -: 1288:inline _LIBCPP_INLINE_VISIBILITY
+        -: 1289:_LIBCPP_CONSTEXPR
+        -: 1290:typename common_type<_Rep1, _Rep2>::type
+        -: 1291:operator/(const duration<_Rep1, _Period1>& __lhs, const duration<_Rep2, _Period2>& __rhs)
+        -: 1292:{
+        -: 1293:    typedef typename common_type<duration<_Rep1, _Period1>, duration<_Rep2, _Period2> >::type _Ct;
+        -: 1294:    return _Ct(__lhs).count() / _Ct(__rhs).count();
+        -: 1295:}
+        -: 1296:
+        -: 1297:// Duration %
+        -: 1298:
+        -: 1299:template <class _Rep1, class _Period, class _Rep2>
+        -: 1300:inline _LIBCPP_INLINE_VISIBILITY
+        -: 1301:_LIBCPP_CONSTEXPR
+        -: 1302:typename __duration_divide_result<duration<_Rep1, _Period>, _Rep2>::type
+        -: 1303:operator%(const duration<_Rep1, _Period>& __d, const _Rep2& __s)
+        -: 1304:{
+        -: 1305:    typedef typename common_type<_Rep1, _Rep2>::type _Cr;
+        -: 1306:    typedef duration<_Cr, _Period> _Cd;
+        -: 1307:    return _Cd(_Cd(__d).count() % static_cast<_Cr>(__s));
+        -: 1308:}
+        -: 1309:
+        -: 1310:template <class _Rep1, class _Period1, class _Rep2, class _Period2>
+        -: 1311:inline _LIBCPP_INLINE_VISIBILITY
+        -: 1312:_LIBCPP_CONSTEXPR
+        -: 1313:typename common_type<duration<_Rep1, _Period1>, duration<_Rep2, _Period2> >::type
+        -: 1314:operator%(const duration<_Rep1, _Period1>& __lhs, const duration<_Rep2, _Period2>& __rhs)
+        -: 1315:{
+        -: 1316:    typedef typename common_type<_Rep1, _Rep2>::type _Cr;
+        -: 1317:    typedef typename common_type<duration<_Rep1, _Period1>, duration<_Rep2, _Period2> >::type _Cd;
+        -: 1318:    return _Cd(static_cast<_Cr>(_Cd(__lhs).count()) % static_cast<_Cr>(_Cd(__rhs).count()));
+        -: 1319:}
+        -: 1320:
+        -: 1321://////////////////////////////////////////////////////////
+        -: 1322:///////////////////// time_point /////////////////////////
+        -: 1323://////////////////////////////////////////////////////////
+        -: 1324:
+        -: 1325:template <class _Clock, class _Duration = typename _Clock::duration>
+        -: 1326:class _LIBCPP_TEMPLATE_VIS time_point
+        -: 1327:{
+        -: 1328:    static_assert(__is_duration<_Duration>::value,
+        -: 1329:                  "Second template parameter of time_point must be a std::chrono::duration");
+        -: 1330:public:
+        -: 1331:    typedef _Clock                    clock;
+        -: 1332:    typedef _Duration                 duration;
+        -: 1333:    typedef typename duration::rep    rep;
+        -: 1334:    typedef typename duration::period period;
+        -: 1335:private:
+        -: 1336:    duration __d_;
+        -: 1337:
+        -: 1338:public:
+        -: 1339:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11 time_point() : __d_(duration::zero()) {}
+        -: 1340:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11 explicit time_point(const duration& __d) : __d_(__d) {}
+        -: 1341:
+        -: 1342:    // conversions
+        -: 1343:    template <class _Duration2>
+        -: 1344:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -: 1345:    time_point(const time_point<clock, _Duration2>& t,
+        -: 1346:        typename enable_if
+        -: 1347:        <
+        -: 1348:            is_convertible<_Duration2, duration>::value
+        -: 1349:        >::type* = 0)
+        -: 1350:            : __d_(t.time_since_epoch()) {}
+        -: 1351:
+        -: 1352:    // observer
+        -: 1353:
+    #####: 1354:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11 duration time_since_epoch() const {return __d_;}
+        -: 1355:
+        -: 1356:    // arithmetic
+        -: 1357:
+        -: 1358:    _LIBCPP_INLINE_VISIBILITY time_point& operator+=(const duration& __d) {__d_ += __d; return *this;}
+        -: 1359:    _LIBCPP_INLINE_VISIBILITY time_point& operator-=(const duration& __d) {__d_ -= __d; return *this;}
+        -: 1360:
+        -: 1361:    // special values
+        -: 1362:
+        -: 1363:    _LIBCPP_INLINE_VISIBILITY static _LIBCPP_CONSTEXPR time_point min() {return time_point(duration::min());}
+        -: 1364:    _LIBCPP_INLINE_VISIBILITY static _LIBCPP_CONSTEXPR time_point max() {return time_point(duration::max());}
+        -: 1365:};
+        -: 1366:
+        -: 1367:} // chrono
+        -: 1368:
+        -: 1369:template <class _Clock, class _Duration1, class _Duration2>
+        -: 1370:struct _LIBCPP_TEMPLATE_VIS common_type<chrono::time_point<_Clock, _Duration1>,
+        -: 1371:                                         chrono::time_point<_Clock, _Duration2> >
+        -: 1372:{
+        -: 1373:    typedef chrono::time_point<_Clock, typename common_type<_Duration1, _Duration2>::type> type;
+        -: 1374:};
+        -: 1375:
+        -: 1376:namespace chrono {
+        -: 1377:
+        -: 1378:template <class _ToDuration, class _Clock, class _Duration>
+        -: 1379:inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -: 1380:time_point<_Clock, _ToDuration>
+        -: 1381:time_point_cast(const time_point<_Clock, _Duration>& __t)
+        -: 1382:{
+        -: 1383:    return time_point<_Clock, _ToDuration>(_VSTD::chrono::duration_cast<_ToDuration>(__t.time_since_epoch()));
+        -: 1384:}
+        -: 1385:
+        -: 1386:#if _LIBCPP_STD_VER > 14
+        -: 1387:template <class _ToDuration, class _Clock, class _Duration>
+        -: 1388:inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR
+        -: 1389:typename enable_if
+        -: 1390:<
+        -: 1391:    __is_duration<_ToDuration>::value,
+        -: 1392:    time_point<_Clock, _ToDuration>
+        -: 1393:>::type
+        -: 1394:floor(const time_point<_Clock, _Duration>& __t)
+        -: 1395:{
+        -: 1396:    return time_point<_Clock, _ToDuration>{floor<_ToDuration>(__t.time_since_epoch())};
+        -: 1397:}
+        -: 1398:
+        -: 1399:template <class _ToDuration, class _Clock, class _Duration>
+        -: 1400:inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR
+        -: 1401:typename enable_if
+        -: 1402:<
+        -: 1403:    __is_duration<_ToDuration>::value,
+        -: 1404:    time_point<_Clock, _ToDuration>
+        -: 1405:>::type
+        -: 1406:ceil(const time_point<_Clock, _Duration>& __t)
+        -: 1407:{
+        -: 1408:    return time_point<_Clock, _ToDuration>{ceil<_ToDuration>(__t.time_since_epoch())};
+        -: 1409:}
+        -: 1410:
+        -: 1411:template <class _ToDuration, class _Clock, class _Duration>
+        -: 1412:inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR
+        -: 1413:typename enable_if
+        -: 1414:<
+        -: 1415:    __is_duration<_ToDuration>::value,
+        -: 1416:    time_point<_Clock, _ToDuration>
+        -: 1417:>::type
+        -: 1418:round(const time_point<_Clock, _Duration>& __t)
+        -: 1419:{
+        -: 1420:    return time_point<_Clock, _ToDuration>{round<_ToDuration>(__t.time_since_epoch())};
+        -: 1421:}
+        -: 1422:
+        -: 1423:template <class _Rep, class _Period>
+        -: 1424:inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR
+        -: 1425:typename enable_if
+        -: 1426:<
+        -: 1427:    numeric_limits<_Rep>::is_signed,
+        -: 1428:    duration<_Rep, _Period>
+        -: 1429:>::type
+        -: 1430:abs(duration<_Rep, _Period> __d)
+        -: 1431:{
+        -: 1432:    return __d >= __d.zero() ? __d : -__d;
+        -: 1433:}
+        -: 1434:#endif
+        -: 1435:
+        -: 1436:// time_point ==
+        -: 1437:
+        -: 1438:template <class _Clock, class _Duration1, class _Duration2>
+        -: 1439:inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -: 1440:bool
+        -: 1441:operator==(const time_point<_Clock, _Duration1>& __lhs, const time_point<_Clock, _Duration2>& __rhs)
+        -: 1442:{
+        -: 1443:    return __lhs.time_since_epoch() == __rhs.time_since_epoch();
+        -: 1444:}
+        -: 1445:
+        -: 1446:// time_point !=
+        -: 1447:
+        -: 1448:template <class _Clock, class _Duration1, class _Duration2>
+        -: 1449:inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -: 1450:bool
+        -: 1451:operator!=(const time_point<_Clock, _Duration1>& __lhs, const time_point<_Clock, _Duration2>& __rhs)
+        -: 1452:{
+        -: 1453:    return !(__lhs == __rhs);
+        -: 1454:}
+        -: 1455:
+        -: 1456:// time_point <
+        -: 1457:
+        -: 1458:template <class _Clock, class _Duration1, class _Duration2>
+        -: 1459:inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -: 1460:bool
+        -: 1461:operator<(const time_point<_Clock, _Duration1>& __lhs, const time_point<_Clock, _Duration2>& __rhs)
+        -: 1462:{
+        -: 1463:    return __lhs.time_since_epoch() < __rhs.time_since_epoch();
+        -: 1464:}
+        -: 1465:
+        -: 1466:// time_point >
+        -: 1467:
+        -: 1468:template <class _Clock, class _Duration1, class _Duration2>
+        -: 1469:inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -: 1470:bool
+        -: 1471:operator>(const time_point<_Clock, _Duration1>& __lhs, const time_point<_Clock, _Duration2>& __rhs)
+        -: 1472:{
+        -: 1473:    return __rhs < __lhs;
+        -: 1474:}
+        -: 1475:
+        -: 1476:// time_point <=
+        -: 1477:
+        -: 1478:template <class _Clock, class _Duration1, class _Duration2>
+        -: 1479:inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -: 1480:bool
+        -: 1481:operator<=(const time_point<_Clock, _Duration1>& __lhs, const time_point<_Clock, _Duration2>& __rhs)
+        -: 1482:{
+        -: 1483:    return !(__rhs < __lhs);
+        -: 1484:}
+        -: 1485:
+        -: 1486:// time_point >=
+        -: 1487:
+        -: 1488:template <class _Clock, class _Duration1, class _Duration2>
+        -: 1489:inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -: 1490:bool
+        -: 1491:operator>=(const time_point<_Clock, _Duration1>& __lhs, const time_point<_Clock, _Duration2>& __rhs)
+        -: 1492:{
+        -: 1493:    return !(__lhs < __rhs);
+        -: 1494:}
+        -: 1495:
+        -: 1496:// time_point operator+(time_point x, duration y);
+        -: 1497:
+        -: 1498:template <class _Clock, class _Duration1, class _Rep2, class _Period2>
+        -: 1499:inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -: 1500:time_point<_Clock, typename common_type<_Duration1, duration<_Rep2, _Period2> >::type>
+        -: 1501:operator+(const time_point<_Clock, _Duration1>& __lhs, const duration<_Rep2, _Period2>& __rhs)
+        -: 1502:{
+        -: 1503:    typedef time_point<_Clock, typename common_type<_Duration1, duration<_Rep2, _Period2> >::type> _Tr;
+        -: 1504:    return _Tr (__lhs.time_since_epoch() + __rhs);
+        -: 1505:}
+        -: 1506:
+        -: 1507:// time_point operator+(duration x, time_point y);
+        -: 1508:
+        -: 1509:template <class _Rep1, class _Period1, class _Clock, class _Duration2>
+        -: 1510:inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -: 1511:time_point<_Clock, typename common_type<duration<_Rep1, _Period1>, _Duration2>::type>
+        -: 1512:operator+(const duration<_Rep1, _Period1>& __lhs, const time_point<_Clock, _Duration2>& __rhs)
+        -: 1513:{
+        -: 1514:    return __rhs + __lhs;
+        -: 1515:}
+        -: 1516:
+        -: 1517:// time_point operator-(time_point x, duration y);
+        -: 1518:
+        -: 1519:template <class _Clock, class _Duration1, class _Rep2, class _Period2>
+        -: 1520:inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -: 1521:time_point<_Clock, typename common_type<_Duration1, duration<_Rep2, _Period2> >::type>
+        -: 1522:operator-(const time_point<_Clock, _Duration1>& __lhs, const duration<_Rep2, _Period2>& __rhs)
+        -: 1523:{
+        -: 1524:    typedef time_point<_Clock, typename common_type<_Duration1, duration<_Rep2, _Period2> >::type> _Ret;
+        -: 1525:    return _Ret(__lhs.time_since_epoch() -__rhs);
+        -: 1526:}
+        -: 1527:
+        -: 1528:// duration operator-(time_point x, time_point y);
+        -: 1529:
+        -: 1530:template <class _Clock, class _Duration1, class _Duration2>
+        -: 1531:inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -: 1532:typename common_type<_Duration1, _Duration2>::type
+        -: 1533:operator-(const time_point<_Clock, _Duration1>& __lhs, const time_point<_Clock, _Duration2>& __rhs)
+        -: 1534:{
+        -: 1535:    return __lhs.time_since_epoch() - __rhs.time_since_epoch();
+        -: 1536:}
+        -: 1537:
+        -: 1538://////////////////////////////////////////////////////////
+        -: 1539://///////////////////// clocks ///////////////////////////
+        -: 1540://////////////////////////////////////////////////////////
+        -: 1541:
+        -: 1542:class _LIBCPP_TYPE_VIS system_clock
+        -: 1543:{
+        -: 1544:public:
+        -: 1545:    typedef microseconds                     duration;
+        -: 1546:    typedef duration::rep                    rep;
+        -: 1547:    typedef duration::period                 period;
+        -: 1548:    typedef chrono::time_point<system_clock> time_point;
+        -: 1549:    static _LIBCPP_CONSTEXPR_AFTER_CXX11 const bool is_steady = false;
+        -: 1550:
+        -: 1551:    static time_point now() _NOEXCEPT;
+        -: 1552:    static time_t     to_time_t  (const time_point& __t) _NOEXCEPT;
+        -: 1553:    static time_point from_time_t(time_t __t) _NOEXCEPT;
+        -: 1554:};
+        -: 1555:
+        -: 1556:#ifndef _LIBCPP_HAS_NO_MONOTONIC_CLOCK
+        -: 1557:class _LIBCPP_TYPE_VIS steady_clock
+        -: 1558:{
+        -: 1559:public:
+        -: 1560:    typedef nanoseconds                                   duration;
+        -: 1561:    typedef duration::rep                                 rep;
+        -: 1562:    typedef duration::period                              period;
+        -: 1563:    typedef chrono::time_point<steady_clock, duration>    time_point;
+        -: 1564:    static _LIBCPP_CONSTEXPR_AFTER_CXX11 const bool is_steady = true;
+        -: 1565:
+        -: 1566:    static time_point now() _NOEXCEPT;
+        -: 1567:};
+        -: 1568:
+        -: 1569:typedef steady_clock high_resolution_clock;
+        -: 1570:#else
+        -: 1571:typedef system_clock high_resolution_clock;
+        -: 1572:#endif
+        -: 1573:
+        -: 1574:} // chrono
+        -: 1575:
+        -: 1576:#if _LIBCPP_STD_VER > 11
+        -: 1577:// Suffixes for duration literals [time.duration.literals]
+        -: 1578:inline namespace literals
+        -: 1579:{ 
+        -: 1580:  inline namespace chrono_literals
+        -: 1581:  {
+        -: 1582:
+        -: 1583:    constexpr chrono::hours operator""h(unsigned long long __h)
+        -: 1584:    {
+        -: 1585:        return chrono::hours(static_cast<chrono::hours::rep>(__h));
+        -: 1586:    }
+        -: 1587:
+        -: 1588:    constexpr chrono::duration<long double, ratio<3600,1>> operator""h(long double __h)
+        -: 1589:    {
+        -: 1590:        return chrono::duration<long double, ratio<3600,1>>(__h);
+        -: 1591:    }
+        -: 1592:
+        -: 1593:
+        -: 1594:    constexpr chrono::minutes operator""min(unsigned long long __m)
+        -: 1595:    {
+        -: 1596:        return chrono::minutes(static_cast<chrono::minutes::rep>(__m));
+        -: 1597:    }
+        -: 1598:
+        -: 1599:    constexpr chrono::duration<long double, ratio<60,1>> operator""min(long double __m)
+        -: 1600:    {
+        -: 1601:        return chrono::duration<long double, ratio<60,1>> (__m);
+        -: 1602:    }
+        -: 1603:
+        -: 1604:
+        -: 1605:    constexpr chrono::seconds operator""s(unsigned long long __s)
+        -: 1606:    {
+        -: 1607:        return chrono::seconds(static_cast<chrono::seconds::rep>(__s));
+        -: 1608:    }
+        -: 1609:
+        -: 1610:    constexpr chrono::duration<long double> operator""s(long double __s)
+        -: 1611:    {
+        -: 1612:        return chrono::duration<long double> (__s);
+        -: 1613:    }
+        -: 1614:
+        -: 1615:
+        -: 1616:    constexpr chrono::milliseconds operator""ms(unsigned long long __ms)
+        -: 1617:    {
+        -: 1618:        return chrono::milliseconds(static_cast<chrono::milliseconds::rep>(__ms));
+        -: 1619:    }
+        -: 1620:
+        -: 1621:    constexpr chrono::duration<long double, milli> operator""ms(long double __ms)
+        -: 1622:    {
+        -: 1623:        return chrono::duration<long double, milli>(__ms);
+        -: 1624:    }
+        -: 1625:
+        -: 1626:
+        -: 1627:    constexpr chrono::microseconds operator""us(unsigned long long __us)
+        -: 1628:    {
+        -: 1629:        return chrono::microseconds(static_cast<chrono::microseconds::rep>(__us));
+        -: 1630:    }
+        -: 1631:
+        -: 1632:    constexpr chrono::duration<long double, micro> operator""us(long double __us)
+        -: 1633:    {
+        -: 1634:        return chrono::duration<long double, micro> (__us);
+        -: 1635:    }
+        -: 1636:    
+        -: 1637:
+        -: 1638:    constexpr chrono::nanoseconds operator""ns(unsigned long long __ns)
+        -: 1639:    {
+        -: 1640:        return chrono::nanoseconds(static_cast<chrono::nanoseconds::rep>(__ns));
+        -: 1641:    }
+        -: 1642:
+        -: 1643:    constexpr chrono::duration<long double, nano> operator""ns(long double __ns)
+        -: 1644:    {
+        -: 1645:        return chrono::duration<long double, nano> (__ns);
+        -: 1646:    }
+        -: 1647:
+        -: 1648:}}
+        -: 1649:
+        -: 1650:namespace chrono { // hoist the literals into namespace std::chrono
+        -: 1651:   using namespace literals::chrono_literals;
+        -: 1652:}
+        -: 1653:
+        -: 1654:#endif
+        -: 1655:
+        -: 1656:_LIBCPP_END_NAMESPACE_STD
+        -: 1657:
+        -: 1658:_LIBCPP_POP_MACROS
+        -: 1659:
+        -: 1660:#endif  // _LIBCPP_CHRONO

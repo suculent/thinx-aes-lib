@@ -1,0 +1,392 @@
+        -:    0:Source:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/_ctype.h
+        -:    0:Graph:../020-TestCase.gcno
+        -:    0:Data:-
+        -:    0:Runs:0
+        -:    0:Programs:0
+        -:    1:/*
+        -:    2: * Copyright (c) 2000, 2005, 2008 Apple Inc. All rights reserved.
+        -:    3: *
+        -:    4: * @APPLE_LICENSE_HEADER_START@
+        -:    5: * 
+        -:    6: * This file contains Original Code and/or Modifications of Original Code
+        -:    7: * as defined in and that are subject to the Apple Public Source License
+        -:    8: * Version 2.0 (the 'License'). You may not use this file except in
+        -:    9: * compliance with the License. Please obtain a copy of the License at
+        -:   10: * http://www.opensource.apple.com/apsl/ and read it before using this
+        -:   11: * file.
+        -:   12: * 
+        -:   13: * The Original Code and all software distributed under the License are
+        -:   14: * distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+        -:   15: * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
+        -:   16: * INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF MERCHANTABILITY,
+        -:   17: * FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR NON-INFRINGEMENT.
+        -:   18: * Please see the License for the specific language governing rights and
+        -:   19: * limitations under the License.
+        -:   20: * 
+        -:   21: * @APPLE_LICENSE_HEADER_END@
+        -:   22: */
+        -:   23:/*
+        -:   24: * Copyright (c) 1989, 1993
+        -:   25: *	The Regents of the University of California.  All rights reserved.
+        -:   26: * (c) UNIX System Laboratories, Inc.
+        -:   27: * All or some portions of this file are derived from material licensed
+        -:   28: * to the University of California by American Telephone and Telegraph
+        -:   29: * Co. or Unix System Laboratories, Inc. and are reproduced herein with
+        -:   30: * the permission of UNIX System Laboratories, Inc.
+        -:   31: *
+        -:   32: * This code is derived from software contributed to Berkeley by
+        -:   33: * Paul Borman at Krystal Technologies.
+        -:   34: *
+        -:   35: * Redistribution and use in source and binary forms, with or without
+        -:   36: * modification, are permitted provided that the following conditions
+        -:   37: * are met:
+        -:   38: * 1. Redistributions of source code must retain the above copyright
+        -:   39: *    notice, this list of conditions and the following disclaimer.
+        -:   40: * 2. Redistributions in binary form must reproduce the above copyright
+        -:   41: *    notice, this list of conditions and the following disclaimer in the
+        -:   42: *    documentation and/or other materials provided with the distribution.
+        -:   43: * 3. All advertising materials mentioning features or use of this software
+        -:   44: *    must display the following acknowledgement:
+        -:   45: *	This product includes software developed by the University of
+        -:   46: *	California, Berkeley and its contributors.
+        -:   47: * 4. Neither the name of the University nor the names of its contributors
+        -:   48: *    may be used to endorse or promote products derived from this software
+        -:   49: *    without specific prior written permission.
+        -:   50: *
+        -:   51: * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+        -:   52: * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+        -:   53: * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+        -:   54: * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+        -:   55: * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+        -:   56: * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+        -:   57: * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+        -:   58: * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+        -:   59: * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+        -:   60: * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+        -:   61: * SUCH DAMAGE.
+        -:   62: *
+        -:   63: *	@(#)ctype.h	8.4 (Berkeley) 1/21/94
+        -:   64: */
+        -:   65:
+        -:   66:#ifndef	__CTYPE_H_
+        -:   67:#define __CTYPE_H_
+        -:   68:
+        -:   69:#include <sys/cdefs.h>
+        -:   70:#include <runetype.h>
+        -:   71:
+        -:   72:#define	_CTYPE_A	0x00000100L		/* Alpha */
+        -:   73:#define	_CTYPE_C	0x00000200L		/* Control */
+        -:   74:#define	_CTYPE_D	0x00000400L		/* Digit */
+        -:   75:#define	_CTYPE_G	0x00000800L		/* Graph */
+        -:   76:#define	_CTYPE_L	0x00001000L		/* Lower */
+        -:   77:#define	_CTYPE_P	0x00002000L		/* Punct */
+        -:   78:#define	_CTYPE_S	0x00004000L		/* Space */
+        -:   79:#define	_CTYPE_U	0x00008000L		/* Upper */
+        -:   80:#define	_CTYPE_X	0x00010000L		/* X digit */
+        -:   81:#define	_CTYPE_B	0x00020000L		/* Blank */
+        -:   82:#define	_CTYPE_R	0x00040000L		/* Print */
+        -:   83:#define	_CTYPE_I	0x00080000L		/* Ideogram */
+        -:   84:#define	_CTYPE_T	0x00100000L		/* Special */
+        -:   85:#define	_CTYPE_Q	0x00200000L		/* Phonogram */
+        -:   86:#define	_CTYPE_SW0	0x20000000L		/* 0 width character */
+        -:   87:#define	_CTYPE_SW1	0x40000000L		/* 1 width character */
+        -:   88:#define	_CTYPE_SW2	0x80000000L		/* 2 width character */
+        -:   89:#define	_CTYPE_SW3	0xc0000000L		/* 3 width character */
+        -:   90:#define	_CTYPE_SWM	0xe0000000L		/* Mask for screen width data */
+        -:   91:#define	_CTYPE_SWS	30			/* Bits to shift to get width */
+        -:   92:
+        -:   93:#ifdef _NONSTD_SOURCE
+        -:   94:/*
+        -:   95: * Backward compatibility
+        -:   96: */
+        -:   97:#define	_A		_CTYPE_A		/* Alpha */
+        -:   98:#define	_C		_CTYPE_C		/* Control */
+        -:   99:#define	_D		_CTYPE_D		/* Digit */
+        -:  100:#define	_G		_CTYPE_G		/* Graph */
+        -:  101:#define	_L		_CTYPE_L		/* Lower */
+        -:  102:#define	_P		_CTYPE_P		/* Punct */
+        -:  103:#define	_S		_CTYPE_S		/* Space */
+        -:  104:#define	_U		_CTYPE_U		/* Upper */
+        -:  105:#define	_X		_CTYPE_X		/* X digit */
+        -:  106:#define	_B		_CTYPE_B		/* Blank */
+        -:  107:#define	_R		_CTYPE_R		/* Print */
+        -:  108:#define	_I		_CTYPE_I		/* Ideogram */
+        -:  109:#define	_T		_CTYPE_T		/* Special */
+        -:  110:#define	_Q		_CTYPE_Q		/* Phonogram */
+        -:  111:#define	_SW0		_CTYPE_SW0		/* 0 width character */
+        -:  112:#define	_SW1		_CTYPE_SW1		/* 1 width character */
+        -:  113:#define	_SW2		_CTYPE_SW2		/* 2 width character */
+        -:  114:#define	_SW3		_CTYPE_SW3		/* 3 width character */
+        -:  115:#endif /* _NONSTD_SOURCE */
+        -:  116:
+        -:  117:#define __DARWIN_CTYPE_inline		__header_inline
+        -:  118:
+        -:  119:#define __DARWIN_CTYPE_TOP_inline	__header_inline
+        -:  120:
+        -:  121:/*
+        -:  122: * Use inline functions if we are allowed to and the compiler supports them.
+        -:  123: */
+        -:  124:#if !defined(_DONT_USE_CTYPE_INLINE_) && \
+        -:  125:    (defined(_USE_CTYPE_INLINE_) || defined(__GNUC__) || defined(__cplusplus))
+        -:  126:
+        -:  127:/* See comments in <machine/_type.h> about __darwin_ct_rune_t. */
+        -:  128:__BEGIN_DECLS
+        -:  129:unsigned long		___runetype(__darwin_ct_rune_t);
+        -:  130:__darwin_ct_rune_t	___tolower(__darwin_ct_rune_t);
+        -:  131:__darwin_ct_rune_t	___toupper(__darwin_ct_rune_t);
+        -:  132:__END_DECLS
+        -:  133:
+        -:  134:__DARWIN_CTYPE_TOP_inline int
+        -:  135:isascii(int _c)
+        -:  136:{
+    #####:  137:	return ((_c & ~0x7F) == 0);
+        -:  138:}
+        -:  139:
+        -:  140:#ifdef USE_ASCII
+        -:  141:__DARWIN_CTYPE_inline int
+        -:  142:__maskrune(__darwin_ct_rune_t _c, unsigned long _f)
+        -:  143:{
+        -:  144:	return (int)_DefaultRuneLocale.__runetype[_c & 0xff] & (__uint32_t)_f;
+        -:  145:}
+        -:  146:#else /* !USE_ASCII */
+        -:  147:__BEGIN_DECLS
+        -:  148:int             	__maskrune(__darwin_ct_rune_t, unsigned long);
+        -:  149:__END_DECLS
+        -:  150:#endif /* USE_ASCII */
+        -:  151:
+        -:  152:__DARWIN_CTYPE_inline int
+        -:  153:__istype(__darwin_ct_rune_t _c, unsigned long _f)
+        -:  154:{
+        -:  155:#ifdef USE_ASCII
+        -:  156:	return !!(__maskrune(_c, _f));
+        -:  157:#else /* USE_ASCII */
+    #####:  158:	return (isascii(_c) ? !!(_DefaultRuneLocale.__runetype[_c] & _f)
+    #####:  159:		: !!__maskrune(_c, _f));
+        -:  160:#endif /* USE_ASCII */
+        -:  161:}
+        -:  162:
+        -:  163:__DARWIN_CTYPE_inline __darwin_ct_rune_t
+        -:  164:__isctype(__darwin_ct_rune_t _c, unsigned long _f)
+        -:  165:{
+        -:  166:#ifdef USE_ASCII
+        -:  167:	return !!(__maskrune(_c, _f));
+        -:  168:#else /* USE_ASCII */
+        -:  169:	return (_c < 0 || _c >= _CACHED_RUNES) ? 0 :
+        -:  170:		!!(_DefaultRuneLocale.__runetype[_c] & _f);
+        -:  171:#endif /* USE_ASCII */
+        -:  172:}
+        -:  173:
+        -:  174:#ifdef USE_ASCII
+        -:  175:__DARWIN_CTYPE_inline __darwin_ct_rune_t
+        -:  176:__toupper(__darwin_ct_rune_t _c)
+        -:  177:{
+        -:  178:	return _DefaultRuneLocale.__mapupper[_c & 0xff];
+        -:  179:}
+        -:  180:
+        -:  181:__DARWIN_CTYPE_inline __darwin_ct_rune_t
+        -:  182:__tolower(__darwin_ct_rune_t _c)
+        -:  183:{
+        -:  184:	return _DefaultRuneLocale.__maplower[_c & 0xff];
+        -:  185:}
+        -:  186:#else /* !USE_ASCII */
+        -:  187:__BEGIN_DECLS
+        -:  188:__darwin_ct_rune_t	__toupper(__darwin_ct_rune_t);
+        -:  189:__darwin_ct_rune_t	__tolower(__darwin_ct_rune_t);
+        -:  190:__END_DECLS
+        -:  191:#endif /* USE_ASCII */
+        -:  192:
+        -:  193:__DARWIN_CTYPE_inline int
+        -:  194:__wcwidth(__darwin_ct_rune_t _c)
+        -:  195:{
+        -:  196:	unsigned int _x;
+        -:  197:
+        -:  198:	if (_c == 0)
+        -:  199:		return (0);
+        -:  200:	_x = (unsigned int)__maskrune(_c, _CTYPE_SWM|_CTYPE_R);
+        -:  201:	if ((_x & _CTYPE_SWM) != 0)
+        -:  202:		return ((_x & _CTYPE_SWM) >> _CTYPE_SWS);
+        -:  203:	return ((_x & _CTYPE_R) != 0 ? 1 : -1);
+        -:  204:}
+        -:  205:
+        -:  206:#ifndef _EXTERNALIZE_CTYPE_INLINES_
+        -:  207:
+        -:  208:#define	_tolower(c)	__tolower(c)
+        -:  209:#define	_toupper(c)	__toupper(c)
+        -:  210:
+        -:  211:__DARWIN_CTYPE_TOP_inline int
+        -:  212:isalnum(int _c)
+        -:  213:{
+    #####:  214:	return (__istype(_c, _CTYPE_A|_CTYPE_D));
+        -:  215:}
+        -:  216:
+        -:  217:__DARWIN_CTYPE_TOP_inline int
+        -:  218:isalpha(int _c)
+        -:  219:{
+        -:  220:	return (__istype(_c, _CTYPE_A));
+        -:  221:}
+        -:  222:
+        -:  223:__DARWIN_CTYPE_TOP_inline int
+        -:  224:isblank(int _c)
+        -:  225:{
+        -:  226:	return (__istype(_c, _CTYPE_B));
+        -:  227:}
+        -:  228:
+        -:  229:__DARWIN_CTYPE_TOP_inline int
+        -:  230:iscntrl(int _c)
+        -:  231:{
+        -:  232:	return (__istype(_c, _CTYPE_C));
+        -:  233:}
+        -:  234:
+        -:  235:/* ANSI -- locale independent */
+        -:  236:__DARWIN_CTYPE_TOP_inline int
+        -:  237:isdigit(int _c)
+        -:  238:{
+        -:  239:	return (__isctype(_c, _CTYPE_D));
+        -:  240:}
+        -:  241:
+        -:  242:__DARWIN_CTYPE_TOP_inline int
+        -:  243:isgraph(int _c)
+        -:  244:{
+        -:  245:	return (__istype(_c, _CTYPE_G));
+        -:  246:}
+        -:  247:
+        -:  248:__DARWIN_CTYPE_TOP_inline int
+        -:  249:islower(int _c)
+        -:  250:{
+        -:  251:	return (__istype(_c, _CTYPE_L));
+        -:  252:}
+        -:  253:
+        -:  254:__DARWIN_CTYPE_TOP_inline int
+        -:  255:isprint(int _c)
+        -:  256:{
+        -:  257:	return (__istype(_c, _CTYPE_R));
+        -:  258:}
+        -:  259:
+        -:  260:__DARWIN_CTYPE_TOP_inline int
+        -:  261:ispunct(int _c)
+        -:  262:{
+        -:  263:	return (__istype(_c, _CTYPE_P));
+        -:  264:}
+        -:  265:
+        -:  266:__DARWIN_CTYPE_TOP_inline int
+        -:  267:isspace(int _c)
+        -:  268:{
+    #####:  269:	return (__istype(_c, _CTYPE_S));
+        -:  270:}
+        -:  271:
+        -:  272:__DARWIN_CTYPE_TOP_inline int
+        -:  273:isupper(int _c)
+        -:  274:{
+        -:  275:	return (__istype(_c, _CTYPE_U));
+        -:  276:}
+        -:  277:
+        -:  278:/* ANSI -- locale independent */
+        -:  279:__DARWIN_CTYPE_TOP_inline int
+        -:  280:isxdigit(int _c)
+        -:  281:{
+        -:  282:	return (__isctype(_c, _CTYPE_X));
+        -:  283:}
+        -:  284:
+        -:  285:__DARWIN_CTYPE_TOP_inline int
+        -:  286:toascii(int _c)
+        -:  287:{
+        -:  288:	return (_c & 0x7F);
+        -:  289:}
+        -:  290:
+        -:  291:__DARWIN_CTYPE_TOP_inline int
+        -:  292:tolower(int _c)
+        -:  293:{
+    #####:  294:        return (__tolower(_c));
+        -:  295:}
+        -:  296:
+        -:  297:__DARWIN_CTYPE_TOP_inline int
+        -:  298:toupper(int _c)
+        -:  299:{
+        -:  300:        return (__toupper(_c));
+        -:  301:}
+        -:  302:
+        -:  303:#if !defined(_ANSI_SOURCE) && (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE))
+        -:  304:__DARWIN_CTYPE_TOP_inline int
+        -:  305:digittoint(int _c)
+        -:  306:{
+        -:  307:	return (__maskrune(_c, 0x0F));
+        -:  308:}
+        -:  309:
+        -:  310:__DARWIN_CTYPE_TOP_inline int
+        -:  311:ishexnumber(int _c)
+        -:  312:{
+        -:  313:	return (__istype(_c, _CTYPE_X));
+        -:  314:}
+        -:  315:
+        -:  316:__DARWIN_CTYPE_TOP_inline int
+        -:  317:isideogram(int _c)
+        -:  318:{
+        -:  319:	return (__istype(_c, _CTYPE_I));
+        -:  320:}
+        -:  321:
+        -:  322:__DARWIN_CTYPE_TOP_inline int
+        -:  323:isnumber(int _c)
+        -:  324:{
+        -:  325:	return (__istype(_c, _CTYPE_D));
+        -:  326:}
+        -:  327:
+        -:  328:__DARWIN_CTYPE_TOP_inline int
+        -:  329:isphonogram(int _c)
+        -:  330:{
+        -:  331:	return (__istype(_c, _CTYPE_Q));
+        -:  332:}
+        -:  333:
+        -:  334:__DARWIN_CTYPE_TOP_inline int
+        -:  335:isrune(int _c)
+        -:  336:{
+        -:  337:	return (__istype(_c, 0xFFFFFFF0L));
+        -:  338:}
+        -:  339:
+        -:  340:__DARWIN_CTYPE_TOP_inline int
+        -:  341:isspecial(int _c)
+        -:  342:{
+        -:  343:	return (__istype(_c, _CTYPE_T));
+        -:  344:}
+        -:  345:#endif /* !_ANSI_SOURCE && (!_POSIX_C_SOURCE || _DARWIN_C_SOURCE) */
+        -:  346:#endif /* _EXTERNALIZE_CTYPE_INLINES_ */
+        -:  347:
+        -:  348:#else /* not using inlines */
+        -:  349:
+        -:  350:__BEGIN_DECLS
+        -:  351:int     isalnum(int);
+        -:  352:int     isalpha(int);
+        -:  353:int     isblank(int);
+        -:  354:int     iscntrl(int);
+        -:  355:int     isdigit(int);
+        -:  356:int     isgraph(int);
+        -:  357:int     islower(int);
+        -:  358:int     isprint(int);
+        -:  359:int     ispunct(int);
+        -:  360:int     isspace(int);
+        -:  361:int     isupper(int);
+        -:  362:int     isxdigit(int);
+        -:  363:int     tolower(int);
+        -:  364:int     toupper(int);
+        -:  365:int     isascii(int);
+        -:  366:int     toascii(int);
+        -:  367:
+        -:  368:#if !defined(_ANSI_SOURCE) && (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE))
+        -:  369:int     _tolower(int);
+        -:  370:int     _toupper(int);
+        -:  371:int     digittoint(int);
+        -:  372:int     ishexnumber(int);
+        -:  373:int     isideogram(int);
+        -:  374:int     isnumber(int);
+        -:  375:int     isphonogram(int);
+        -:  376:int     isrune(int);
+        -:  377:int     isspecial(int);
+        -:  378:#endif
+        -:  379:__END_DECLS
+        -:  380:
+        -:  381:#endif /* using inlines */
+        -:  382:
+        -:  383:#ifdef _USE_EXTENDED_LOCALES_
+        -:  384:#include <xlocale/_ctype.h>
+        -:  385:#endif /* _USE_EXTENDED_LOCALES_ */
+        -:  386:
+        -:  387:#endif /* !_CTYPE_H_ */

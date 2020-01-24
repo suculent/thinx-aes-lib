@@ -1,0 +1,245 @@
+        -:    0:Source:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/typeinfo
+        -:    0:Graph:../020-TestCase.gcno
+        -:    0:Data:-
+        -:    0:Runs:0
+        -:    0:Programs:0
+        -:    1:// -*- C++ -*-
+        -:    2://===-------------------------- typeinfo ----------------------------------===//
+        -:    3://
+        -:    4://                     The LLVM Compiler Infrastructure
+        -:    5://
+        -:    6:// This file is dual licensed under the MIT and the University of Illinois Open
+        -:    7:// Source Licenses. See LICENSE.TXT for details.
+        -:    8://
+        -:    9://===----------------------------------------------------------------------===//
+        -:   10:
+        -:   11:#ifndef __LIBCPP_TYPEINFO
+        -:   12:#define __LIBCPP_TYPEINFO
+        -:   13:
+        -:   14:/*
+        -:   15:
+        -:   16:    typeinfo synopsis
+        -:   17:
+        -:   18:namespace std {
+        -:   19:
+        -:   20:class type_info
+        -:   21:{
+        -:   22:public:
+        -:   23:    virtual ~type_info();
+        -:   24:
+        -:   25:    bool operator==(const type_info& rhs) const noexcept;
+        -:   26:    bool operator!=(const type_info& rhs) const noexcept;
+        -:   27:
+        -:   28:    bool before(const type_info& rhs) const noexcept;
+        -:   29:    size_t hash_code() const noexcept;
+        -:   30:    const char* name() const noexcept;
+        -:   31:
+        -:   32:    type_info(const type_info& rhs) = delete;
+        -:   33:    type_info& operator=(const type_info& rhs) = delete;
+        -:   34:};
+        -:   35:
+        -:   36:class bad_cast
+        -:   37:    : public exception
+        -:   38:{
+        -:   39:public:
+        -:   40:    bad_cast() noexcept;
+        -:   41:    bad_cast(const bad_cast&) noexcept;
+        -:   42:    bad_cast& operator=(const bad_cast&) noexcept;
+        -:   43:    virtual const char* what() const noexcept;
+        -:   44:};
+        -:   45:
+        -:   46:class bad_typeid
+        -:   47:    : public exception
+        -:   48:{
+        -:   49:public:
+        -:   50:    bad_typeid() noexcept;
+        -:   51:    bad_typeid(const bad_typeid&) noexcept;
+        -:   52:    bad_typeid& operator=(const bad_typeid&) noexcept;
+        -:   53:    virtual const char* what() const noexcept;
+        -:   54:};
+        -:   55:
+        -:   56:}  // std
+        -:   57:
+        -:   58:*/
+        -:   59:
+        -:   60:#include <__config>
+        -:   61:#include <exception>
+        -:   62:#include <cstddef>
+        -:   63:#include <cstdint>
+        -:   64:#ifdef _LIBCPP_NO_EXCEPTIONS
+        -:   65:#include <cstdlib>
+        -:   66:#endif
+        -:   67:
+        -:   68:#if !defined(_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER)
+        -:   69:#pragma GCC system_header
+        -:   70:#endif
+        -:   71:
+        -:   72:#if defined(_LIBCPP_ABI_MICROSOFT) && !defined(_LIBCPP_NO_VCRUNTIME)
+        -:   73:#include <vcruntime_typeinfo.h>
+        -:   74:#else
+        -:   75:
+        -:   76:#if !defined(_LIBCPP_ABI_MICROSOFT)
+        -:   77:#if defined(_LIBCPP_NONUNIQUE_RTTI_BIT)
+        -:   78:#define _LIBCPP_HAS_NONUNIQUE_TYPEINFO
+        -:   79:#else
+        -:   80:#define _LIBCPP_HAS_UNIQUE_TYPEINFO
+        -:   81:#endif
+        -:   82:#endif
+        -:   83:
+        -:   84:namespace std  // purposefully not using versioning namespace
+        -:   85:{
+        -:   86:
+        -:   87:class _LIBCPP_EXCEPTION_ABI type_info
+        -:   88:{
+        -:   89:    type_info& operator=(const type_info&);
+        -:   90:    type_info(const type_info&);
+        -:   91:
+        -:   92:#if defined(_LIBCPP_HAS_NONUNIQUE_TYPEINFO)
+        -:   93:    _LIBCPP_INLINE_VISIBILITY
+        -:   94:    int __compare_nonunique_names(const type_info &__arg) const _NOEXCEPT
+        -:   95:    { return __builtin_strcmp(name(), __arg.name()); }
+        -:   96:#endif
+        -:   97:
+        -:   98:#if defined(_LIBCPP_ABI_MICROSOFT)
+        -:   99:    mutable struct {
+        -:  100:      const char *__undecorated_name;
+        -:  101:      const char __decorated_name[1];
+        -:  102:    } __data;
+        -:  103:
+        -:  104:    int __compare(const type_info &__rhs) const _NOEXCEPT;
+        -:  105:#endif // _LIBCPP_ABI_MICROSOFT
+        -:  106:
+        -:  107:protected:
+        -:  108:#if !defined(_LIBCPP_ABI_MICROSOFT)
+        -:  109:#if defined(_LIBCPP_HAS_NONUNIQUE_TYPEINFO)
+        -:  110:    // A const char* with the non-unique RTTI bit possibly set.
+        -:  111:    uintptr_t __type_name;
+        -:  112:
+        -:  113:    _LIBCPP_INLINE_VISIBILITY
+        -:  114:    explicit type_info(const char* __n)
+        -:  115:      : __type_name(reinterpret_cast<uintptr_t>(__n)) {}
+        -:  116:#else
+        -:  117:    const char *__type_name;
+        -:  118:
+        -:  119:    _LIBCPP_INLINE_VISIBILITY
+        -:  120:    explicit type_info(const char* __n) : __type_name(__n) {}
+        -:  121:#endif
+        -:  122:#endif // ! _LIBCPP_ABI_MICROSOFT
+        -:  123:
+        -:  124:public:
+        -:  125:    _LIBCPP_AVAILABILITY_TYPEINFO_VTABLE
+        -:  126:    virtual ~type_info();
+        -:  127:
+        -:  128:#if defined(_LIBCPP_ABI_MICROSOFT)
+        -:  129:    const char *name() const _NOEXCEPT;
+        -:  130:
+        -:  131:    _LIBCPP_INLINE_VISIBILITY
+        -:  132:    bool before(const type_info& __arg) const _NOEXCEPT {
+        -:  133:      return __compare(__arg) < 0;
+        -:  134:    }
+        -:  135:
+        -:  136:    size_t hash_code() const _NOEXCEPT;
+        -:  137:
+        -:  138:    _LIBCPP_INLINE_VISIBILITY
+        -:  139:    bool operator==(const type_info& __arg) const _NOEXCEPT {
+        -:  140:      return __compare(__arg) == 0;
+        -:  141:    }
+        -:  142:#else
+        -:  143:#if defined(_LIBCPP_HAS_NONUNIQUE_TYPEINFO)
+        -:  144:    _LIBCPP_INLINE_VISIBILITY
+        -:  145:    const char* name() const _NOEXCEPT
+        -:  146:    {
+        -:  147:      return reinterpret_cast<const char*>(__type_name &
+        -:  148:                                           ~_LIBCPP_NONUNIQUE_RTTI_BIT);
+        -:  149:    }
+        -:  150:
+        -:  151:    _LIBCPP_INLINE_VISIBILITY
+        -:  152:    bool before(const type_info& __arg) const _NOEXCEPT
+        -:  153:    {
+        -:  154:      if (!((__type_name & __arg.__type_name) & _LIBCPP_NONUNIQUE_RTTI_BIT))
+        -:  155:        return __type_name < __arg.__type_name;
+        -:  156:      return __compare_nonunique_names(__arg) < 0;
+        -:  157:    }
+        -:  158:
+        -:  159:    _LIBCPP_INLINE_VISIBILITY
+        -:  160:    size_t hash_code() const _NOEXCEPT
+        -:  161:    {
+        -:  162:      if (!(__type_name & _LIBCPP_NONUNIQUE_RTTI_BIT))
+        -:  163:        return __type_name;
+        -:  164:
+        -:  165:      const char* __ptr = name();
+        -:  166:      size_t __hash = 5381;
+        -:  167:      while (unsigned char __c = static_cast<unsigned char>(*__ptr++))
+        -:  168:        __hash = (__hash * 33) ^ __c;
+        -:  169:      return __hash;
+        -:  170:    }
+        -:  171:
+        -:  172:    _LIBCPP_INLINE_VISIBILITY
+        -:  173:    bool operator==(const type_info& __arg) const _NOEXCEPT
+        -:  174:    {
+        -:  175:      if (__type_name == __arg.__type_name)
+        -:  176:        return true;
+        -:  177:
+        -:  178:      if (!((__type_name & __arg.__type_name) & _LIBCPP_NONUNIQUE_RTTI_BIT))
+        -:  179:        return false;
+        -:  180:      return __compare_nonunique_names(__arg) == 0;
+        -:  181:    }
+        -:  182:#else
+        -:  183:    _LIBCPP_INLINE_VISIBILITY
+        -:  184:    const char* name() const _NOEXCEPT
+        -:  185:    { return __type_name; }
+        -:  186:
+        -:  187:    _LIBCPP_INLINE_VISIBILITY
+        -:  188:    bool before(const type_info& __arg) const _NOEXCEPT
+        -:  189:    { return __type_name < __arg.__type_name; }
+        -:  190:
+        -:  191:    _LIBCPP_INLINE_VISIBILITY
+        -:  192:    size_t hash_code() const _NOEXCEPT
+        -:  193:    { return reinterpret_cast<size_t>(__type_name); }
+        -:  194:
+        -:  195:    _LIBCPP_INLINE_VISIBILITY
+        -:  196:    bool operator==(const type_info& __arg) const _NOEXCEPT
+    #####:  197:    { return __type_name == __arg.__type_name; }
+        -:  198:#endif
+        -:  199:#endif // _LIBCPP_ABI_MICROSOFT
+        -:  200:
+        -:  201:    _LIBCPP_INLINE_VISIBILITY
+        -:  202:    bool operator!=(const type_info& __arg) const _NOEXCEPT
+        -:  203:    { return !operator==(__arg); }
+        -:  204:};
+        -:  205:
+        -:  206:class _LIBCPP_EXCEPTION_ABI bad_cast
+        -:  207:    : public exception
+        -:  208:{
+        -:  209:public:
+        -:  210:    bad_cast() _NOEXCEPT;
+        -:  211:    virtual ~bad_cast() _NOEXCEPT;
+        -:  212:    virtual const char* what() const _NOEXCEPT;
+        -:  213:};
+        -:  214:
+        -:  215:class _LIBCPP_EXCEPTION_ABI bad_typeid
+        -:  216:    : public exception
+        -:  217:{
+        -:  218:public:
+        -:  219:    bad_typeid() _NOEXCEPT;
+        -:  220:    virtual ~bad_typeid() _NOEXCEPT;
+        -:  221:    virtual const char* what() const _NOEXCEPT;
+        -:  222:};
+        -:  223:
+        -:  224:}  // std
+        -:  225:
+        -:  226:#endif // defined(_LIBCPP_ABI_MICROSOFT) && !defined(_LIBCPP_NO_VCRUNTIME)
+        -:  227:
+        -:  228:_LIBCPP_BEGIN_NAMESPACE_STD
+        -:  229:_LIBCPP_NORETURN inline _LIBCPP_INLINE_VISIBILITY
+        -:  230:void __throw_bad_cast()
+        -:  231:{
+        -:  232:#ifndef _LIBCPP_NO_EXCEPTIONS
+    #####:  233:    throw bad_cast();
+        -:  234:#else
+        -:  235:	_VSTD::abort();
+        -:  236:#endif
+    #####:  237:}
+        -:  238:_LIBCPP_END_NAMESPACE_STD
+        -:  239:
+        -:  240:#endif  // __LIBCPP_TYPEINFO

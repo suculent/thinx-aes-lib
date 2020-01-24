@@ -1,0 +1,506 @@
+        -:    0:Source:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/streambuf
+        -:    0:Graph:../020-TestCase.gcno
+        -:    0:Data:-
+        -:    0:Runs:0
+        -:    0:Programs:0
+        -:    1:// -*- C++ -*-
+        -:    2://===------------------------- streambuf ----------------------------------===//
+        -:    3://
+        -:    4://                     The LLVM Compiler Infrastructure
+        -:    5://
+        -:    6:// This file is dual licensed under the MIT and the University of Illinois Open
+        -:    7:// Source Licenses. See LICENSE.TXT for details.
+        -:    8://
+        -:    9://===----------------------------------------------------------------------===//
+        -:   10:
+        -:   11:#ifndef _LIBCPP_STEAMBUF
+        -:   12:#define _LIBCPP_STEAMBUF
+        -:   13:
+        -:   14:/*
+        -:   15:    streambuf synopsis
+        -:   16:
+        -:   17:namespace std
+        -:   18:{
+        -:   19:
+        -:   20:template <class charT, class traits = char_traits<charT> >
+        -:   21:class basic_streambuf
+        -:   22:{
+        -:   23:public:
+        -:   24:    // types:
+        -:   25:    typedef charT char_type;
+        -:   26:    typedef traits traits_type;
+        -:   27:    typedef typename traits_type::int_type int_type;
+        -:   28:    typedef typename traits_type::pos_type pos_type;
+        -:   29:    typedef typename traits_type::off_type off_type;
+        -:   30:
+        -:   31:    virtual ~basic_streambuf();
+        -:   32:
+        -:   33:    // 27.6.2.2.1 locales:
+        -:   34:    locale pubimbue(const locale& loc);
+        -:   35:    locale getloc() const;
+        -:   36:
+        -:   37:    // 27.6.2.2.2 buffer and positioning:
+        -:   38:    basic_streambuf* pubsetbuf(char_type* s, streamsize n);
+        -:   39:    pos_type pubseekoff(off_type off, ios_base::seekdir way,
+        -:   40:                        ios_base::openmode which = ios_base::in | ios_base::out);
+        -:   41:    pos_type pubseekpos(pos_type sp,
+        -:   42:                        ios_base::openmode which = ios_base::in | ios_base::out);
+        -:   43:    int pubsync();
+        -:   44:
+        -:   45:    // Get and put areas:
+        -:   46:    // 27.6.2.2.3 Get area:
+        -:   47:    streamsize in_avail();
+        -:   48:    int_type snextc();
+        -:   49:    int_type sbumpc();
+        -:   50:    int_type sgetc();
+        -:   51:    streamsize sgetn(char_type* s, streamsize n);
+        -:   52:
+        -:   53:    // 27.6.2.2.4 Putback:
+        -:   54:    int_type sputbackc(char_type c);
+        -:   55:    int_type sungetc();
+        -:   56:
+        -:   57:    // 27.6.2.2.5 Put area:
+        -:   58:    int_type sputc(char_type c);
+        -:   59:    streamsize sputn(const char_type* s, streamsize n);
+        -:   60:
+        -:   61:protected:
+        -:   62:    basic_streambuf();
+        -:   63:    basic_streambuf(const basic_streambuf& rhs);
+        -:   64:    basic_streambuf& operator=(const basic_streambuf& rhs);
+        -:   65:    void swap(basic_streambuf& rhs);
+        -:   66:
+        -:   67:    // 27.6.2.3.2 Get area:
+        -:   68:    char_type* eback() const;
+        -:   69:    char_type* gptr() const;
+        -:   70:    char_type* egptr() const;
+        -:   71:    void gbump(int n);
+        -:   72:    void setg(char_type* gbeg, char_type* gnext, char_type* gend);
+        -:   73:
+        -:   74:    // 27.6.2.3.3 Put area:
+        -:   75:    char_type* pbase() const;
+        -:   76:    char_type* pptr() const;
+        -:   77:    char_type* epptr() const;
+        -:   78:    void pbump(int n);
+        -:   79:    void setp(char_type* pbeg, char_type* pend);
+        -:   80:
+        -:   81:    // 27.6.2.4 virtual functions:
+        -:   82:    // 27.6.2.4.1 Locales:
+        -:   83:    virtual void imbue(const locale& loc);
+        -:   84:
+        -:   85:    // 27.6.2.4.2 Buffer management and positioning:
+        -:   86:    virtual basic_streambuf* setbuf(char_type* s, streamsize n);
+        -:   87:    virtual pos_type seekoff(off_type off, ios_base::seekdir way,
+        -:   88:                             ios_base::openmode which = ios_base::in | ios_base::out);
+        -:   89:    virtual pos_type seekpos(pos_type sp,
+        -:   90:                             ios_base::openmode which = ios_base::in | ios_base::out);
+        -:   91:    virtual int sync();
+        -:   92:
+        -:   93:    // 27.6.2.4.3 Get area:
+        -:   94:    virtual streamsize showmanyc();
+        -:   95:    virtual streamsize xsgetn(char_type* s, streamsize n);
+        -:   96:    virtual int_type underflow();
+        -:   97:    virtual int_type uflow();
+        -:   98:
+        -:   99:    // 27.6.2.4.4 Putback:
+        -:  100:    virtual int_type pbackfail(int_type c = traits_type::eof());
+        -:  101:
+        -:  102:    // 27.6.2.4.5 Put area:
+        -:  103:    virtual streamsize xsputn(const char_type* s, streamsize n);
+        -:  104:    virtual int_type overflow (int_type c = traits_type::eof());
+        -:  105:};
+        -:  106:
+        -:  107:}  // std
+        -:  108:
+        -:  109:*/
+        -:  110:
+        -:  111:#include <__config>
+        -:  112:#include <iosfwd>
+        -:  113:#include <ios>
+        -:  114:
+        -:  115:#if !defined(_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER)
+        -:  116:#pragma GCC system_header
+        -:  117:#endif
+        -:  118:
+        -:  119:_LIBCPP_PUSH_MACROS
+        -:  120:#include <__undef_macros>
+        -:  121:
+        -:  122:_LIBCPP_BEGIN_NAMESPACE_STD
+        -:  123:
+        -:  124:template <class _CharT, class _Traits>
+        -:  125:class _LIBCPP_TEMPLATE_VIS basic_streambuf
+        -:  126:{
+        -:  127:public:
+        -:  128:    // types:
+        -:  129:    typedef _CharT                         char_type;
+        -:  130:    typedef _Traits                        traits_type;
+        -:  131:    typedef typename traits_type::int_type int_type;
+        -:  132:    typedef typename traits_type::pos_type pos_type;
+        -:  133:    typedef typename traits_type::off_type off_type;
+        -:  134:
+        -:  135:    static_assert((is_same<_CharT, typename traits_type::char_type>::value),
+        -:  136:                  "traits_type::char_type must be the same type as CharT");
+        -:  137:
+        -:  138:    virtual ~basic_streambuf();
+        -:  139:
+        -:  140:    // 27.6.2.2.1 locales:
+        -:  141:    inline _LIBCPP_EXTERN_TEMPLATE_INLINE_VISIBILITY
+        -:  142:    locale pubimbue(const locale& __loc) {
+        -:  143:        imbue(__loc);
+        -:  144:        locale __r = __loc_;
+        -:  145:        __loc_ = __loc;
+        -:  146:        return __r;
+        -:  147:    }
+        -:  148:
+        -:  149:    inline _LIBCPP_EXTERN_TEMPLATE_INLINE_VISIBILITY
+    #####:  150:    locale getloc() const { return __loc_; }
+        -:  151:
+        -:  152:    // 27.6.2.2.2 buffer and positioning:
+        -:  153:    inline _LIBCPP_EXTERN_TEMPLATE_INLINE_VISIBILITY
+        -:  154:    basic_streambuf* pubsetbuf(char_type* __s, streamsize __n)
+        -:  155:    { return setbuf(__s, __n); }
+        -:  156:
+        -:  157:    inline _LIBCPP_EXTERN_TEMPLATE_INLINE_VISIBILITY
+        -:  158:    pos_type pubseekoff(off_type __off, ios_base::seekdir __way,
+        -:  159:                        ios_base::openmode __which = ios_base::in | ios_base::out)
+        -:  160:    { return seekoff(__off, __way, __which); }
+        -:  161:
+        -:  162:    inline _LIBCPP_EXTERN_TEMPLATE_INLINE_VISIBILITY
+        -:  163:    pos_type pubseekpos(pos_type __sp,
+        -:  164:                        ios_base::openmode __which = ios_base::in | ios_base::out)
+        -:  165:    { return seekpos(__sp, __which); }
+        -:  166:
+        -:  167:    inline _LIBCPP_EXTERN_TEMPLATE_INLINE_VISIBILITY
+        -:  168:    int pubsync() { return sync(); }
+        -:  169:
+        -:  170:    // Get and put areas:
+        -:  171:    // 27.6.2.2.3 Get area:
+        -:  172:    inline _LIBCPP_EXTERN_TEMPLATE_INLINE_VISIBILITY
+        -:  173:    streamsize in_avail() {
+        -:  174:        if (__ninp_ < __einp_)
+        -:  175:            return static_cast<streamsize>(__einp_ - __ninp_);
+        -:  176:        return showmanyc();
+        -:  177:    }
+        -:  178:
+        -:  179:    inline _LIBCPP_EXTERN_TEMPLATE_INLINE_VISIBILITY
+        -:  180:    int_type snextc() {
+        -:  181:        if (sbumpc() == traits_type::eof())
+        -:  182:            return traits_type::eof();
+        -:  183:        return sgetc();
+        -:  184:    }
+        -:  185:
+        -:  186:    inline _LIBCPP_EXTERN_TEMPLATE_INLINE_VISIBILITY
+        -:  187:    int_type sbumpc() {
+    #####:  188:        if (__ninp_ == __einp_)
+    #####:  189:            return uflow();
+    #####:  190:        return traits_type::to_int_type(*__ninp_++);
+    #####:  191:    }
+        -:  192:
+        -:  193:    inline _LIBCPP_EXTERN_TEMPLATE_INLINE_VISIBILITY
+        -:  194:    int_type sgetc() {
+        -:  195:        if (__ninp_ == __einp_)
+        -:  196:            return underflow();
+        -:  197:        return traits_type::to_int_type(*__ninp_);
+        -:  198:    }
+        -:  199:
+        -:  200:    inline _LIBCPP_EXTERN_TEMPLATE_INLINE_VISIBILITY
+        -:  201:    streamsize sgetn(char_type* __s, streamsize __n)
+        -:  202:    { return xsgetn(__s, __n); }
+        -:  203:
+        -:  204:    // 27.6.2.2.4 Putback:
+        -:  205:    inline _LIBCPP_EXTERN_TEMPLATE_INLINE_VISIBILITY
+        -:  206:    int_type sputbackc(char_type __c) {
+        -:  207:        if (__binp_ == __ninp_ || !traits_type::eq(__c, __ninp_[-1]))
+        -:  208:            return pbackfail(traits_type::to_int_type(__c));
+        -:  209:        return traits_type::to_int_type(*--__ninp_);
+        -:  210:    }
+        -:  211:
+        -:  212:    inline _LIBCPP_EXTERN_TEMPLATE_INLINE_VISIBILITY
+        -:  213:    int_type sungetc() {
+        -:  214:        if (__binp_ == __ninp_)
+        -:  215:          return pbackfail();
+        -:  216:        return traits_type::to_int_type(*--__ninp_);
+        -:  217:    }
+        -:  218:
+        -:  219:    // 27.6.2.2.5 Put area:
+        -:  220:    inline _LIBCPP_EXTERN_TEMPLATE_INLINE_VISIBILITY
+        -:  221:    int_type sputc(char_type __c) {
+    #####:  222:        if (__nout_ == __eout_)
+    #####:  223:            return overflow(traits_type::to_int_type(__c));
+    #####:  224:        *__nout_++ = __c;
+    #####:  225:        return traits_type::to_int_type(__c);
+    #####:  226:    }
+        -:  227:
+        -:  228:    inline _LIBCPP_EXTERN_TEMPLATE_INLINE_VISIBILITY
+        -:  229:    streamsize sputn(const char_type* __s, streamsize __n)
+    #####:  230:    { return xsputn(__s, __n); }
+        -:  231:
+        -:  232:protected:
+        -:  233:    basic_streambuf();
+        -:  234:    basic_streambuf(const basic_streambuf& __rhs);
+        -:  235:    basic_streambuf& operator=(const basic_streambuf& __rhs);
+        -:  236:    void swap(basic_streambuf& __rhs);
+        -:  237:
+        -:  238:    // 27.6.2.3.2 Get area:
+    #####:  239:    _LIBCPP_INLINE_VISIBILITY char_type* eback() const {return __binp_;}
+    #####:  240:    _LIBCPP_INLINE_VISIBILITY char_type* gptr()  const {return __ninp_;}
+    #####:  241:    _LIBCPP_INLINE_VISIBILITY char_type* egptr() const {return __einp_;}
+        -:  242:
+        -:  243:    inline _LIBCPP_EXTERN_TEMPLATE_INLINE_VISIBILITY
+    #####:  244:    void gbump(int __n) { __ninp_ += __n; }
+        -:  245:
+        -:  246:    inline _LIBCPP_EXTERN_TEMPLATE_INLINE_VISIBILITY
+        -:  247:    void setg(char_type* __gbeg, char_type* __gnext, char_type* __gend) {
+    #####:  248:        __binp_ = __gbeg;
+    #####:  249:        __ninp_ = __gnext;
+    #####:  250:        __einp_ = __gend;
+    #####:  251:    }
+        -:  252:
+        -:  253:    // 27.6.2.3.3 Put area:
+    #####:  254:    _LIBCPP_INLINE_VISIBILITY char_type* pbase() const {return __bout_;}
+    #####:  255:    _LIBCPP_INLINE_VISIBILITY char_type* pptr()  const {return __nout_;}
+    #####:  256:    _LIBCPP_INLINE_VISIBILITY char_type* epptr() const {return __eout_;}
+        -:  257:
+        -:  258:    inline _LIBCPP_EXTERN_TEMPLATE_INLINE_VISIBILITY
+    #####:  259:    void pbump(int __n) { __nout_ += __n; }
+        -:  260:
+        -:  261:    _LIBCPP_INLINE_VISIBILITY
+    #####:  262:    void __pbump(streamsize __n) { __nout_ += __n; }
+        -:  263:
+        -:  264:    inline _LIBCPP_EXTERN_TEMPLATE_INLINE_VISIBILITY
+        -:  265:    void setp(char_type* __pbeg, char_type* __pend) {
+    #####:  266:        __bout_ = __nout_ = __pbeg;
+    #####:  267:        __eout_ = __pend;
+    #####:  268:    }
+        -:  269:
+        -:  270:    // 27.6.2.4 virtual functions:
+        -:  271:    // 27.6.2.4.1 Locales:
+        -:  272:    virtual void imbue(const locale& __loc);
+        -:  273:
+        -:  274:    // 27.6.2.4.2 Buffer management and positioning:
+        -:  275:    virtual basic_streambuf* setbuf(char_type* __s, streamsize __n);
+        -:  276:    virtual pos_type seekoff(off_type __off, ios_base::seekdir __way,
+        -:  277:                             ios_base::openmode __which = ios_base::in | ios_base::out);
+        -:  278:    virtual pos_type seekpos(pos_type __sp,
+        -:  279:                             ios_base::openmode __which = ios_base::in | ios_base::out);
+        -:  280:    virtual int sync();
+        -:  281:
+        -:  282:    // 27.6.2.4.3 Get area:
+        -:  283:    virtual streamsize showmanyc();
+        -:  284:    virtual streamsize xsgetn(char_type* __s, streamsize __n);
+        -:  285:    virtual int_type underflow();
+        -:  286:    virtual int_type uflow();
+        -:  287:
+        -:  288:    // 27.6.2.4.4 Putback:
+        -:  289:    virtual int_type pbackfail(int_type __c = traits_type::eof());
+        -:  290:
+        -:  291:    // 27.6.2.4.5 Put area:
+        -:  292:    virtual streamsize xsputn(const char_type* __s, streamsize __n);
+        -:  293:    virtual int_type overflow(int_type __c = traits_type::eof());
+        -:  294:
+        -:  295:private:
+        -:  296:    locale __loc_;
+        -:  297:    char_type* __binp_;
+        -:  298:    char_type* __ninp_;
+        -:  299:    char_type* __einp_;
+        -:  300:    char_type* __bout_;
+        -:  301:    char_type* __nout_;
+        -:  302:    char_type* __eout_;
+        -:  303:};
+        -:  304:
+        -:  305:template <class _CharT, class _Traits>
+        -:  306:basic_streambuf<_CharT, _Traits>::~basic_streambuf()
+        -:  307:{
+        -:  308:}
+        -:  309:
+        -:  310:template <class _CharT, class _Traits>
+        -:  311:basic_streambuf<_CharT, _Traits>::basic_streambuf()
+        -:  312:    : __binp_(0),
+        -:  313:      __ninp_(0),
+        -:  314:      __einp_(0),
+        -:  315:      __bout_(0),
+        -:  316:      __nout_(0),
+        -:  317:      __eout_(0)
+        -:  318:{
+        -:  319:}
+        -:  320:
+        -:  321:template <class _CharT, class _Traits>
+        -:  322:basic_streambuf<_CharT, _Traits>::basic_streambuf(const basic_streambuf& __sb)
+        -:  323:    : __loc_(__sb.__loc_),
+        -:  324:      __binp_(__sb.__binp_),
+        -:  325:      __ninp_(__sb.__ninp_),
+        -:  326:      __einp_(__sb.__einp_),
+        -:  327:      __bout_(__sb.__bout_),
+        -:  328:      __nout_(__sb.__nout_),
+        -:  329:      __eout_(__sb.__eout_)
+        -:  330:{
+        -:  331:}
+        -:  332:
+        -:  333:template <class _CharT, class _Traits>
+        -:  334:basic_streambuf<_CharT, _Traits>&
+        -:  335:basic_streambuf<_CharT, _Traits>::operator=(const basic_streambuf& __sb)
+        -:  336:{
+        -:  337:    __loc_ = __sb.__loc_;
+        -:  338:    __binp_ = __sb.__binp_;
+        -:  339:    __ninp_ = __sb.__ninp_;
+        -:  340:    __einp_ = __sb.__einp_;
+        -:  341:    __bout_ = __sb.__bout_;
+        -:  342:    __nout_ = __sb.__nout_;
+        -:  343:    __eout_ = __sb.__eout_;
+        -:  344:    return *this;
+        -:  345:}
+        -:  346:
+        -:  347:template <class _CharT, class _Traits>
+        -:  348:void
+        -:  349:basic_streambuf<_CharT, _Traits>::swap(basic_streambuf& __sb)
+        -:  350:{
+        -:  351:    _VSTD::swap(__loc_, __sb.__loc_);
+        -:  352:    _VSTD::swap(__binp_, __sb.__binp_);
+        -:  353:    _VSTD::swap(__ninp_, __sb.__ninp_);
+        -:  354:    _VSTD::swap(__einp_, __sb.__einp_);
+        -:  355:    _VSTD::swap(__bout_, __sb.__bout_);
+        -:  356:    _VSTD::swap(__nout_, __sb.__nout_);
+        -:  357:    _VSTD::swap(__eout_, __sb.__eout_);
+        -:  358:}
+        -:  359:
+        -:  360:template <class _CharT, class _Traits>
+        -:  361:void
+        -:  362:basic_streambuf<_CharT, _Traits>::imbue(const locale&)
+        -:  363:{
+        -:  364:}
+        -:  365:
+        -:  366:template <class _CharT, class _Traits>
+        -:  367:basic_streambuf<_CharT, _Traits>*
+        -:  368:basic_streambuf<_CharT, _Traits>::setbuf(char_type*, streamsize)
+        -:  369:{
+        -:  370:    return this;
+        -:  371:}
+        -:  372:
+        -:  373:template <class _CharT, class _Traits>
+        -:  374:typename basic_streambuf<_CharT, _Traits>::pos_type
+        -:  375:basic_streambuf<_CharT, _Traits>::seekoff(off_type, ios_base::seekdir,
+        -:  376:                                          ios_base::openmode)
+        -:  377:{
+        -:  378:    return pos_type(off_type(-1));
+        -:  379:}
+        -:  380:
+        -:  381:template <class _CharT, class _Traits>
+        -:  382:typename basic_streambuf<_CharT, _Traits>::pos_type
+        -:  383:basic_streambuf<_CharT, _Traits>::seekpos(pos_type, ios_base::openmode)
+        -:  384:{
+        -:  385:    return pos_type(off_type(-1));
+        -:  386:}
+        -:  387:
+        -:  388:template <class _CharT, class _Traits>
+        -:  389:int
+        -:  390:basic_streambuf<_CharT, _Traits>::sync()
+        -:  391:{
+        -:  392:    return 0;
+        -:  393:}
+        -:  394:
+        -:  395:template <class _CharT, class _Traits>
+        -:  396:streamsize
+        -:  397:basic_streambuf<_CharT, _Traits>::showmanyc()
+        -:  398:{
+        -:  399:    return 0;
+        -:  400:}
+        -:  401:
+        -:  402:template <class _CharT, class _Traits>
+        -:  403:streamsize
+        -:  404:basic_streambuf<_CharT, _Traits>::xsgetn(char_type* __s, streamsize __n)
+        -:  405:{
+        -:  406:    const int_type __eof = traits_type::eof();
+        -:  407:    int_type __c;
+        -:  408:    streamsize __i = 0;
+        -:  409:    while(__i < __n)
+        -:  410:    {
+        -:  411:        if (__ninp_ < __einp_)
+        -:  412:        {
+        -:  413:            const streamsize __len = _VSTD::min(static_cast<streamsize>(INT_MAX),
+        -:  414:                                _VSTD::min(__einp_ - __ninp_, __n - __i));
+        -:  415:            traits_type::copy(__s, __ninp_, __len);
+        -:  416:            __s +=  __len;
+        -:  417:            __i +=  __len;
+        -:  418:            this->gbump(__len);
+        -:  419:        }
+        -:  420:        else if ((__c = uflow()) != __eof)
+        -:  421:        {
+        -:  422:            *__s = traits_type::to_char_type(__c);
+        -:  423:            ++__s;
+        -:  424:            ++__i;
+        -:  425:        }
+        -:  426:        else
+        -:  427:            break;
+        -:  428:    }
+        -:  429:    return __i;
+        -:  430:}
+        -:  431:
+        -:  432:template <class _CharT, class _Traits>
+        -:  433:typename basic_streambuf<_CharT, _Traits>::int_type
+        -:  434:basic_streambuf<_CharT, _Traits>::underflow()
+        -:  435:{
+        -:  436:    return traits_type::eof();
+        -:  437:}
+        -:  438:
+        -:  439:template <class _CharT, class _Traits>
+        -:  440:typename basic_streambuf<_CharT, _Traits>::int_type
+        -:  441:basic_streambuf<_CharT, _Traits>::uflow()
+        -:  442:{
+        -:  443:    if (underflow() == traits_type::eof())
+        -:  444:        return traits_type::eof();
+        -:  445:    return traits_type::to_int_type(*__ninp_++);
+        -:  446:}
+        -:  447:
+        -:  448:template <class _CharT, class _Traits>
+        -:  449:typename basic_streambuf<_CharT, _Traits>::int_type
+        -:  450:basic_streambuf<_CharT, _Traits>::pbackfail(int_type)
+        -:  451:{
+        -:  452:    return traits_type::eof();
+        -:  453:}
+        -:  454:
+        -:  455:template <class _CharT, class _Traits>
+        -:  456:streamsize
+        -:  457:basic_streambuf<_CharT, _Traits>::xsputn(const char_type* __s, streamsize __n)
+        -:  458:{
+        -:  459:    streamsize __i = 0;
+        -:  460:    int_type __eof = traits_type::eof();
+        -:  461:    while( __i < __n)
+        -:  462:    {
+        -:  463:        if (__nout_ >= __eout_)
+        -:  464:        {
+        -:  465:            if (overflow(traits_type::to_int_type(*__s)) == __eof)
+        -:  466:                break;
+        -:  467:            ++__s;
+        -:  468:            ++__i;
+        -:  469:        }
+        -:  470:        else
+        -:  471:        {
+        -:  472:            streamsize __chunk_size = _VSTD::min(__eout_ - __nout_, __n - __i);
+        -:  473:            traits_type::copy(__nout_, __s, __chunk_size);
+        -:  474:            __nout_ += __chunk_size;
+        -:  475:            __s     += __chunk_size;
+        -:  476:            __i     += __chunk_size;
+        -:  477:        }
+        -:  478:    }
+        -:  479:    return __i;
+        -:  480:}
+        -:  481:
+        -:  482:template <class _CharT, class _Traits>
+        -:  483:typename basic_streambuf<_CharT, _Traits>::int_type
+        -:  484:basic_streambuf<_CharT, _Traits>::overflow(int_type)
+        -:  485:{
+        -:  486:    return traits_type::eof();
+        -:  487:}
+        -:  488:
+        -:  489:#ifndef _LIBCPP_AVAILABILITY_NO_STREAMS_EXTERN_TEMPLATE
+        -:  490:_LIBCPP_EXTERN_TEMPLATE(class _LIBCPP_EXTERN_TEMPLATE_TYPE_VIS basic_streambuf<char>)
+        -:  491:_LIBCPP_EXTERN_TEMPLATE(class _LIBCPP_EXTERN_TEMPLATE_TYPE_VIS basic_streambuf<wchar_t>)
+        -:  492:
+        -:  493:_LIBCPP_EXTERN_TEMPLATE(class _LIBCPP_EXTERN_TEMPLATE_TYPE_VIS basic_ios<char>)
+        -:  494:_LIBCPP_EXTERN_TEMPLATE(class _LIBCPP_EXTERN_TEMPLATE_TYPE_VIS basic_ios<wchar_t>)
+        -:  495:#endif
+        -:  496:
+        -:  497:_LIBCPP_END_NAMESPACE_STD
+        -:  498:
+        -:  499:_LIBCPP_POP_MACROS
+        -:  500:
+        -:  501:#endif  // _LIBCPP_STEAMBUF
