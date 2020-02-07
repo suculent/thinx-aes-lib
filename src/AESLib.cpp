@@ -215,11 +215,17 @@ uint16_t AESLib::decrypt64(char * msg, uint16_t msgLen, char * plain, byte key[]
 
   byte out[b64len]; // unfortunately this needs to fit to stack... that's hard limit for chunk
 
-  Serial.print("[decrypt64] Formatting out buffer to allow strlen...");
-  errno_t er = memset_s( out, sizeof(out), 0, b64len );
+#ifdef AES_DEBUG
+  // Serial.print("[decrypt64] Clearing-out buffer to allow safe strlen (zero-in-the-middle will still fail)...");
+#endif
+  int er = memset_s( out, sizeof(out), 0, b64len );
+  if (er == 0) return 0;
+  // memset( out, sizeof(out), 0 );
 
+#ifdef AES_DEBUG
 #ifdef ESP8266
   Serial.print("[decrypt64] free heap: "); Serial.println(ESP.getFreeHeap());
+#endif
 #endif
 
   int b64_len = aes.do_aes_decrypt((byte *)msg, b64len, (byte*)out, key, bits, (byte *)my_iv);

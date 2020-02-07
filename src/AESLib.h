@@ -16,7 +16,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
-
+#include <iostream>
 
 #ifndef __x86_64
 #include "Arduino.h"
@@ -60,7 +60,7 @@ class AESLib
 #endif
 
     uint8_t getrnd();
-    
+
   private:
     void clean();
     AES aes;
