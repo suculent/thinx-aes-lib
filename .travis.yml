@@ -28,29 +28,23 @@ script:
   - cd ..
   # Platform Build and Regression Integration Test
   - bash ./travis-prebuild.sh # allows pre-skipping unsupported platforms
-  - cd examples/base64_iv
+  - cd /home/travis/build/suculent/thinx-aes-lib/examples/base64_iv
   - build_platform esp8266
   - build_platform esp32
-  - cd ..
   - pwd && ls
-  - cd examples/complex
+  - cd /home/travis/build/suculent/thinx-aes-lib/examples/complex
   - build_platform esp8266
   - build_platform esp32
-  - cd ..
-  - cd examples/esp_serial
-  - pwd && ls
+  - cd /home/travis/build/suculent/thinx-aes-lib/examples/esp_serial
   - build_platform esp8266
   - build_platform esp32
-  - cd ..
-  - cd examples/large
+  - cd /home/travis/build/suculent/thinx-aes-lib/examples/large
   - build_platform esp8266
   - build_platform esp32
-  - cd ..
-  - cd examples/medium
+  - cd /home/travis/build/suculent/thinx-aes-lib/examples/medium
   - build_platform esp8266
   - build_platform esp32
-  - cd ..
-  - cd examples/simple
+  - cd /home/travis/build/suculent/thinx-aes-lib/examples/simple
   - build_platform esp8266
   - build_platform esp32
   - build_platform mega2560

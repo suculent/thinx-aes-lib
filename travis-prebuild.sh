@@ -4,7 +4,7 @@ function travis_skip()
   local platform_key=$1
 
   # grab all pde and ino example sketches
-  local examples=$(find $PWD -o -name "*.ino")
+  local examples=$(find $PWD -name "*.ino")
 
   # loop through example sketches
   for example in $examples; do
