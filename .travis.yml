@@ -10,21 +10,23 @@ git:
   
 env:
   global:
-     # You can uncomment this to explicitly choose an (old) version of the Arduino IDE
-     # - ARDUINO_IDE_VERSION="1.8.10"
+    # You can uncomment this to explicitly choose an (old) version of the Arduino IDE
+    - ARDUINO_IDE_VERSION="1.8.11"
      
 before_install:
   - source <(curl -SLs https://raw.githubusercontent.com/adafruit/travis-ci-arduino/master/install.sh)
+  
 install:
-
   # Note that every library should be installed in a seperate command
   # - arduino --install-library "Adafruit SleepyDog Library"
   # - arduino --install-library "Adafruit FONA Library"
   
 script:
+  # Unit Test
   - cd ./test
   - bash ./test.sh
   - cd ..
+  # Platform Build and Regression Integration Test
   - bash ./travis-prebuild.sh # allows skipping unsupported platforms
   - cd examples/base64_iv
   - build_main_platforms
