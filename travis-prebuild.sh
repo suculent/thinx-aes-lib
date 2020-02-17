@@ -19,9 +19,9 @@ function travis_skip()
 }
 
 # travis_skip uno
-# travis_skip zero
+travis_skip zero # fails because of pgmspace.h
 # travis_skip leonardo
-# travis_skip m4
+travis_skip m4
 # travis_skip mega2560
 # travis_skip esp32
 # travis_skip esp8266

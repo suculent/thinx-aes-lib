@@ -224,7 +224,8 @@ uint16_t AESLib::decrypt64(char * msg, uint16_t msgLen, char * plain, byte key[]
 #endif
 
   if (b64len > 0) {
-    memset( out, b64len, 0x00 );
+    // void * memset ( void * ptr, int value, size_t num );
+    memset( out, 0x00, b64len );
   }
 
 #ifdef AES_DEBUG

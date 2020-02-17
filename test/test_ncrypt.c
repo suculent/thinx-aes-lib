@@ -51,7 +51,7 @@ void aes_init() {
 // must not be in production code, ever
 uint16_t encrypt_to_ciphertext(char * msg, byte iv[]) {
   uint16_t msgLen = strlen(msg);
-  memset( ciphertext, sizeof(ciphertext), 0 );
+  memset( ciphertext, 0, sizeof(ciphertext) );
   //errno_t er = memset_s( ciphertext, sizeof(ciphertext), 0, sizeof(ciphertext) );
   //if (er) return 0;
   uint16_t cipherLength = aesLib.encrypt((byte*)msg, msgLen, ciphertext, aes_key, sizeof(aes_key), iv);
@@ -59,7 +59,7 @@ uint16_t encrypt_to_ciphertext(char * msg, byte iv[]) {
 }
 
 uint16_t decrypt_to_cleartext(byte msg[], uint16_t msgLen, byte iv[]) {
-  memset( cleartext, sizeof(cleartext), INPUT_BUFFER_LIMIT );
+  memset( cleartext, 0, INPUT_BUFFER_LIMIT );
   //errno_t er = memset_s( cleartext, sizeof(cleartext), 0, INPUT_BUFFER_LIMIT );
   //if (er) return 0;
   uint16_t dec_len = aesLib.decrypt(msg, msgLen, cleartext, aes_key, sizeof(aes_key), iv);
@@ -73,7 +73,7 @@ void test_ncrypt_1() {
 
     memcpy(aes_iv, enc_iv_to, sizeof(enc_iv_to));
     uint16_t len = encrypt_to_ciphertext(cleartext, aes_iv);
-    memset( cleartext, sizeof(cleartext), INPUT_BUFFER_LIMIT );
+    memset( cleartext, 0, sizeof(cleartext) );
     //errno_t er = memset_s( cleartext, sizeof(cleartext), 0, INPUT_BUFFER_LIMIT );
     //if (er) return;
 
