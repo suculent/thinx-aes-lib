@@ -23,7 +23,7 @@ void aes_init() {
   Serial.println(encrypt(strdup(plaintext.c_str()), plaintext.length(), aes_iv));
 }
 
-String encrypt(char * msg, uint16_t msgLen, byte iv[]) {  
+String encrypt(char * msg, uint16_t msgLen, byte iv[]) {
   int cipherlength = aesLib.get_cipher64_length(msgLen);
   char encrypted[cipherlength]; // AHA! needs to be large, 2x is not enough
   aesLib.encrypt64(msg, msgLen, encrypted, aes_key, sizeof(aes_key), iv);
@@ -31,7 +31,7 @@ String encrypt(char * msg, uint16_t msgLen, byte iv[]) {
   return String(encrypted);
 }
 
-String decrypt(char * msg, uint16_t msgLen, byte iv[]) {  
+String decrypt(char * msg, uint16_t msgLen, byte iv[]) {
   char decrypted[msgLen];
   aesLib.decrypt64(msg, msgLen, decrypted, aes_key, sizeof(aes_key), iv);
   return String(decrypted);
@@ -43,20 +43,20 @@ void setup() {
   delay(2000);
   aes_init();
   aesLib.set_paddingmode(paddingMode::Array);
-  
+
   //
   // verify with https://cryptii.com
   // previously: verify with https://gchq.github.io/CyberChef/#recipe=To_Base64('A-Za-z0-9%2B/%3D')
   //
-  
+
   char b64in[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-  
+
   char b64out[base64_enc_len(sizeof(aes_iv))];
   base64_encode(b64out, b64in, 16);
-  
+
   char b64enc[base64_enc_len(10)];
-  base64_encode(b64enc, (static char*) "0123456789", 10);
-  
+  base64_encode(b64enc, (char*) "0123456789", 10);
+
   char b64dec[ base64_dec_len(b64enc, sizeof(b64enc))];
   base64_decode(b64dec, b64enc, sizeof(b64enc));
 

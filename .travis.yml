@@ -37,6 +37,7 @@ script:
   - build_platform esp32
   - cd ..
   - cd examples/esp_serial
+  - pwd && ls
   - build_platform esp8266
   - build_platform esp32
   - cd ..
