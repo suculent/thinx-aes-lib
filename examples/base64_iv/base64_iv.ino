@@ -37,36 +37,20 @@ void aes_init() {
 String encrypt(char * msg, byte iv[]) {
   int msgLen = strlen(msg);
   char encrypted[2 * msgLen];
-  aesLib.encrypt64(msg, encrypted, aes_key, sizeof(aes_key), iv);
+  aesLib.encrypt64(msg, msglen, encrypted, aes_key, sizeof(aes_key), iv);
   return String(encrypted);
 }
 
 String decrypt(char * msg, byte iv[]) {
-  unsigned long ms = micros();
   int msgLen = strlen(msg);
   char decrypted[msgLen]; // half may be enough
-  aesLib.decrypt64(msg, decrypted, aes_key, sizeof(aes_key), iv);
+  aesLib.decrypt64(msg, msgLen, decrypted, aes_key, sizeof(aes_key), iv);
   return String(decrypted);
 }
 
 void print_key_iv() {
-
-  int i;
-
-  /*
-
-  Serial.println("AES Key: ");
-  for (i = 0; i < sizeof(aes_key); i++) {
-    Serial.print(aes_key[i], DEC);
-    if ((i + 1) < sizeof(aes_key)) {
-      Serial.print(",");
-    }
-  }
-
-  Serial.println(""); */
-
   Serial.println("AES IV: ");
-  for (i = 0; i < sizeof(aes_iv); i++) {
+  for (unsigned int i = 0; i < sizeof(aes_iv); i++) {
     Serial.print(aes_iv[i], DEC);
     if ((i + 1) < sizeof(aes_iv)) {
       Serial.print(",");
