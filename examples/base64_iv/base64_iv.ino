@@ -23,7 +23,7 @@ String server_b64msg = "ei6NxsBeWk7hj41eia3S0LdkAlm2qxpRbmcsrd23TTc="; // same a
 // Generate IV (once)
 void aes_init() {
   // workaround for incorrect B64 functionality on first run...
-  encrypt("HELLO WORLD!", aes_iv);
+  encrypt( (const char*) "HELLO WORLD!", aes_iv );
 
   print_key_iv();
 
@@ -37,7 +37,7 @@ void aes_init() {
 String encrypt(char * msg, byte iv[]) {
   int msgLen = strlen(msg);
   char encrypted[2 * msgLen];
-  aesLib.encrypt64(msg, msglen, encrypted, aes_key, sizeof(aes_key), iv);
+  aesLib.encrypt64(msg, msgLen, encrypted, aes_key, sizeof(aes_key), iv);
   return String(encrypted);
 }
 
