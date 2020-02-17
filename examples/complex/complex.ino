@@ -80,7 +80,7 @@ String encrypt(char * msg, byte iv[]) {
   unsigned long ms = micros();
   int msgLen = strlen(msg);
   char encrypted[2 * msgLen];
-  aesLib.encrypt64(msg, encrypted, aes_key, sizeof(aes_key), iv);
+  aesLib.encrypt64(msg, msgLen, encrypted, aes_key, sizeof(aes_key), iv);
   Serial.print("Encryption took: ");
   Serial.print(micros() - ms);
   Serial.println("us");
@@ -91,7 +91,7 @@ String decrypt(char * msg, byte iv[]) {
   unsigned long ms = micros();
   int msgLen = strlen(msg);
   char decrypted[msgLen]; // half may be enough
-  aesLib.decrypt64(msg, decrypted, aes_key, sizeof(aes_key), iv);
+  aesLib.decrypt64(msg, msgLen, decrypted, aes_key, sizeof(aes_key), iv);
   Serial.print("Decryption [2] took: ");
   Serial.print(micros() - ms);
   Serial.println("us");
@@ -108,7 +108,7 @@ void setup() {
 
 void log_free_stack(String tag) {
   #ifdef ESP8266
-  Serial.print("["); Serial.print(tag); Serial.print("] "); 
+  Serial.print("["); Serial.print(tag); Serial.print("] ");
   Serial.print("free heap: "); Serial.println(ESP.getFreeHeap());
   #endif
 }
@@ -125,7 +125,7 @@ void loop() {
 
   loopcount++;
 
-  sprintf(cleartext, "AABBCCDDEE\0");
+  sprintf(cleartext, "AABBCCDDEE");
 
   print_key_iv();
 
