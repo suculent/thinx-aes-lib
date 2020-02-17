@@ -1,0 +1,50 @@
+language: c
+sudo: false
+cache:
+  directories:
+    - ~/arduino_ide
+    - ~/.arduino15/packages/
+git:
+  depth: false
+  quiet: true
+  
+env:
+  global:
+     # You can uncomment this to explicitly choose an (old) version of the Arduino IDE
+     # - ARDUINO_IDE_VERSION="1.8.10"
+     
+before_install:
+  - source <(curl -SLs https://raw.githubusercontent.com/adafruit/travis-ci-arduino/master/install.sh)
+install:
+
+  # Note that every library should be installed in a seperate command
+  # - arduino --install-library "Adafruit SleepyDog Library"
+  # - arduino --install-library "Adafruit FONA Library"
+  
+script:
+  - cd ./test
+  - bash ./test.sh
+  - cd ..
+  - bash ./travis-prebuild.sh # allows skipping unsupported platforms
+  - cd examples/base64_iv
+  - build_main_platforms
+  - cd ..
+  - cd examples/complex
+  - build_main_platforms
+  - cd ..
+  - cd examples/esp_serial
+  - build_main_platforms
+  - cd ..
+  - cd examples/large
+  - build_main_platforms
+  - cd ..
+  - cd examples/medium
+  - build_main_platforms
+  - cd ..
+  - cd examples/simple
+  - build_main_platforms
+  
+notifications:
+  email:
+    on_success: change
+    on_failure: change
