@@ -1,5 +1,6 @@
 #include "AESLib.h"
 
+#ifndef __AVR__
 std::string AESLib::intToHex(uint8_t intValue) {
     std::string hexStr;
     std::stringstream sstream;
@@ -9,6 +10,7 @@ std::string AESLib::intToHex(uint8_t intValue) {
     sstream.clear();
     return hexStr;
 }
+#endif
 
 uint8_t AESLib::getrnd()
 {
@@ -95,12 +97,14 @@ uint16_t AESLib::decrypt(byte input[], uint16_t input_length, char * plain, byte
   uint16_t b64len = base64_decode((char*)decode_buffer, (char*)input, input_length);
 
 #ifndef __x86_64
+#ifndef __AVR__
 #ifdef AES_DEBUG
   Serial.printf("[AESLib::decrypt] Decoded bytes = ");
   for (uint8_t pos = 0; pos < b64len; pos++) {
     Serial.printf("%s ", intToHex(decode_buffer[pos]).c_str());
   }
   Serial.printf("\n");
+#endif
 #endif
 #endif
 
@@ -218,9 +222,8 @@ uint16_t AESLib::decrypt64(char * msg, uint16_t msgLen, char * plain, byte key[]
 #ifdef AES_DEBUG
   // Serial.print("[decrypt64] Clearing-out buffer to allow safe strlen (zero-in-the-middle will still fail)...");
 #endif
-  int er = memset_s( out, sizeof(out), 0, b64len );
-  if (er == 0) return 0;
-  // memset( out, sizeof(out), 0 );
+
+  memset( out, sizeof(out), 0 );
 
 #ifdef AES_DEBUG
 #ifdef ESP8266

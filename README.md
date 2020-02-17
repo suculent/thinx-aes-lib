@@ -16,6 +16,8 @@ Since ESP8266 Arduino Core 2.6.2 is already out, this might be updated to use AE
 
 # Changes
 
+`2.0.5` – restored backwards compatibility with AVR; updated Simple and Medium examples
+
 `2.0.3` – added unit tests; thus fixed getrnd()
 
 `2.0.1` - cleaner implementation, dropping Arduino framework in favour of testability and portability

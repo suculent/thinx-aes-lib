@@ -88,7 +88,7 @@ void loop() {
   memcpy(enc_iv, enc_iv_from, sizeof(enc_iv_from));
   uint16_t decLen = decrypt_to_cleartext(ciphertext, encLen , enc_iv);
   Serial.print("Decrypted cleartext of length: "); Serial.println(decLen);
-  Serial.print("Decrypted cleartext:\n"); Serial.printf("%s\n", (char*)cleartext);
+  Serial.print("Decrypted cleartext:\n"); Serial.println((char*)cleartext);
 
   if (strcmp((char*)readBuffer, (char*)cleartext) == 0) {
     Serial.println("Decrypted correctly.");

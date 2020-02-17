@@ -261,7 +261,7 @@ AES::AES(){
 
 /******************************************************************************/
 
-byte AES::set_key (byte key [], byte keylen)
+byte AES::set_key (byte key [], uint16_t keylen)
 {
   byte hi ;
   switch (keylen)
@@ -344,7 +344,11 @@ void AES::copy_n_bytes (byte * d, byte * s, byte nn)
 
 uint8_t AES::getrandom()
 {
+#ifdef __AVR__
+    srand (millis());
+#else
     srand ((unsigned int)time(NULL));
+#endif
     uint8_t really_random = rand() % 255;
     return really_random;
 }

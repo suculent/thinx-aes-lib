@@ -74,7 +74,7 @@ class AES
    *  (valid inputs are hence 128, 192, 16, 24 and 32).
    *
    */
-  byte set_key (byte key[], byte keylen) ;
+  byte set_key (byte key[], uint16_t keylen) ;
 
   /** clean up subkeys after use.
    *
