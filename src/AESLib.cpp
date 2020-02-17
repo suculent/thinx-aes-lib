@@ -50,7 +50,7 @@ void AESLib::clean() {
 //
 
 /* Returns message encrypted only to be used as byte array. TODO: Refactor to byte[] */
-uint16_t AESLib::encrypt(byte input[], uint16_t input_length, char * output, byte key[], int bits, byte my_iv[]) {
+uint16_t AESLib::encrypt(const byte input[], uint16_t input_length, char * output, const byte key[], int bits, byte my_iv[]) {
 
   aes.set_key(key, bits);
   aes.setPadMode((paddingMode)0); // CMS, Bit, ZeroLength, Null, Space, Random, Array
@@ -91,7 +91,7 @@ uint16_t AESLib::encrypt(byte input[], uint16_t input_length, char * output, byt
 }
 
 /* Returns byte array decoded and decrypted. TODO: Refactor to byte[] */
-uint16_t AESLib::decrypt(byte input[], uint16_t input_length, char * plain, byte key[],int bits, byte my_iv[]) {
+uint16_t AESLib::decrypt(const byte input[], uint16_t input_length, char * plain, const byte key[],int bits, byte my_iv[]) {
   aes.set_key(key, bits);
   byte decode_buffer[input_length];
   uint16_t b64len = base64_decode((char*)decode_buffer, (char*)input, input_length);
@@ -176,7 +176,7 @@ String AESLib::encrypt(String msg, byte key[],int bits, byte my_iv[]) {
 //
 
 /* Returns message encrypted and base64 encoded to be used as string. */
-uint16_t AESLib::encrypt64(char * msg, uint16_t msgLen, char * output, byte key[],int bits, byte my_iv[]) {
+uint16_t AESLib::encrypt64(const char * msg, uint16_t msgLen, char * output, const byte key[],int bits, byte my_iv[]) {
 
   aes.set_key(key, bits);
 
@@ -197,7 +197,7 @@ uint16_t AESLib::encrypt64(char * msg, uint16_t msgLen, char * output, byte key[
 }
 
 /* Suggested size for the plaintext buffer is 1/2 length of `msg`. Refactor! */
-uint16_t AESLib::decrypt64(char * msg, uint16_t msgLen, char * plain, byte key[],int bits, byte my_iv[]) {
+uint16_t AESLib::decrypt64(char * msg, uint16_t msgLen, char * plain, const byte key[],int bits, byte my_iv[]) {
 
 #ifdef AES_DEBUG
   Serial.println("[decrypt64] decrypting message:  ");
