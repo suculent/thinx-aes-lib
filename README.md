@@ -4,7 +4,7 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=suculent_thinx-aes-lib&metric=alert_status)](https://sonarcloud.io/dashboard?id=suculent_thinx-aes-lib)
 [![Build Status](https://travis-ci.org/suculent/thinx-aes-lib.svg)](https://travis-ci.org/suculent/thinx-aes-lib)
 
-An ESP32/ESP8266 library for Arduino IDE to wrap AES encryption with Base64 support. This project is originally based on [AESLib by kakopappa](https://github.com/kakopappa/arduino-esp8266-aes-lib). This fork actually works, will be maintained at least for a while, and provides optimized methods that do not require using Arduino's flawed String objects (even though those are still in examples).
+An ESP32/ESP8266 library for Arduino IDE to wrap AES encryption with Base64 support. This project is originally based on [AESLib by kakopappa](https://github.com/kakopappa/arduino-esp8266-aes-lib). This fork actually works, will be maintained at least for a while, and provides optimised methods that do not require using Arduino's flawed String objects (even though those are still in examples).
 
 AESLib provides convenience methods for encrypting data to byte arrays and Strings, with optional additional base64 encoding to return strings instead of bare data.
 
@@ -17,21 +17,23 @@ Since ESP8266 Arduino Core 2.6.2 is already out, this might be updated to use AE
 
 # Changes
 
-`2.0.6` – added Travis CI unit and platform tests
+`2.0.7` – Applied `const` specifiers throughout the library (via [https://github.com/kenkendk](@kenkendk))
 
-`2.0.5` – restored backwards compatibility with AVR; updated Simple and Medium examples
+`2.0.6` – Added Travis CI unit and platform tests; getrnd() is mocked on platforms without time() or millis() is used instead
 
-`2.0.3` – added unit tests; thus fixed getrnd()
+`2.0.5` – Restored backwards compatibility with AVR; updated Simple and Medium examples
 
-`2.0.1` - cleaner implementation, dropping Arduino framework in favour of testability and portability
+`2.0.3` – Added unit tests; thus fixed getrnd()
 
-`2.0` - fixed padding, added parametrization (via https://github.com/kavers1), restored Arduino compatibility, memory optimizations
+`2.0.1` - Cleaner implementation, dropping Arduino framework in favour of testability and portability
 
-`1.0.5` - fixed generating random IV; fixed #include directive filename case
+`2.0` - Fixed padding, added parametrisation (via [https://github.com/kavers1](@kavers1)), restored Arduino compatibility, memory optimisations
 
-`1.0.4` - fixed simple example
+`1.0.5` - Fixed generating random IV; fixed #include directive filename case
 
-`1.0.3` - fixed padding (after encoding, not before)
+`1.0.4` - Fixed simple example
+
+`1.0.3` - Fixed padding (after encoding, not before)
 
 # Client Example
 
@@ -133,7 +135,7 @@ console.log("Decrypted message: ", decoded_msg);
 
 # References
 
-This is an AES library for the ESP8266, based on tzikis's AES library for Arduino, was previously [here](https://github.com/tzikis/arduino). Tzikis library was based on scottmac's library, which was previously [here](https://github.com/scottmac/arduino), but now seems to be removed. The library is code-wise compatible with Aruino AVR, but it requires more RAM than it is usually available on Arduino boards.
+This is an AES library for the ESP8266, based on tzikis's AES library for Arduino, was previously [here](https://github.com/tzikis/arduino). Tzikis library was based on scottmac's library, which was previously [here](https://github.com/scottmac/arduino), but now seems to be removed. The library is code-wise compatible with Arduino AVR, but it requires more RAM than it is usually available on Arduino boards.
 
 [AES by spaniakos](https://github.com/spaniakos/AES/)
 
