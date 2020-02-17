@@ -223,7 +223,9 @@ uint16_t AESLib::decrypt64(char * msg, uint16_t msgLen, char * plain, byte key[]
   // Serial.print("[decrypt64] Clearing-out buffer to allow safe strlen (zero-in-the-middle will still fail)...");
 #endif
 
-  memset( out, sizeof(out), 0 );
+  if (b64len > 0) {
+    memset( out, b64len, 0x00 );
+  }
 
 #ifdef AES_DEBUG
 #ifdef ESP8266
