@@ -29,7 +29,7 @@ Since ESP8266 Arduino Core 2.6.2 is already out, this might be updated to use AE
 
 `2.0.1` - Cleaner implementation, dropping Arduino framework in favour of testability and portability
 
-`2.0` - Fixed padding, added parametrisation (via [https://github.com/kavers1](@kavers1)), restored Arduino compatibility, memory optimisations
+`2.0` - Fixed padding, added parametrisation (via [@kavers1](https://github.com/kavers1)), restored Arduino compatibility, memory optimisations
 
 `1.0.5` - Fixed generating random IV; fixed #include directive filename case
 
