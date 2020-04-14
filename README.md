@@ -17,9 +17,9 @@ Since ESP8266 Arduino Core 2.6.2 is already out, this might be updated to use AE
 
 # Changes
 
-`2.0.8` - Input buffer reuse optimizations by (via [https://github.com/ElMohamed](@ElMohamed))
+`2.0.8` - Input buffer reuse optimizations by (via [@ElMohamed](https://github.com/ElMohamed))
 
-`2.0.7` – Applied `const` specifiers throughout the library (via [https://github.com/kenkendk](@kenkendk))
+`2.0.7` – Applied `const` specifiers throughout the library (via [@kenkendk](https://github.com/kenkendk))
 
 `2.0.6` – Added Travis CI unit and platform tests; getrnd() is mocked on platforms without time() or millis() is used instead
 
