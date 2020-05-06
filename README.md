@@ -14,6 +14,7 @@ Since ESP8266 Arduino Core 2.6.2 is already out, this might be updated to use AE
 
 * ESP8266 (OK)
 * Arduino Uno (OK)
+* Arduino Mega 2560 (OK)
 
 # Changes
 
