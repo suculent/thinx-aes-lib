@@ -1,9 +1,10 @@
 # THiNX AESLib (ESP32, ESP8266, Arduino)
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8dded023f3d14a69b3c38c9f5fd66a40)](https://www.codacy.com/app/suculent/thinx-aes-lib?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=suculent/thinx-aes-lib&amp;utm_campaign=Badge_Grade) 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8dded023f3d14a69b3c38c9f5fd66a40)](https://www.codacy.com/app/suculent/thinx-aes-lib?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=suculent/thinx-aes-lib&amp;utm_campaign=Badge_Grade)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=suculent_thinx-aes-lib&metric=alert_status)](https://sonarcloud.io/dashboard?id=suculent_thinx-aes-lib)
+[![Build Status](https://travis-ci.org/suculent/thinx-aes-lib.svg)](https://travis-ci.org/suculent/thinx-aes-lib)
 
-An ESP32/ESP8266 library for Arduino IDE to wrap AES encryption with Base64 support. This project is originally based on [AESLib by kakopappa](https://github.com/kakopappa/arduino-esp8266-aes-lib). This fork actually works, will be maintained at least for a while, and provides optimized methods that do not require using Arduino's flawed String objects (even though those are still in examples).
+An ESP32/ESP8266 library for Arduino IDE to wrap AES encryption with Base64 support. This project is originally based on [AESLib by kakopappa](https://github.com/kakopappa/arduino-esp8266-aes-lib). This fork actually works, will be maintained at least for a while, and provides optimised methods that do not require using Arduino's flawed String objects (even though those are still in examples).
 
 AESLib provides convenience methods for encrypting data to byte arrays and Strings, with optional additional base64 encoding to return strings instead of bare data.
 
@@ -13,20 +14,29 @@ Since ESP8266 Arduino Core 2.6.2 is already out, this might be updated to use AE
 
 * ESP8266 (OK)
 * Arduino Uno (OK)
+* Arduino Mega 2560 (OK)
 
 # Changes
 
-`2.0.3` – added unit tests; thus fixed getrnd()
+`2.0.8` - Input buffer reuse optimizations by (via [@ElMohamed](https://github.com/ElMohamed))
 
-`2.0.1` - cleaner implementation, dropping Arduino framework in favour of testability and portability
+`2.0.7` – Applied `const` specifiers throughout the library (via [@kenkendk](https://github.com/kenkendk))
 
-`2.0` - fixed padding, added parametrization (via https://github.com/kavers1), restored Arduino compatibility, memory optimizations
+`2.0.6` – Added Travis CI unit and platform tests; getrnd() is mocked on platforms without time() or millis() is used instead
 
-`1.0.5` - fixed generating random IV; fixed #include directive filename case
+`2.0.5` – Restored backwards compatibility with AVR; updated Simple and Medium examples
 
-`1.0.4` - fixed simple example
+`2.0.3` – Added unit tests; thus fixed getrnd()
 
-`1.0.3` - fixed padding (after encoding, not before)
+`2.0.1` - Cleaner implementation, dropping Arduino framework in favour of testability and portability
+
+`2.0` - Fixed padding, added parametrisation (via [@kavers1](https://github.com/kavers1)), restored Arduino compatibility, memory optimisations
+
+`1.0.5` - Fixed generating random IV; fixed #include directive filename case
+
+`1.0.4` - Fixed simple example
+
+`1.0.3` - Fixed padding (after encoding, not before)
 
 # Client Example
 
@@ -57,7 +67,7 @@ void aes_init() {
 String encrypt(char * msg, byte iv[]) {  
   int msgLen = strlen(msg);
   char encrypted[2 * msgLen];
-  aesLib.encrypt64(msg, encrypted, aes_key, iv);  
+  aesLib.encrypt64(msg, msgLen, encrypted, aes_key, iv);  
   return String(encrypted);
 }
 
@@ -65,7 +75,7 @@ String decrypt(char * msg, byte iv[]) {
   unsigned long ms = micros();
   int msgLen = strlen(msg);
   char decrypted[msgLen]; // half may be enough
-  aesLib.decrypt64(msg, decrypted, aes_key, iv);  
+  aesLib.decrypt64(msg, msgLen, decrypted, aes_key, iv);  
   return String(decrypted);
 }
 
@@ -128,7 +138,7 @@ console.log("Decrypted message: ", decoded_msg);
 
 # References
 
-This is an AES library for the ESP8266, based on tzikis's AES library for Arduino, was previously [here](https://github.com/tzikis/arduino). Tzikis library was based on scottmac's library, which was previously [here](https://github.com/scottmac/arduino), but now seems to be removed. The library is code-wise compatible with Aruino AVR, but it requires more RAM than it is usually available on Arduino boards.
+This is an AES library for the ESP8266, based on tzikis's AES library for Arduino, was previously [here](https://github.com/tzikis/arduino). Tzikis library was based on scottmac's library, which was previously [here](https://github.com/scottmac/arduino), but now seems to be removed. The library is code-wise compatible with Arduino AVR, but it requires more RAM than it is usually available on Arduino boards.
 
 [AES by spaniakos](https://github.com/spaniakos/AES/)
 

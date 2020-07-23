@@ -1,0 +1,56 @@
+language: c
+sudo: false
+cache:
+  directories:
+    - ~/arduino_ide
+    - ~/.arduino15/packages/
+git:
+  depth: false
+  quiet: true
+
+env:
+  global:
+    # You can uncomment this to explicitly choose an (old) version of the Arduino IDE
+    - ARDUINO_IDE_VERSION="1.8.11"
+
+before_install:
+  - source <(curl -SLs https://raw.githubusercontent.com/adafruit/travis-ci-arduino/master/install.sh)
+
+install:
+  # Note that every library should be installed in a seperate command
+  # - arduino --install-library "Adafruit SleepyDog Library"
+  # - arduino --install-library "Adafruit FONA Library"
+
+script:
+  # Unit Test
+  - cd ./test
+  - bash ./test.sh
+  - cd ..
+  # Platform Build and Regression Integration Test
+  - bash ./travis-prebuild.sh # allows pre-skipping unsupported platforms
+  - cd /home/travis/build/suculent/thinx-aes-lib/examples/base64_iv
+  - build_platform esp8266
+  - build_platform esp32
+  - pwd && ls
+  - cd /home/travis/build/suculent/thinx-aes-lib/examples/complex
+  - build_platform esp8266
+  - build_platform esp32
+  - cd /home/travis/build/suculent/thinx-aes-lib/examples/esp_serial
+  - build_platform esp8266
+  - build_platform esp32
+  - cd /home/travis/build/suculent/thinx-aes-lib/examples/large
+  - build_platform esp8266
+  - build_platform esp32
+  - cd /home/travis/build/suculent/thinx-aes-lib/examples/medium
+  - build_platform esp8266
+  - build_platform esp32
+  - cd /home/travis/build/suculent/thinx-aes-lib/examples/simple
+  - build_platform esp8266
+  - build_platform esp32
+  - build_platform mega2560
+  - build_platform uno
+
+notifications:
+  email:
+    on_success: change
+    on_failure: change

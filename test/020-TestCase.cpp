@@ -7,7 +7,7 @@
 // Configuration
 //
 
-#import "../src/AESLib.h"
+#include "../src/AESLib.h"
 
 #include <stdio.h>
 #include <string.h>

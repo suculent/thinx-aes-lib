@@ -23,7 +23,7 @@ String server_b64msg = "j0RFVdlKjYrwx17qzHdt45miHZWoErdyOahKNKM6KTM="; // same a
 // Generate IV (once)
 void aes_init() {
   // workaround for incorrect B64 functionality on first run...
-  encrypt("HELLO WORLD!", aes_iv);
+  encrypt( (const char*) "HELLO WORLD!", aes_iv );
 
   print_key_iv();
 
@@ -42,7 +42,6 @@ String encrypt(char * msg, byte iv[]) {
 }
 
 String decrypt(char * msg, byte iv[]) {
-  unsigned long ms = micros();
   int msgLen = strlen(msg);
   char decrypted[msgLen]; // half may be enough
   aesLib.decrypt64(msg, msgLen, decrypted, aes_key, sizeof(aes_key), iv);
@@ -50,23 +49,8 @@ String decrypt(char * msg, byte iv[]) {
 }
 
 void print_key_iv() {
-
-  int i;
-
-  /*
-
-  Serial.println("AES Key: ");
-  for (i = 0; i < sizeof(aes_key); i++) {
-    Serial.print(aes_key[i], DEC);
-    if ((i + 1) < sizeof(aes_key)) {
-      Serial.print(",");
-    }
-  }
-
-  Serial.println(""); */
-
   Serial.println("AES IV: ");
-  for (i = 0; i < sizeof(aes_iv); i++) {
+  for (unsigned int i = 0; i < sizeof(aes_iv); i++) {
     Serial.print(aes_iv[i], DEC);
     if ((i + 1) < sizeof(aes_iv)) {
       Serial.print(",");

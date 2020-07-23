@@ -1,5 +1,6 @@
 #include "AESLib.h"
 
+#ifndef __AVR__
 std::string AESLib::intToHex(uint8_t intValue) {
     std::string hexStr;
     std::stringstream sstream;
@@ -9,6 +10,7 @@ std::string AESLib::intToHex(uint8_t intValue) {
     sstream.clear();
     return hexStr;
 }
+#endif
 
 uint8_t AESLib::getrnd()
 {
@@ -48,7 +50,7 @@ void AESLib::clean() {
 //
 
 /* Returns message encrypted only to be used as byte array. TODO: Refactor to byte[] */
-uint16_t AESLib::encrypt(byte input[], uint16_t input_length, char * output, byte key[], int bits, byte my_iv[]) {
+uint16_t AESLib::encrypt(const byte input[], uint16_t input_length, char * output, const byte key[], int bits, byte my_iv[]) {
 
   aes.set_key(key, bits);
   aes.setPadMode((paddingMode)0); // CMS, Bit, ZeroLength, Null, Space, Random, Array
@@ -89,22 +91,23 @@ uint16_t AESLib::encrypt(byte input[], uint16_t input_length, char * output, byt
 }
 
 /* Returns byte array decoded and decrypted. TODO: Refactor to byte[] */
-uint16_t AESLib::decrypt(byte input[], uint16_t input_length, char * plain, byte key[],int bits, byte my_iv[]) {
-  aes.set_key(key, bits);
-  byte decode_buffer[input_length];
-  uint16_t b64len = base64_decode((char*)decode_buffer, (char*)input, input_length);
+uint16_t AESLib::decrypt(byte input[], uint16_t input_length, char * plain, const byte key[], int bits, byte my_iv[]) {
+  byte * decode_input = input;
+  uint16_t b64len = base64_decode((char*)decode_input, (char*)input, input_length);
 
 #ifndef __x86_64
+#ifndef __AVR__
 #ifdef AES_DEBUG
   Serial.printf("[AESLib::decrypt] Decoded bytes = ");
   for (uint8_t pos = 0; pos < b64len; pos++) {
-    Serial.printf("%s ", intToHex(decode_buffer[pos]).c_str());
+    Serial.printf("%s ", intToHex(decode_input[pos]).c_str());
   }
   Serial.printf("\n");
 #endif
 #endif
+#endif
 
-  int dec_len = aes.do_aes_decrypt((byte *)decode_buffer, b64len, (byte*)plain, key, bits, (byte *)my_iv);
+  int dec_len = aes.do_aes_decrypt((byte *)decode_input, b64len, (byte *)plain, key, bits, (byte *)my_iv);
 
   return dec_len;
 }
@@ -172,7 +175,7 @@ String AESLib::encrypt(String msg, byte key[],int bits, byte my_iv[]) {
 //
 
 /* Returns message encrypted and base64 encoded to be used as string. */
-uint16_t AESLib::encrypt64(char * msg, uint16_t msgLen, char * output, byte key[],int bits, byte my_iv[]) {
+uint16_t AESLib::encrypt64(const char * msg, uint16_t msgLen, char * output, const byte key[],int bits, byte my_iv[]) {
 
   aes.set_key(key, bits);
 
@@ -193,7 +196,7 @@ uint16_t AESLib::encrypt64(char * msg, uint16_t msgLen, char * output, byte key[
 }
 
 /* Suggested size for the plaintext buffer is 1/2 length of `msg`. Refactor! */
-uint16_t AESLib::decrypt64(char * msg, uint16_t msgLen, char * plain, byte key[],int bits, byte my_iv[]) {
+uint16_t AESLib::decrypt64(char * msg, uint16_t msgLen, char * plain, const byte key[],int bits, byte my_iv[]) {
 
 #ifdef AES_DEBUG
   Serial.println("[decrypt64] decrypting message:  ");
@@ -215,11 +218,19 @@ uint16_t AESLib::decrypt64(char * msg, uint16_t msgLen, char * plain, byte key[]
 
   byte out[b64len]; // unfortunately this needs to fit to stack... that's hard limit for chunk
 
-  Serial.print("[decrypt64] Formatting out buffer to allow strlen...");
-  errno_t er = memset_s( out, sizeof(out), 0, b64len );
+#ifdef AES_DEBUG
+  // Serial.print("[decrypt64] Clearing-out buffer to allow safe strlen (zero-in-the-middle will still fail)...");
+#endif
 
+  if (b64len > 0) {
+    // void * memset ( void * ptr, int value, size_t num );
+    memset( out, 0x00, b64len );
+  }
+
+#ifdef AES_DEBUG
 #ifdef ESP8266
   Serial.print("[decrypt64] free heap: "); Serial.println(ESP.getFreeHeap());
+#endif
 #endif
 
   int b64_len = aes.do_aes_decrypt((byte *)msg, b64len, (byte*)out, key, bits, (byte *)my_iv);

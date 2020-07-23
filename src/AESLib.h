@@ -6,17 +6,19 @@
 #include "AES.h"
 #include "base64.h"
 
-#include <iomanip>
+#ifndef __AVR__
+#include <iomanip> // provides std::setfill and setw:: (only for intToHex debugging)
 #include <sstream>
-#include <string>
 #include <cstdint>
+#include <iostream>
+#include <string>
+#endif
 
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
-
 
 #ifndef __x86_64
 #include "Arduino.h"
@@ -46,13 +48,15 @@ class AESLib
     void set_paddingmode(paddingMode mode);
     paddingMode get_paddingmode();
 
-    uint16_t encrypt64(char * input, uint16_t input_length, char * output, byte key[],int bits, byte my_iv[]); // base64 encode, encrypt and base64 encode again; will deprecate
-    uint16_t encrypt(byte input[], uint16_t input_length, char * output, byte key[],int bits, byte my_iv[]); // base64 encode and encrypt; should encode on output only (if)
+    uint16_t encrypt64(const char * input, uint16_t input_length, char * output, const byte key[],int bits, byte my_iv[]); // base64 encode, encrypt and base64 encode again; will deprecate
+    uint16_t encrypt(const byte input[], uint16_t input_length, char * output, const byte key[],int bits, byte my_iv[]); // base64 encode and encrypt; should encode on output only (if)
 
-    uint16_t decrypt64(char * input, uint16_t input_length, char * output, byte key[],int bits, byte my_iv[]); // decode, decrypt and decode
-    uint16_t decrypt(byte input[], uint16_t input_length, char * output, byte key[], int bits, byte my_iv[]); // decrypts and decodes (expects encoded)
+    uint16_t decrypt64(char * input, uint16_t input_length, char * output, const byte key[],int bits, byte my_iv[]); // decode, decrypt and decode
+    uint16_t decrypt(byte input[], uint16_t input_length, char * output, const byte key[], int bits, byte my_iv[]); // decrypts and decodes (expects encoded)
 
+#ifndef __AVR__
     std::string intToHex(uint8_t intValue);
+#endif
 
 #ifndef __x86_64
     String decrypt(String msg, byte key[],int bits, byte my_iv[]) __attribute__((deprecated)); // decode, decrypt, decode and return as String
@@ -60,7 +64,7 @@ class AESLib
 #endif
 
     uint8_t getrnd();
-    
+
   private:
     void clean();
     AES aes;

@@ -74,7 +74,7 @@ class AES
    *  (valid inputs are hence 128, 192, 16, 24 and 32).
    *
    */
-  byte set_key (byte key[], byte keylen) ;
+  byte set_key (const byte key[], uint16_t keylen) ;
 
   /** clean up subkeys after use.
    *
@@ -89,7 +89,7 @@ class AES
    *  i have not updated the function in the implementation yet, but it is considered a future plan.
    *
    */
-  void copy_n_bytes (byte * AESt, byte * src, byte n) ;
+  void copy_n_bytes (byte * AESt, const byte * src, byte n) ;
 
 
   /** get a random number
@@ -111,7 +111,7 @@ class AES
    *  @Return 0 if SUCCESS or -1 if FAILURE
    *
    */
-  byte encrypt (byte plain [N_BLOCK], byte cipher [N_BLOCK]) ;
+  byte encrypt (const byte plain [N_BLOCK], byte cipher [N_BLOCK]) ;
 
   /** CBC encrypt a number of blocks (input and return an IV).
    *
@@ -122,7 +122,7 @@ class AES
    *  @Return 0 if SUCCESS or -1 if FAILURE
    *
    */
-  byte cbc_encrypt (byte * plain, byte * cipher, int n_block, byte iv [N_BLOCK]) ;
+  byte cbc_encrypt (const byte * plain, byte * cipher, int n_block, byte iv [N_BLOCK]) ;
 
   /** CBC encrypt a number of blocks (input and return an IV).
    *
@@ -132,7 +132,7 @@ class AES
    *  @Return 0 if SUCCESS or -1 if FAILURE
    *
    */
-  byte cbc_encrypt (byte * plain, byte * cipher, int n_block) ;
+  byte cbc_encrypt (const byte * plain, byte * cipher, int n_block) ;
 
 
   /**  Decrypt a single block of 16 bytes
@@ -147,7 +147,7 @@ class AES
    *  @Return 0 if SUCCESS or -1 if FAILURE
    *
    */
-  byte decrypt (byte cipher [N_BLOCK], byte plain [N_BLOCK]) ;
+  byte decrypt (const byte cipher [N_BLOCK], byte plain [N_BLOCK]) ;
 
   /** CBC decrypt a number of blocks (input and return an IV)
    *
@@ -158,7 +158,7 @@ class AES
    *  @Return 0 if SUCCESS or -1 if FAILURE
    *
    */
-  byte cbc_decrypt (byte * cipher, byte * plain, int n_block, byte iv [N_BLOCK]) ;
+  byte cbc_decrypt (const byte * cipher, byte * plain, int n_block, byte iv [N_BLOCK]) ;
 
   /** CBC decrypt a number of blocks (input and return an IV)
    *
@@ -168,7 +168,7 @@ class AES
    *  @Return 0 if SUCCESS or -1 if FAILURE
    *
    */
-  byte cbc_decrypt (byte * cipher, byte * plain, int n_block) ;
+  byte cbc_decrypt (const byte * cipher, byte * plain, int n_block) ;
 
   /** Sets IV (initialization vector) and IVC (IV counter).
    *  This function changes the ivc and iv variables needed for AES.
@@ -234,7 +234,7 @@ class AES
    * @param in the array of the padded text
    * @param p_size the size of the byte array ex sizeof(paddedtext)
   */
-  int get_unpadded_len(byte *in , int p_size);
+  int get_unpadded_len(const byte *in , int p_size);
 
   /** returns the number of padding characters.
    *
@@ -256,7 +256,7 @@ class AES
    * @param out The string of the out array.
    * @return no return, The padded plaintext is stored in the out pointer.
    */
-  void padPlaintext(void* in,byte* out);
+  void padPlaintext(const void* in,byte* out);
 
   /** Check the if the padding is correct.
    *
@@ -266,7 +266,7 @@ class AES
    * @param size the size of the string
    * @return true if correct / false if not
    */
-  bool CheckPad(byte* in,int size);
+  bool CheckPad(const byte* in,int size);
 
   /** Sets the padding mode
    *
@@ -291,7 +291,7 @@ class AES
    * @param output[] the string of the text in a byte array
    * @param p_pad optional, used to print with out the padding characters
   */
-  void printArray(byte output[],bool p_pad = true);
+  void printArray(const byte output[],bool p_pad = true);
 
   /** Prints the array given.
    *
@@ -300,7 +300,7 @@ class AES
    * @param output[] the string of the text in a byte array
    * @param sizel the size of the array.
   */
-  void printArray(byte output[],int sizel);
+  void printArray(const byte output[],int sizel);
 
   /** User friendly implementation of AES-CBC encryption.
    *
@@ -312,7 +312,7 @@ class AES
    * @param ivl[N_BLOCK] the initialization vector IV that will be used for encryption.
    * @note The key will be stored in class variable.
    */
-  void do_aes_encrypt(byte *plain,int size_p,byte *cipher,byte *key, int bits, byte ivl [N_BLOCK]);
+  void do_aes_encrypt(const byte *plain,int size_p,byte *cipher,const byte *key,int bits, byte ivl [N_BLOCK]);
 
   /** User friendly implementation of AES-CBC encryption.
    *
@@ -323,7 +323,7 @@ class AES
    * @param bits bits of the encryption/decrpytion
    * @note The key will be stored in class variable.
    */
-  void do_aes_encrypt(byte *plain,int size_p,byte *cipher,byte *key, int bits);
+  void do_aes_encrypt(const byte *plain,int size_p,byte *cipher,const byte *key,int bits);
 
   /** User friendly implementation of AES-CBC decryption.
    *
@@ -335,7 +335,7 @@ class AES
    * @param ivl[N_BLOCK] the initialization vector IV that will be used for decryption.
    * @note The key will be stored in class variable.
    */
-  int do_aes_decrypt(byte *cipher,int size_c,byte *plain,byte *key, int bits, byte ivl [N_BLOCK]);
+  int do_aes_decrypt(const byte *cipher,int size_c,byte *plain,const byte *key, int bits, byte ivl [N_BLOCK]);
 
   /** User friendly implementation of AES-CBC decryption.
    *
@@ -346,7 +346,7 @@ class AES
    * @param bits bits of the encryption/decrpytion
    * @note The key will be stored in class variable.
    */
-  int do_aes_decrypt(byte *cipher,int size_c,byte *plain,byte *key, int bits);
+  int do_aes_decrypt(const byte *cipher,int size_c,byte *plain,const byte *key, int bits);
 
   #if defined(AES_LINUX)
     /**
