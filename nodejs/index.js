@@ -24,7 +24,6 @@ var message = "Looks like key but it's not me.";
 // Encrypt
 // iv = CryptoJS.enc.Hex.parse(plain_iv); // resets IV back to initial state
 var ebytes = CryptoJS.AES.encrypt( message, key, { iv: iv } );
-//var ebytes = CryptoJS.AES.encrypt( message, key );
 var ciphertext = ebytes.toString();
 console.log("ciphertext: ", ciphertext);
 

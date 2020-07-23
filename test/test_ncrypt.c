@@ -25,6 +25,8 @@ std::string intToHexString(uint8_t intValue) {
     return hexStr;
 }
 
+typedef errno_t int;
+
 AESLib aesLib;
 
 #define INPUT_BUFFER_LIMIT (128 + 1) // designed for Arduino UNO, not stress-tested anymore (this works with readBuffer[129])
