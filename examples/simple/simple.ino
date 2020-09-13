@@ -11,7 +11,7 @@ AESLib aesLib;
 unsigned char cleartext[INPUT_BUFFER_LIMIT] = {0}; // THIS IS INPUT BUFFER (FOR TEXT)
 unsigned char ciphertext[2*INPUT_BUFFER_LIMIT] = {0}; // THIS IS OUTPUT BUFFER (FOR BASE64-ENCODED ENCRYPTED DATA)
 
-unsigned char readBuffer[18] = "username:password";
+unsigned char readBuffer[19] = "username:password";
 
 unsigned char zmi_username[9] = "username";
 unsigned char zmi_password[9] = "password";
