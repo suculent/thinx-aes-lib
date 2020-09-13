@@ -55,16 +55,12 @@ void aes_init() {
 // must not be in production code, ever
 uint16_t encrypt_to_ciphertext(char * msg, byte iv[]) {
   uint16_t msgLen = strlen(msg);
-  errno_t er = memset_s( ciphertext, sizeof(ciphertext), 0, sizeof(ciphertext) );
-  if (er) return 0;
   memcpy(aes_iv, iv, N_BLOCK);
   uint16_t cipherLength = aesLib.encrypt((byte*)msg, msgLen, ciphertext, aes_key, sizeof(aes_key), iv);
   return cipherLength;
 }
 
 uint16_t decrypt_to_cleartext(byte msg[], uint16_t msgLen, byte iv[]) {
-  errno_t er = memset_s( cleartext, sizeof(cleartext), 0, INPUT_BUFFER_LIMIT );
-  if (er) return 0;
   memcpy(aes_iv, iv, N_BLOCK);
   uint16_t dec_len = aesLib.decrypt(msg, msgLen, cleartext, aes_key, sizeof(aes_key), iv);
   return dec_len;
