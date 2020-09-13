@@ -4,7 +4,7 @@
 #define __STDC_WANT_LIB_EXT1__ 1
 
 #include "AES.h"
-#include "base64.h"
+#include "xbase64.h"
 
 #ifndef __AVR__
 #include <iomanip> // provides std::setfill and setw:: (only for intToHex debugging)
