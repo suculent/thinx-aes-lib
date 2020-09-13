@@ -1,4 +1,4 @@
-#include "base64.h"
+#include "xbase64.h"
 
 #if (defined(__AVR__))
 #include <avr/pgmspace.h>
