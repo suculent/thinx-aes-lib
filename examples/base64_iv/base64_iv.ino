@@ -84,14 +84,12 @@ void aes_init() {
 
   Serial.print("Ciphertext: "); Serial.println(server_b64msg);
   byte dec_iv_C[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-#if 0==1
-  decrypted = decrypt((char*)server_b64msg.c_str(), dec_iv_C); // aes_iv fails here, incorrectly decoded...
-#else
+
   int msgLen = strlen(server_b64msg.c_str());
   char xdecrypted[msgLen]; // half may be enough
   aesLib.decrypt((unsigned char*)server_b64msg.c_str(), msgLen, xdecrypted, aes_key, sizeof(aes_key), dec_iv_C);
   decrypted=String(xdecrypted);
-#endif
+
   Serial.print("Server message decrypted using server IV and ZeroLength, cleartext: ");
   Serial.println(decrypted);
   
@@ -102,7 +100,32 @@ void aes_init() {
   print_key_iv();
   Serial.print("Decoded Server IV bytes: "); Serial.println(ivLen);  
 
+  ///
+
+  Serial.println("\n4) AES init... for Server, paddingMode::ZeroLength");
+  aesLib.set_paddingmode(paddingMode::ZeroLength);  
+
+  byte msg[] = "Looks like key but it's not me.";
+  byte iv_D[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+  int outLen = strlen((const char*)msg);
+  char encrypted[2 * msgLen];
+  int enclen = aesLib.encrypt((const unsigned char*)msg, outLen, encrypted, aes_key, sizeof(aes_key), iv_D);
+  encrypted[enclen] = 0; // terminate string explicitly
+
+  Serial.print("Ciphertext: "); Serial.println(encrypted);
+  Serial.print("enclen: "); Serial.println(enclen);
+
   Serial.println("\n---\n");
+   
+  // reset aes_iv to server-based value
+  ivLen = base64_decode((char*)server_b64iv.c_str(), (char *)aes_iv, server_b64iv.length());
+  // Serial.print("Server IV should be null-IV now: ");¨
+  // array/mem copy first!  
+  print_key_iv();
+  Serial.print("Decoded Server IV bytes: "); Serial.println(ivLen);  
+
+  
 }
 
 String encrypt(char * msg, byte iv[]) {
@@ -134,13 +157,6 @@ void print_key_iv() {
 void setup() {
   Serial.begin(9600);
   aes_init();
-
-  byte dec_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // iv_block gets written to, provide own fresh copy...
-  
-  // dec_iv can be also initialized from base64 string (see aes_init());
-  String decrypted = decrypt((char*)server_b64msg.c_str(), dec_iv); // aes_iv fails here, incorrectly decoded...
-  Serial.print("Server Cleartext: ");
-  Serial.println(decrypted);
 }
 
 void loop() {
@@ -154,17 +170,17 @@ void loop() {
 
   aesLib.set_paddingmode(paddingMode::ZeroLength);
 
-  // Encrypt
+  // Encrypt Data
   byte enc_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // iv_block gets written to, provide own fresh copy...
   String encrypted = encrypt(cleartext, enc_iv);
   sprintf(ciphertext, "%s", encrypted.c_str());
-  Serial.print("Ciphertext: ");
+  Serial.print("Base64 encoded Ciphertext: ");
   Serial.println(encrypted);
 
-  // Decrypt
+  // Decrypt Data
   byte dec_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // iv_block gets written to, provide own fresh copy...
   String decrypted = decrypt(ciphertext, dec_iv);
-  Serial.print("Cleartext: ");
+  Serial.print("Base64 encoded Cleartext: ");
   Serial.println(decrypted);
 
   delay(500);
