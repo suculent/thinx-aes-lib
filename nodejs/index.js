@@ -22,15 +22,23 @@ var message = "Looks like key but it's not me.";
 // ENCRYPT /////////////////////////////////////////////////////////////////////
 
 // Encrypt
-// iv = CryptoJS.enc.Hex.parse(plain_iv); // resets IV back to initial state
-var ebytes = CryptoJS.AES.encrypt( message, key, { iv: iv } );
+iv = CryptoJS.enc.Hex.parse(plain_iv); // resets IV back to initial state
+var ebytes = CryptoJS.AES.encrypt( message, key, {
+    iv: iv,
+    mode: CryptoJS.mode.CBC,
+    padding: CryptoJS.pad.ZeroPadding
+});
 var ciphertext = ebytes.toString();
 console.log("ciphertext: ", ciphertext);
 
 // DECRYPT /////////////////////////////////////////////////////////////////////
 
 // Decrypt
-var bytes  = CryptoJS.AES.decrypt( ciphertext, key, { iv: iv } );
+var bytes  = CryptoJS.AES.decrypt( ciphertext, key, {
+  iv: iv,
+  mode: CryptoJS.mode.CBC,
+  padding: CryptoJS.pad.ZeroPadding
+});
 var plaintext = bytes.toString(CryptoJS.enc.Base64);
 var decoded_b64msg =  new Buffer(plaintext, 'base64').toString('ascii');
 
