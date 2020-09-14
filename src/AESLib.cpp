@@ -53,7 +53,6 @@ void AESLib::clean() {
 uint16_t AESLib::encrypt(const byte input[], uint16_t input_length, char * output, const byte key[], int bits, byte my_iv[]) {
 
   aes.set_key(key, bits);
-  aes.setPadMode((paddingMode)0); // CMS, Bit, ZeroLength, Null, Space, Random, Array
   aes.do_aes_encrypt((byte *)input, input_length, (byte*)output, key, bits, my_iv);
 
   uint16_t enc_len = aes.get_size();
