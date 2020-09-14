@@ -40,7 +40,7 @@ void aes_init() {
   aesLib.set_paddingmode(paddingMode::ZeroLength);  
 
   byte enc_iv_A[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-  Serial.println("Encrypting \"Looks like key but it's not me.\" using null-IV with CMS padding");
+  Serial.println("Encrypting \"Looks like key but it's not me.\" using null-IV with ZeroLength padding");
   String encrypted1 = encrypt( (const char*) "Looks like key but it's not me.\0", enc_iv_A );
   Serial.print("Encrypted(1): "); Serial.println(encrypted1);
   print_key_iv();
@@ -48,7 +48,7 @@ void aes_init() {
   aesLib.set_paddingmode(paddingMode::ZeroLength);  
 
   byte dec_iv_B[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-  Serial.println("Decrypting \"Looks like key but it's not me.\" using null-IV CMS padding");
+  Serial.println("Decrypting \"Looks like key but it's not me.\" using null-IV ZeroLength padding");
   String decrypted = decrypt((char*)encrypted1.c_str(), dec_iv_B); // aes_iv fails here, incorrectly decoded...
   Serial.print("Cleartext: ");
   Serial.println(decrypted);
@@ -59,14 +59,14 @@ void aes_init() {
   Serial.println("\n2) AES init... paddingMode::ZeroLength");
   aesLib.set_paddingmode(paddingMode::ZeroLength);  
 
-  Serial.println("Encrypting \"Looks like key but it's not me.\" using null-IV with CMS padding");
+  Serial.println("Encrypting \"Looks like key but it's not me.\" using null-IV with ZeroLength padding");
   String encrypted2 = encrypt( (const char*) "Looks like key but it's not me.", nullIV() );
   Serial.print("Encrypted (2): "); Serial.println(encrypted2);
   print_key_iv();
 
   aesLib.set_paddingmode(paddingMode::ZeroLength);
 
-  Serial.println("Decrypting \"Looks like key but it's not me.\" using null-IV CMS padding");
+  Serial.println("Decrypting \"Looks like key but it's not me.\" using null-IV ZeroLength padding");
   decrypted = decrypt((char*)encrypted2.c_str(), nullIV()); // aes_iv fails here, incorrectly decoded...
   Serial.print("Cleartext: ");
   Serial.println(decrypted);
@@ -92,7 +92,7 @@ void aes_init() {
   aesLib.decrypt((unsigned char*)server_b64msg.c_str(), msgLen, xdecrypted, aes_key, sizeof(aes_key), dec_iv_C);
   decrypted=String(xdecrypted);
 #endif
-  Serial.print("Server message decrypted using server IV and CMS, cleartext: ");
+  Serial.print("Server message decrypted using server IV and ZeroLength, cleartext: ");
   Serial.println(decrypted);
   
   // reset aes_iv to server-based value
