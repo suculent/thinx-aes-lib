@@ -20,6 +20,9 @@ byte aes_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 String server_b64iv = "AAAAAAAAAAAAAAAAAAAAAAAA=="; // same as aes_iv  but in Base-64 form as received from server
 String server_b64msg = "j0RFVdlKjYrwx17qzHdt40ZS4hxckx0riP4SNy21X3U="; // CBC/Zeropadding; same as aes_iv  but in Base-64 form as received from server
 
+// This is example of how NOT TO DO THIS! This will cause local variable null_iv
+// to be updated to subsequent IV iteration on encode/decode.
+
 byte * nullIV() {
   byte null_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // iv_block gets written to, provide own fresh copy...
   return null_iv;
@@ -124,8 +127,6 @@ void aes_init() {
   // array/mem copy first!  
   print_key_iv();
   Serial.print("Decoded Server IV bytes: "); Serial.println(ivLen);  
-
-  
 }
 
 String encrypt(char * msg, byte iv[]) {
@@ -166,7 +167,7 @@ void loop() {
   if (loopcount > 5) return; // prevent week-long logs
 
   //sprintf(cleartext, "START; %i \n", loopcount);
-  sprintf(cleartext, "Looks like key but it's not me.", loopcount);
+  sprintf(cleartext, "Looks like key but it's not me.");
 
   aesLib.set_paddingmode(paddingMode::ZeroLength);
 
