@@ -36,6 +36,7 @@ byte aes_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 // Generate IV (once)
 void aes_init() {
   aesLib.gen_iv(aes_iv);
+  aesLib.set_paddingmode((paddingMode)0);
 }
 
 uint16_t encrypt_to_ciphertext(char * msg, byte iv[]) {

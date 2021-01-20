@@ -15,6 +15,7 @@ byte aes_iv[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 // Generate IV (once)
 void aes_init() {
   aesLib.gen_iv(aes_iv);
+  aesLib.set_paddingmode((paddingMode)0);
   // encrypt("AAAAAAAAAA", aes_iv); // workaround for incorrect B64 functionality on first run... initing b64 is not enough
 }
 
