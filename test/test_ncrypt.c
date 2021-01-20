@@ -75,7 +75,7 @@ void test_ncrypt_1() {
     uint16_t dec_len = decrypt_to_cleartext((byte*)ciphertext, len, aes_iv);
 
     bool mismatch = false;
-    for (uint8_t pos = 0; pos < strlen(readBuffer); pos++) {
+    for (size_t pos = 0; pos < strlen(readBuffer); pos++) {
         if (readBuffer[pos] != cleartext[pos]) {
             printf("Mismatch found at %u\n", pos);
             mismatch = true;
