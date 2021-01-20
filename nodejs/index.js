@@ -1,28 +1,17 @@
 var CryptoJS = require("crypto-js");
 
-// INIT VECTOR /////////////////////////////////////////////////////////////////
+var base64_iv  = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+var iv  = CryptoJS.enc.Hex.parse(base64_iv);
 
-// null_iv[N_BLOCK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
-var base64_iv  = 'AAAAAAAAAAAAAAAAAAAAAA==';
-var plain_iv =  new Buffer(base64_iv, 'base64').toString('hex');
-var iv  = CryptoJS.enc.Hex.parse(plain_iv);
-
-// console.log("plain_iv: ", plain_iv);
-
-// KEY /////////////////////////////////////////////////////////////////////////
-
-// 0x2B, 0x7E, 0x15, 0x16, 0x28, 0xAE, 0xD2, 0xA6, 0xAB, 0xF7, 0x15, 0x88, 0x09, 0xCF, 0x4F, 0x3C
 var AESKey = '2B7E151628AED2A6ABF7158809CF4F3C';
 var key = CryptoJS.enc.Hex.parse(AESKey);
 
-// MESSAGE /////////////////////////////////////////////////////////////////////
-
-var message = "Looks like key but it's not me.";
+var message = "username:password";
 
 // ENCRYPT /////////////////////////////////////////////////////////////////////
 
 // Encrypt
-iv = CryptoJS.enc.Hex.parse(plain_iv); // resets IV back to initial state
+iv = CryptoJS.enc.Hex.parse(base64_iv); // resets IV back to initial state
 var ebytes = CryptoJS.AES.encrypt( message, key, {
     iv: iv,
     mode: CryptoJS.mode.CBC,
