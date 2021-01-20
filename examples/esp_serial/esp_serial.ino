@@ -42,7 +42,7 @@ void setup() {
   while (!Serial); // wait for serial port
   delay(2000);
   aes_init();
-  aesLib.set_paddingmode(paddingMode::Array);
+  aesLib.set_paddingmode(paddingMode::CMS);
 
   //
   // verify with https://cryptii.com
