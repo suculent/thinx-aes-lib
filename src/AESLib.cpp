@@ -233,6 +233,10 @@ uint16_t AESLib::decrypt64(char * msg, uint16_t msgLen, char * plain, const byte
 #endif
 
   int b64_len = aes.do_aes_decrypt((byte *)msg, b64len, (byte*)out, key, bits, (byte *)my_iv);
+  // ToWI: 2021-01-22: Check the padding length, negative value means deciphering error and cause ESP restarts due to stack smashing error
+  if (b64_len < 0)
+      return 0;
+    
   out[b64_len+1] = 0;
 
 #ifdef AES_DEBUG
