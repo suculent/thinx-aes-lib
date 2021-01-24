@@ -145,7 +145,7 @@ uint16_t AESLib::encrypt64(const char * msg, uint16_t msgLen, char * output, con
   // only this method can return b64
   uint16_t encrypted_length = aes.get_size();
 
-  // Serial.print("- Encrypted length padded length "); Serial.print(paddedLen); Serial.println(" bytes");
+  Serial.print("- Encrypted length padded length "); Serial.print(paddedLen); Serial.println(" bytes");
 
   int encoded_length = base64_encode(output, (char *)cipher, encrypted_length );
 

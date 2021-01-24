@@ -1,0 +1,17 @@
+{
+  "name": "AESLib",
+  "keywords": "thinx, esp8266, 128, AES, CBC",
+  "description": "ESP8266 wrapper for AES library with 128-bit CBC encryption",
+  "authors": {
+    "name": "Matej Sychra",
+    "email": "suculent@me.com",
+    "url": "https://github.com/suculent/thinx-aes-lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/suculent/thinx-aes-lib.git"
+  },
+  "version": "2.2.1",
+  "frameworks": "arduino",
+  "platforms": ["esp8266", "esp32", "avr", "linux"]
+}
