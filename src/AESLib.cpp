@@ -89,24 +89,23 @@ uint16_t AESLib::encrypt(const byte input[], uint16_t input_length, char * outpu
   return base64_len;
 }
 
+
 /* Returns byte array decoded and decrypted. TODO: Refactor to byte[] */
 uint16_t AESLib::decrypt(byte input[], uint16_t input_length, char * plain, const byte key[], int bits, byte my_iv[]) {
-  byte * decode_input = input;
-  uint16_t b64len = base64_decode((char*)decode_input, (char*)input, input_length);
+
+  int dec_len = aes.do_aes_decrypt((byte *)input, input_length, (byte *)plain, key, bits, (byte *)my_iv);
 
 #ifndef __x86_64
 #ifndef __AVR__
 #ifdef AES_DEBUG
-  Serial.printf("[AESLib::decrypt] Decoded bytes = ");
-  for (uint8_t pos = 0; pos < b64len; pos++) {
-    Serial.printf("%s ", intToHex(decode_input[pos]).c_str());
+  Serial.printf("[AESLib::decrypt] Decrypted bytes = ");
+  for (uint8_t pos = 0; pos < dec_len; pos++) {
+    Serial.printf("%s ", intToHex(plain[pos]).c_str());
   }
   Serial.printf("\n");
 #endif
 #endif
 #endif
-
-  int dec_len = aes.do_aes_decrypt((byte *)decode_input, b64len, (byte *)plain, key, bits, (byte *)my_iv);
 
   return dec_len;
 }
@@ -116,57 +115,6 @@ uint16_t AESLib::decrypt(byte input[], uint16_t input_length, char * plain, cons
 //
 
 #ifndef __x86_64
-/* Returns Arduino String decoded and decrypted. Will probably deprecate in favour of char* OR byte[]
-String AESLib::decrypt(String msg, byte key[],int bits, byte my_iv[]) {
-
-  aes.set_key(key, bits);
-
-  int len = msg.length();
-  char encrypted[base64_dec_len((char*)msg.c_str(),len)];
-  int b64len = base64_decode(encrypted, (char*)msg.c_str(), msg.length());
-
-  byte out[b64len];
-  int plain_len = aes.do_aes_decrypt((byte *)encrypted, b64len, out, key, bits, (byte *)my_iv);
-  // unpad the string
-  out[plain_len] = 0; // add string termination
-
-  int outLen = base64_dec_len((char*)out, plain_len);
-  char message[outLen+1]; // trailing zero for cstring
-
-  outLen = base64_decode(message, (char *)out, plain_len);
-  //message[baseLen] = '\0'; // ensure trailing zero after cstring <--not needed is already done in base64_decode
-
-  return String(message);
-}*/
-
-/* Returns Arduino string encrypted and encoded with Base64. Will probably deprecate in favour of char* OR byte[]
-String AESLib::encrypt(String msg, byte key[],int bits, byte my_iv[]) {
-
-  aes.set_key(key, bits);
-
-  int msgLen = strlen(msg.c_str());
-
-  char b64data[base64_enc_len(msgLen)+1]; //+1 to store \0 at the end
-  int b64len = base64_encode(b64data, (char*)msg.c_str(), msgLen);
-
-  // paddedLen is a mutiple of the N_BLOCK size
-  // paddedLen = (((int)(b64len/N_BLOCK) + 1)*N_BLOCK
-  // KOV the +1 is not needed since this is no string anymore so no \0 character needed for ending
-  //     depending on the padding strategy an additional N_BLOCK bytes will be added
-  int paddedLen =  aes.get_padded_len(b64len);
-  byte padded[paddedLen];
-  aes.padPlaintext(b64data, padded);
-
-  // cipher will keep the length of the padded message
-  // do_aes_encrypt will pad the message so use the unpadded source
-  byte cipher[paddedLen];
-  aes.do_aes_encrypt((byte *)b64data, b64len, cipher, key, bits, my_iv);
-
-  char out[base64_enc_len(paddedLen)+1];
-  base64_encode(out, (char *)cipher, paddedLen );
-
-  return String((char*)out);
-}*/
 
 //
 // Encryption with added base64 layer on input, seems useless with known lengths.

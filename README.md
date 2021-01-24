@@ -17,6 +17,10 @@ Since ESP8266 Arduino Core 2.6.2 is already out, this might be updated to use AE
 
 # Changes
 
+`2.2.1` - Major decryption fix
+
+`2.2.0` - Improved examples
+
 `2.1.8` - Improved examples
 
 `2.0.8` - Input buffer reuse optimizations by (via [@ElMohamed](https://github.com/ElMohamed))
