@@ -95,9 +95,15 @@ void loop() {
    // must not exceed INPUT_BUFFER_LIMIT bytes; may contain a newline
   sprintf(cleartext, "%s", readBuffer.c_str());
 
+  memcpy(enc_iv_to, aes_iv, sizeof(aes_iv));
+  memcpy(enc_iv_from, aes_iv, sizeof(aes_iv));
+
   // Encrypt
   // iv_block gets written to, provide own fresh copy... so each iteration of encryption will be the same.
   uint16_t len = encrypt_to_ciphertext(cleartext, enc_iv_to);
+
+  memset(cleartext, 0, sizeof(cleartext));
+
   Serial.print("Encrypted length = "); Serial.println(len);
 
   Serial.println("Encrypted. Decrypting..."); Serial.flush();
