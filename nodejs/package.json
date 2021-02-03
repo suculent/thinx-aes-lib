@@ -1,6 +1,6 @@
 {
   "name": "aestest",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -9,6 +9,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "crypto-js": "^3.1.9-1"
+    "crypto-js": "^4.0.0"
   }
 }
