@@ -83,8 +83,12 @@ void loop() {
   Serial.print("Encrypted length = "); Serial.println(encLen );
 
   Serial.println("Encrypted. Decrypting..."); Serial.println(encLen ); Serial.flush();
+  
+  unsigned char base64decoded[50] = {0};
+  base64_decode((char*)base64decoded, (char*)ciphertext, encLen);
+  
   memcpy(enc_iv, enc_iv_from, sizeof(enc_iv_from));
-  uint16_t decLen = decrypt_to_cleartext(ciphertext, encLen , enc_iv);
+  uint16_t decLen = decrypt_to_cleartext(base64decoded, strlen((char*)base64decoded), enc_iv);
   Serial.print("Decrypted cleartext of length: "); Serial.println(decLen);
   Serial.print("Decrypted cleartext:\n"); Serial.println((char*)cleartext);
 
