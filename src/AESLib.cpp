@@ -11,6 +11,7 @@ std::string AESLib::intToHex(uint8_t intValue) {
     return hexStr;
 }
 #endif
+AESLib::AESLib(void){};
 
 uint8_t AESLib::getrnd()
 {
@@ -56,6 +57,12 @@ uint16_t AESLib::encrypt(const byte input[], uint16_t input_length, char * outpu
   aes.do_aes_encrypt((byte *)input, input_length, (byte*)output, key, bits, my_iv);
 
   uint16_t enc_len = aes.get_size();
+  uint16_t base64_len = base64_enc_len(input_length);
+
+  char b64data[base64_len];
+  // Note: arg order is base64_encode(output, input);
+  base64_len = base64_encode(b64data, (char*)output, enc_len);
+  memcpy(output, b64data, base64_len);
 
   /*
 #ifdef AES_DEBUG
@@ -80,7 +87,7 @@ uint16_t AESLib::encrypt(const byte input[], uint16_t input_length, char * outpu
 #endif
 #endif
 
-  return enc_len;
+  return base64_len;
 }
 
 
@@ -120,32 +127,22 @@ uint16_t AESLib::encrypt64(const char * msg, uint16_t msgLen, char * output, con
 
   aes.set_key(key, bits);
 
-  // Serial.print("- Encoding "); Serial.print(msgLen); Serial.println(" bytes");
-
-  char b64data[base64_enc_len(msgLen)+1];  // should add 1 character to accomodate the 0x\0 ending character
+  //char b64data[base64_enc_len(msgLen)+1];  // should add 1 character to accomodate the 0x\0 ending character
 
   // thanks to this, method can consume byte[] and not just char* (!)
-  int b64len = base64_encode(b64data, msg, msgLen);
+  //int b64len = base64_encode(b64data, msg, msgLen);
+  int paddedLen = aes.get_padded_len(msgLen);//int paddedLen = aes.get_padded_len(b64len);
 
-  // Serial.print("- Encoded to "); Serial.print(b64len); Serial.println(" bytes");
-
-  int paddedLen = aes.get_padded_len(b64len);
-
-  // Serial.print("- Expected padded length "); Serial.print(paddedLen); Serial.println(" bytes");
 
   byte cipher[paddedLen];
-  aes.do_aes_encrypt((byte *)b64data, b64len, cipher, key, bits, my_iv);
+
+  aes.do_aes_encrypt((byte *)msg, msgLen, cipher, key, bits, my_iv);//aes.do_aes_encrypt((byte *)b64data, b64len, cipher, key, bits, my_iv);
 
   // only this method can return b64
-  uint16_t encrypted_length = aes.get_size();
+  //uint16_t encrypted_length = aes.get_size(); -> BAD
+  uint16_t encrypted_length = base64_encode(output, (char *)cipher, aes.get_size() );
 
-  // Serial.print("- Encrypted length padded length "); Serial.print(paddedLen); Serial.println(" bytes");
-
-  int encoded_length = base64_encode(output, (char *)cipher, encrypted_length );
-
-  // Serial.print("- Encoded length "); Serial.print(encoded_length); Serial.println(" bytes");
-
-  return encoded_length;
+  return encrypted_length;
 }
 
 /* Suggested size for the plaintext buffer is 1/2 length of `msg`. Refactor! */
@@ -163,7 +160,9 @@ uint16_t AESLib::decrypt64(char * msg, uint16_t msgLen, char * plain, const byte
 
   // decoded base64 takes some space, but less than original...
   // it should therefore never overfill when reusing the msg-text buffer
-  int b64len = base64_decode(msg, msg, msgLen);
+  char *msgOut = (char*)malloc(msgLen);
+  int b64len = base64_decode(msgOut, msg, msgLen);
+
   // decrypting will keep the message length
 #ifdef AES_DEBUG
   Serial.print("[decrypt64] base64_decode allocating decrypt buffer len:  "); Serial.println(b64len);
@@ -186,17 +185,23 @@ uint16_t AESLib::decrypt64(char * msg, uint16_t msgLen, char * plain, const byte
 #endif
 #endif
 
-  int b64_len = aes.do_aes_decrypt((byte *)msg, b64len, (byte*)out, key, bits, (byte *)my_iv);
+  int b64_len = aes.do_aes_decrypt((byte *)msgOut, b64len, (byte*)out, key, bits, (byte *)my_iv);
   // ToWI: 2021-01-22: Check the padding length, negative value means deciphering error and cause ESP restarts due to stack smashing error
+  free(msgOut);
   if (b64_len < 0)
       return 0;
-    
-  out[b64_len+1] = 0;
+  
+  out[b64_len] = 0;
+  memset( plain, 0x00, msgLen );
+  memcpy((byte*)plain, (byte*)out, b64_len);
 
 #ifdef AES_DEBUG
-  Serial.print("[decrypt64] aes_decrypt length before b64-decode:  "); Serial.println(b64_len);
+  for(byte i=0; i<b64_len;i++)
+    printf("%X ",out[i]);
+  printf("\n");
+  //Serial.print("[decrypt64] aes_decrypt length before b64-decode:  "); Serial.println(b64_len);
 #endif
-
+/*
   // calculate required output length
   uint16_t outLen = base64_dec_len((char*)out, b64_len);
 
@@ -211,7 +216,8 @@ uint16_t AESLib::decrypt64(char * msg, uint16_t msgLen, char * plain, const byte
 #ifdef AES_DEBUG
   Serial.print("[decrypt64] base64_decode->outLen =  "); Serial.println(outLen);
 #endif
-
-  return outLen;
+*/
+  // only this method can return b64
+  return b64_len;
 }
 #endif
