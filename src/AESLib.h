@@ -40,7 +40,7 @@ class AESLib
 {
   public:
 
-    void gen_iv(byte  *iv);
+    void gen_iv(byte *iv);
 
     int get_cipher_length(int msg_len);
     int get_cipher64_length(int msg_len);
@@ -48,11 +48,11 @@ class AESLib
     void set_paddingmode(paddingMode mode);
     paddingMode get_paddingmode();
 
-    uint16_t encrypt64(const char * input, uint16_t input_length, char * output, const byte key[],int bits, byte my_iv[]); // base64 encode, encrypt and base64 encode again; will deprecate
-    uint16_t encrypt(const byte input[], uint16_t input_length, char * output, const byte key[],int bits, byte my_iv[]); // base64 encode and encrypt; should encode on output only (if)
+    uint16_t encrypt64(const byte *input, uint16_t input_length, char *output, const byte key[],int bits, byte my_iv[]); // base64 encode, encrypt and base64 encode again; will deprecate
+    uint16_t encrypt(const byte input[], uint16_t input_length, byte *output, const byte key[],int bits, byte my_iv[]); // base64 encode and encrypt; should encode on output only (if)
 
-    uint16_t decrypt64(char * input, uint16_t input_length, char * output, const byte key[],int bits, byte my_iv[]); // decode, decrypt and decode
-    uint16_t decrypt(byte input[], uint16_t input_length, char * output, const byte key[], int bits, byte my_iv[]); // decrypts and decodes (expects encoded)
+    uint16_t decrypt64(char *input, uint16_t input_length, byte *output, const byte key[],int bits, byte my_iv[]); // decode, decrypt and decode
+    uint16_t decrypt(byte input[], uint16_t input_length, byte *output, const byte key[], int bits, byte my_iv[]); // decrypts and decodes (expects encoded)
 
 #ifndef __AVR__
     std::string intToHex(uint8_t intValue);

@@ -1,7 +1,14 @@
 # THiNX AESLib (ESP32, ESP8266, Arduino)
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8dded023f3d14a69b3c38c9f5fd66a40)](https://www.codacy.com/app/suculent/thinx-aes-lib?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=suculent/thinx-aes-lib&amp;utm_campaign=Badge_Grade)
-[![Build Status](https://travis-ci.org/suculent/thinx-aes-lib.svg)](https://travis-ci.org/suculent/thinx-aes-lib)
+# This fork
+- Removed the nonworking IV functions in the AES class, the iv member and all methods and members related to the iv member.
+- Removed the random seeding that was done in AES::getrandom().
+- Removed the extra Base64 encode that was done by the AESLib::encrypt64()/AESLib::decrypt64() methods.
+- Updated parameter lists to correctly reflect the binary cleartext/ciphertext used or produced by the four methods in AESLib.
+
+Note: You will have to provide your own IV in all calls. If you want to use gen_iv(), you will also have to seed the PRNG properly using srand() - notice that initialization typically takes the same time on every startup, so just using millis() will probably not result in a good seed.
+
+# Original readme
 
 An ESP32/ESP8266 library for Arduino IDE to wrap AES encryption with Base64 support. This project is originally based on [AESLib by kakopappa](https://github.com/kakopappa/arduino-esp8266-aes-lib). This fork actually works, will be maintained at least for a while, and provides optimised methods that do not require using Arduino's flawed String objects (even though those are still in examples).
 
