@@ -57,37 +57,8 @@ uint16_t AESLib::encrypt(const byte input[], uint16_t input_length, byte *output
   aes.do_aes_encrypt((byte *)input, input_length, (byte*)output, key, bits, my_iv);
 
   uint16_t enc_len = aes.get_size();
-  uint16_t base64_len = base64_enc_len(input_length);
 
-  char b64data[base64_len];
-  // Note: arg order is base64_encode(output, input);
-  base64_len = base64_encode(b64data, (char*)output, enc_len);
-  memcpy(output, b64data, base64_len);
-
-  /*
-#ifdef AES_DEBUG
-  printf("[AESLib::encrypt] Encoded %u bytes = ", base64_len);
-  for (uint8_t pos = 0; pos < base64_len; pos++) {
-    if (pos < base64_len) {
-      printf("%c", output[pos]);
-    }
-  }
-#endif
-  */
-
-#ifndef __x86_64
-#ifdef AES_DEBUG
-  Serial.printf("[AESLib::encrypt] Encoded %u bytes = ", base64_len);
-  for (uint8_t pos = 0; pos < base64_len; pos++) {
-    if (pos < base64_len) {
-      Serial.printf("%c", output[pos]);
-    }
-  }
-  Serial.println("");
-#endif
-#endif
-
-  return base64_len;
+  return enc_len;
 }
 
 

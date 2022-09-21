@@ -43,11 +43,6 @@ byte aes_iv[N_BLOCK] = { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // 2 
 byte enc_iv_to[N_BLOCK] = { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // 2 bytes (16 bits)
 byte enc_iv_from[N_BLOCK] = { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // 2 bytes (16 bits)
 
-// Generate IV (once)
-void aes_init() {
-  aesLib.gen_iv(aes_iv);
-}
-
 // must not be in production code, ever
 uint16_t encrypt_to_ciphertext(char * msg, byte iv[]) {
   uint16_t msgLen = strlen(msg);
@@ -66,18 +61,21 @@ uint16_t decrypt_to_cleartext(byte msg[], uint16_t msgLen, byte iv[]) {
 void test_ncrypt_1() {
 
     sprintf(cleartext, "%s", readBuffer); // copy from buffer because cleartext will be destroyed
+    printf("Encrypted string: '%s'\n", cleartext);
 
     memcpy(aes_iv, enc_iv_to, sizeof(enc_iv_to));
     uint16_t len = encrypt_to_ciphertext(cleartext, aes_iv);
+    printf("Encrypted length %u\n", len);
     memset( cleartext, 0, sizeof(cleartext) );
 
-    memcpy(aes_iv, enc_iv_to, sizeof(enc_iv_from));
+    memcpy(aes_iv, enc_iv_from, sizeof(enc_iv_from));
     uint16_t dec_len = decrypt_to_cleartext((byte*)ciphertext, len, aes_iv);
+    printf("Decrypted length %u\n", dec_len);
 
     bool mismatch = false;
     for (size_t pos = 0; pos < strlen(readBuffer); pos++) {
         if (readBuffer[pos] != cleartext[pos]) {
-            printf("Mismatch found at %zu\n", pos);
+            printf("Mismatch found at %zu %c != %c\n", pos, readBuffer[pos], cleartext[pos]);
             mismatch = true;
         }
     }
