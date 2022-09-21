@@ -235,9 +235,6 @@ static void inv_mix_sub_columns (byte dt[N_BLOCK], const byte st[N_BLOCK])
 /******************************************************************************/
 
 AES::AES(){
-  byte ar_iv[8] = { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 };
-  memcpy(iv,ar_iv,8);
-  memcpy(iv+8,ar_iv,8);
   // make sure that the padding characters are outside the range of the base64 alphabet
   // for none base64 encode message collisions can happen :-(
   arr_pad[0] = 0x82;
@@ -344,15 +341,6 @@ void AES::copy_n_bytes (byte * d, const byte * s, byte nn)
 
 uint8_t AES::getrandom()
 {
-#ifdef __AVR__
-    srand (millis());
-#else
-#if defined(ESP8266) || defined(ESP32)
-    srand ((unsigned int)time(NULL));
-#else
-    srand (millis());
-#endif
-#endif
     uint8_t really_random = rand() % 255;
     return really_random;
 }
@@ -387,22 +375,6 @@ byte AES::cbc_encrypt (const byte * plain, byte * cipher, int n_block, byte iv [
   while (n_block--)
     {
       xor_block (iv, plain) ;
-      if (encrypt (iv, iv) != SUCCESS)
-        return FAILURE ;
-      copy_n_bytes (cipher, iv, N_BLOCK) ;
-      plain  += N_BLOCK ;
-      cipher += N_BLOCK ;
-    }
-  return SUCCESS ;
-}
-
-/******************************************************************************/
-
-byte AES::cbc_encrypt (const byte * plain, byte * cipher, int n_block)
-{
-  while (n_block--)
-    {
-    xor_block (iv, plain) ;
       if (encrypt (iv, iv) != SUCCESS)
         return FAILURE ;
       copy_n_bytes (cipher, iv, N_BLOCK) ;
@@ -453,41 +425,8 @@ byte AES::cbc_decrypt (const byte * cipher, byte * plain, int n_block, byte iv [
   return SUCCESS ;
 }
 
-/******************************************************************************/
-
-byte AES::cbc_decrypt (const byte * cipher, byte * plain, int n_block)
-{
-  while (n_block--)
-    {
-      byte tmp [N_BLOCK] ;
-      copy_n_bytes (tmp, cipher, N_BLOCK) ;
-      if (decrypt (cipher, plain) != SUCCESS)
-        return FAILURE ;
-      xor_block (plain, iv) ;
-      copy_n_bytes (iv, tmp, N_BLOCK) ;
-      plain  += N_BLOCK ;
-      cipher += N_BLOCK;
-    }
-  return SUCCESS ;
-}
-
 /*****************************************************************************/
 
-void AES::set_IV(unsigned long long int IVCl){
-  memcpy(iv,&IVCl,8);
-  memcpy(iv+8,&IVCl+8,8);
-  IVC = IVCl;
-}
-
-/******************************************************************************/
-
-void AES::iv_inc(){
-  IVC += 1;
-  memcpy(iv,&IVC,8);
-  memcpy(iv+8,&IVC+8,8);
-}
-
-/******************************************************************************/
 
 int AES::get_size(){
   return size;
@@ -497,14 +436,6 @@ int AES::get_size(){
 
 void AES::set_size(int sizel){
   size = sizel;
-}
-
-
-/******************************************************************************/
-
-void AES::get_IV(byte *out){
-  memcpy(out,&IVC,8);
-  memcpy(out+8,&IVC+8,8);
 }
 
 /******************************************************************************
@@ -714,17 +645,6 @@ void AES::do_aes_encrypt(const byte *plain,int size_p,byte *cipher, const byte *
 
 /******************************************************************************/
 
-void AES::do_aes_encrypt(const byte *plain,int size_p,byte *cipher, const byte *key, int bits){
-  calc_size_n_pad(size_p);
-  byte plain_p[get_size()];
-  padPlaintext(plain,plain_p);
-  int blocks = get_size() / N_BLOCK;
-  set_key (key, bits) ;
-  cbc_encrypt (plain_p, cipher, blocks);
-}
-
-/******************************************************************************/
-
 int AES::do_aes_decrypt(const byte *cipher,int size_c,byte *plain,const byte *key, int bits, byte ivl [N_BLOCK]){
   set_size(size_c);
   int blocks = size_c / N_BLOCK;
@@ -733,22 +653,3 @@ int AES::do_aes_decrypt(const byte *cipher,int size_c,byte *plain,const byte *ke
   return get_unpadded_len(plain,size_c);
 }
 
-/******************************************************************************/
-
-int AES::do_aes_decrypt(const byte *cipher,int size_c,byte *plain,const byte *key, int bits){
-  set_size(size_c);
-  int blocks = size_c / N_BLOCK;
-  set_key (key, bits);
-  cbc_decrypt (cipher,plain, blocks);
-  return get_unpadded_len(plain,size_c);
-}
-
-
-/******************************************************************************/
-
-#if defined(AES_LINUX)
-double AES::millis(){
-  gettimeofday(&tv, NULL);
-  return (tv.tv_sec + 0.000001 * tv.tv_usec);
-}
-#endif
