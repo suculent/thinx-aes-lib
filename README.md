@@ -24,6 +24,12 @@ Since ESP8266 Arduino Core 2.6.2 is already out, this might be updated to use AE
 
 ## Changes
 
+`2.2.6` - Fixed invalid decode crash on ESP32 (via [@Emanavas](https://github.com/emanavas))
+
+`2.2.5` - Library manager update fixed
+
+`2.2.4` - Removed unneeded and non-functional IV code (via [@hansliss](https://github.com/hansliss))
+
 `2.2.1` - Major decryption fix
 
 `2.2.0` - Improved examples
