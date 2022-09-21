@@ -26,14 +26,14 @@ void aes_init() {
 String encrypt(char * msg, uint16_t msgLen, byte iv[]) {
   int cipherlength = aesLib.get_cipher64_length(msgLen);
   char encrypted[cipherlength]; // AHA! needs to be large, 2x is not enough
-  aesLib.encrypt64(msg, msgLen, encrypted, aes_key, sizeof(aes_key), iv);
+  aesLib.encrypt64((byte*)msg, msgLen, encrypted, aes_key, sizeof(aes_key), iv);
   Serial.print("encrypted = "); Serial.println(encrypted);
   return String(encrypted);
 }
 
 String decrypt(char * msg, uint16_t msgLen, byte iv[]) {
   char decrypted[msgLen];
-  aesLib.decrypt64(msg, msgLen, decrypted, aes_key, sizeof(aes_key), iv);
+  aesLib.decrypt64(msg, msgLen, (byte*)decrypted, aes_key, sizeof(aes_key), iv);
   return String(decrypted);
 }
 

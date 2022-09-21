@@ -32,14 +32,14 @@ void aes_init() {
 uint16_t encrypt_to_ciphertext(char * msg, uint16_t msgLen, byte iv[]) {
   Serial.println("Calling encrypt (string)...");
   int cipherlength = aesLib.get_cipher64_length(msgLen);
-  aesLib.encrypt((byte*)msg, msgLen, ciphertext, aes_key, sizeof(aes_key), iv);
+  aesLib.encrypt((byte*)msg, msgLen, (byte*)ciphertext, aes_key, sizeof(aes_key), iv);
   return cipherlength;
 }
 
 uint16_t decrypt_to_cleartext(char * msg, uint16_t msgLen, byte iv[]) {
   Serial.print("Calling decrypt...; ");
   Serial.print("[decrypt_to_cleartext] free heap: "); Serial.println(ESP.getFreeHeap());
-  uint16_t dec_len = aesLib.decrypt((byte*)msg, msgLen, cleartext, aes_key, sizeof(aes_key), iv);
+  uint16_t dec_len = aesLib.decrypt((byte*)msg, msgLen, (byte*)cleartext, aes_key, sizeof(aes_key), iv);
   Serial.print("Decrypted bytes: "); Serial.println(dec_len);
   return dec_len;
 }

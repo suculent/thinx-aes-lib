@@ -90,7 +90,7 @@ void aes_init() {
 
   int msgLen = strlen(server_b64msg.c_str());
   char xdecrypted[msgLen]; // half may be enough
-  aesLib.decrypt((unsigned char*)server_b64msg.c_str(), msgLen, xdecrypted, aes_key, sizeof(aes_key), dec_iv_C);
+  aesLib.decrypt((unsigned char*)server_b64msg.c_str(), msgLen, (byte*)xdecrypted, aes_key, sizeof(aes_key), dec_iv_C);
   decrypted=String(xdecrypted);
 
   Serial.print("Server message decrypted using server IV and ZeroLength, cleartext: ");
@@ -113,7 +113,7 @@ void aes_init() {
 
   int outLen = strlen((const char*)msg);
   char encrypted[2 * msgLen];
-  int enclen = aesLib.encrypt((const unsigned char*)msg, outLen, encrypted, aes_key, sizeof(aes_key), iv_D);
+  int enclen = aesLib.encrypt((const unsigned char*)msg, outLen, (byte*)encrypted, aes_key, sizeof(aes_key), iv_D);
   encrypted[enclen] = 0; // terminate string explicitly
 
   Serial.print("Ciphertext: "); Serial.println(encrypted);
@@ -132,14 +132,14 @@ void aes_init() {
 String encrypt(char * msg, byte iv[]) {
   int msgLen = strlen(msg);
   char encrypted[2 * msgLen];
-  aesLib.encrypt64(msg, msgLen, encrypted, aes_key, sizeof(aes_key), iv);
+  aesLib.encrypt64((byte*)msg, msgLen, encrypted, aes_key, sizeof(aes_key), iv);
   return String(encrypted);
 }
 
 String decrypt(char * msg, byte iv[]) {
   int msgLen = strlen(msg);
   char decrypted[msgLen]; // half may be enough
-  aesLib.decrypt64(msg, msgLen, decrypted, aes_key, sizeof(aes_key), iv);
+  aesLib.decrypt64(msg, msgLen, (byte*)decrypted, aes_key, sizeof(aes_key), iv);
   return String(decrypted);
 }
 

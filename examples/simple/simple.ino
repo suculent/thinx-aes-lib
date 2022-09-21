@@ -28,14 +28,14 @@ void aes_init() {
 uint16_t encrypt_to_ciphertext(char * msg, uint16_t msgLen, byte iv[]) {
   Serial.println("Calling encrypt (string)...");
   // aesLib.get_cipher64_length(msgLen);
-  int cipherlength = aesLib.encrypt((byte*)msg, msgLen, (char*)ciphertext, aes_key, sizeof(aes_key), iv);
+  int cipherlength = aesLib.encrypt((byte*)msg, msgLen, (byte*)ciphertext, aes_key, sizeof(aes_key), iv);
                    // uint16_t encrypt(byte input[], uint16_t input_length, char * output, byte key[],int bits, byte my_iv[]);
   return cipherlength;
 }
 
 uint16_t decrypt_to_cleartext(byte msg[], uint16_t msgLen, byte iv[]) {
   Serial.print("Calling decrypt...; ");
-  uint16_t dec_bytes = aesLib.decrypt(msg, msgLen, (char*)cleartext, aes_key, sizeof(aes_key), iv);
+  uint16_t dec_bytes = aesLib.decrypt(msg, msgLen, (byte*)cleartext, aes_key, sizeof(aes_key), iv);
   Serial.print("Decrypted bytes: "); Serial.println(dec_bytes);
   return dec_bytes;
 }

@@ -43,7 +43,7 @@ uint16_t encrypt_to_ciphertext(char * msg, byte iv[]) {
   int msgLen = strlen(msg);
   int cipherlength = aesLib.get_cipher64_length(msgLen);
   char encrypted_bytes[cipherlength];
-  uint16_t enc_length = aesLib.encrypt64(msg, msgLen, encrypted_bytes, aes_key, sizeof(aes_key), iv);
+  uint16_t enc_length = aesLib.encrypt64((byte*)msg, msgLen, encrypted_bytes, aes_key, sizeof(aes_key), iv);
   sprintf(ciphertext, "%s", encrypted_bytes);
   return enc_length;
 }
@@ -53,7 +53,7 @@ void decrypt_to_cleartext(char * msg, uint16_t msgLen, byte iv[]) {
 #ifdef ESP8266
   Serial.print("[decrypt_to_cleartext] free heap: "); Serial.println(ESP.getFreeHeap());
 #endif
-  uint16_t decLen = aesLib.decrypt64(msg, msgLen, cleartext, aes_key, sizeof(aes_key), iv);
+  uint16_t decLen = aesLib.decrypt64(msg, msgLen, (byte*)cleartext, aes_key, sizeof(aes_key), iv);
   Serial.print("Decrypted bytes: "); Serial.println(decLen);
 }
 
