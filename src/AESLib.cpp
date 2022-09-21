@@ -11,7 +11,7 @@ std::string AESLib::intToHex(uint8_t intValue) {
     return hexStr;
 }
 #endif
-AESLib::AESLib(void){};
+//AESLib::AESLib(void){};
 
 uint8_t AESLib::getrnd()
 {

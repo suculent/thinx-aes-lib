@@ -52,13 +52,13 @@ void aes_init() {
 uint16_t encrypt_to_ciphertext(char * msg, byte iv[]) {
   uint16_t msgLen = strlen(msg);
   memset( ciphertext, 0, sizeof(ciphertext) );
-  uint16_t cipherLength = aesLib.encrypt((byte*)msg, msgLen, ciphertext, aes_key, sizeof(aes_key), iv);
+  uint16_t cipherLength = aesLib.encrypt((byte*)msg, msgLen, (byte*)ciphertext, aes_key, sizeof(aes_key), iv);
   return cipherLength;
 }
 
 uint16_t decrypt_to_cleartext(byte msg[], uint16_t msgLen, byte iv[]) {
   memset( cleartext, 0, INPUT_BUFFER_LIMIT );
-  uint16_t dec_len = aesLib.decrypt(msg, msgLen, cleartext, aes_key, sizeof(aes_key), iv);
+  uint16_t dec_len = aesLib.decrypt(msg, msgLen, (byte*)cleartext, aes_key, sizeof(aes_key), iv);
   return dec_len;
 }
 
@@ -77,7 +77,7 @@ void test_ncrypt_1() {
     bool mismatch = false;
     for (size_t pos = 0; pos < strlen(readBuffer); pos++) {
         if (readBuffer[pos] != cleartext[pos]) {
-            printf("Mismatch found at %u\n", pos);
+            printf("Mismatch found at %zu\n", pos);
             mismatch = true;
         }
     }
