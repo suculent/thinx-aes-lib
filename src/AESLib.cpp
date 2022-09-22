@@ -1,5 +1,7 @@
 #include "AESLib.h"
 
+//#define AES_DEBUG
+
 #ifndef __AVR__
 std::string AESLib::intToHex(uint8_t intValue) {
     std::string hexStr;
@@ -101,10 +103,9 @@ uint16_t AESLib::encrypt64(const byte *msg, uint16_t msgLen, char *output, const
   aes.do_aes_encrypt((byte *)msg, msgLen, cipher, key, bits, my_iv);
 
   uint16_t encrypted_length = aes.get_size();
-  aes.do_aes_encrypt((byte *)msg, msgLen, cipher, key, bits, my_iv);//aes.do_aes_encrypt((byte *)b64data, b64len, cipher, key, bits, my_iv);
 
   // only this method can return b64
-  uint16_t encrypted_length = base64_encode(output, (char *)cipher, aes.get_size() );
+  encrypted_length = base64_encode(output, (char *)cipher, aes.get_size() );
 
   return encrypted_length;
 }
@@ -138,13 +139,13 @@ uint16_t AESLib::decrypt64(char *msg, uint16_t msgLen, byte *plain, const byte k
 #endif
 #endif
 
-  int plain_len = aes.do_aes_decrypt((byte *)msg, b64len, (byte*)plain, key, bits, (byte *)my_iv);
+  int plain_len = aes.do_aes_decrypt((byte *)msgOut, b64len, (byte*)plain, key, bits, (byte *)my_iv);
   // ToWI: 2021-01-22: Check the padding length, negative value means deciphering error and cause ESP restarts due to stack smashing error
   if (plain_len < 0)
       return 0;
     
 #ifdef AES_DEBUG
-  Serial.print("[decrypt64] base64_decode->outLen =  "); Serial.println(outLen);
+  Serial.print("[decrypt64] do_aes_decrypt->plain_len =  "); Serial.println(plain_len);
 #endif
 
   return plain_len;

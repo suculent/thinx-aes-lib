@@ -16,6 +16,8 @@ Since ESP8266 Arduino Core 2.6.2 is already out, this might be updated to use AE
 
 ## Changes
 
+`2.3.1` - Restored functionality of B64 functions, fixed examples `complex` and `base64_iv`
+
 `2.3.0` - Interface change (encode function does not do base64 by default anymore), fixed tests to pass
 
 `2.2.6` - Fixed invalid decode crash on ESP32 (via [@Emanavas](https://github.com/emanavas))

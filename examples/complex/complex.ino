@@ -158,7 +158,7 @@ void loop() {
     Serial.println(plain.indexOf(decrypted));
     delay(5000);
   } else {
-    if (plain.length() == decrypted.length()) {
+    if (plain.length() == strlen(cleartext)) {
       Serial.println("Decryption successful.");
     } else {
       Serial.print("Decryption length incorrect. Plain: ");
