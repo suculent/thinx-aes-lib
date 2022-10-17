@@ -104,7 +104,7 @@ uint16_t AESLib::encrypt64(const byte *msg, uint16_t msgLen, char *output, const
   aes.do_aes_encrypt((byte *)msg, msgLen, cipher, key, bits, my_iv);//aes.do_aes_encrypt((byte *)b64data, b64len, cipher, key, bits, my_iv);
 
   // only this method can return b64
-  uint16_t encrypted_length = base64_encode(output, (char *)cipher, aes.get_size() );
+  encrypted_length = base64_encode(output, (char *)cipher, aes.get_size() );
 
   return encrypted_length;
 }
