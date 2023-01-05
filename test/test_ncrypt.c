@@ -60,7 +60,7 @@ uint16_t decrypt_to_cleartext(byte msg[], uint16_t msgLen, byte iv[]) {
 // must not be in production code, ever
 void test_ncrypt_1() {
 
-    sprintf(cleartext, "%s", readBuffer); // copy from buffer because cleartext will be destroyed
+    snprintf(cleartext, 33, "%s", readBuffer); // copy from buffer because cleartext will be destroyed
     printf("Encrypted string: '%s'\n", cleartext);
 
     memcpy(aes_iv, enc_iv_to, sizeof(enc_iv_to));

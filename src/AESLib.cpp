@@ -69,8 +69,8 @@ uint16_t AESLib::decrypt(byte input[], uint16_t input_length, byte *plain, const
 
   int dec_len = aes.do_aes_decrypt((byte *)input, input_length, (byte *)plain, key, bits, (byte *)my_iv);
 
-#ifndef __x86_64
 #ifndef __AVR__
+#ifndef __x86_64
 #ifdef AES_DEBUG
   Serial.printf("[AESLib::decrypt] Decrypted bytes = ");
   for (uint8_t pos = 0; pos < dec_len; pos++) {
