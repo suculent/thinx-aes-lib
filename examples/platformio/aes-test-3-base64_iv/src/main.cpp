@@ -1,5 +1,6 @@
 /* Example taking test values from node.js server as input as well... */
 
+#include <Arduino.h>
 #include <AESLib.h>
 
 AESLib aesLib;
