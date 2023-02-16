@@ -35,14 +35,14 @@ void print_key_iv() {
 String encrypt_impl(char * msg, byte iv[]) {
   int msgLen = strlen(msg);
   char encrypted[2 * msgLen] = {0};
-  aesLib.encrypt64(msg, msgLen, encrypted, aes_key, sizeof(aes_key), iv);
+  aesLib.encrypt64((const byte*)msg, msgLen, encrypted, aes_key, sizeof(aes_key), iv);
   return String(encrypted);
 }
 
 String decrypt_impl(char * msg, byte iv[]) {
   int msgLen = strlen(msg);
   char decrypted[msgLen] = {0}; // half may be enough
-  aesLib.decrypt64(msg, msgLen, decrypted, aes_key, sizeof(aes_key), iv);
+  aesLib.decrypt64(msg, msgLen, (byte*)decrypted, aes_key, sizeof(aes_key), iv);
   return String(decrypted);
 }
 

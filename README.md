@@ -16,6 +16,8 @@ Since ESP8266 Arduino Core 2.6.2 is already out, this might be updated to use AE
 
 ## Changes
 
+`2.3.3` - Reviewed/fixed examples in Arduino IDE (ESP8266 Core v3.0.2)
+
 `2.3.2` - Reviewed and simplified example `base_64iv`, added example `platformio/aes-test-3-base64_iv` for that purpose
 
 `2.3.1` - Restored functionality of B64 functions, fixed examples `complex` and `base64_iv`
