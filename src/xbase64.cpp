@@ -1,6 +1,6 @@
 #include "xbase64.h"
 
-#if (defined(__AVR__))
+#if (defined(__AVR__) || defined(NRF5))
 #include <avr/pgmspace.h>
 #else
 #if !defined(__x86_64)

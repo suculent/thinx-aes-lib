@@ -6,7 +6,7 @@
 #include "AES.h"
 #include "xbase64.h"
 
-#ifndef __AVR__
+#if !(defined(__AVR__) || defined(NRF5))
 #include <iomanip> // provides std::setfill and setw:: (only for intToHex debugging)
 #include <sstream>
 #include <cstdint>
@@ -53,10 +53,6 @@ class AESLib
 
     uint16_t decrypt64(char *input, uint16_t input_length, byte *output, const byte key[],int bits, byte my_iv[]); // decode, decrypt and decode
     uint16_t decrypt(byte input[], uint16_t input_length, byte *output, const byte key[], int bits, byte my_iv[]); // decrypts and decodes (expects encoded)
-
-#ifndef __AVR__
-    std::string intToHex(uint8_t intValue);
-#endif
 
 #ifndef __x86_64
     String decrypt(String msg, byte key[],int bits, byte my_iv[]) __attribute__((deprecated)); // decode, decrypt, decode and return as String

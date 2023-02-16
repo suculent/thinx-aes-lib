@@ -30,7 +30,7 @@
   #define printf_P printf
   #define PSTR(x) (x)
 #else
-  #if (defined(__AVR__))
+  #if (defined(__AVR__) || defined(NRF5))
     #include <avr/pgmspace.h>
   #else
   #if !defined(__x86_64)

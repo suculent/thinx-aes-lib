@@ -3,6 +3,7 @@
 //#define AES_DEBUG
 
 #ifndef __AVR__
+#ifndef NRF5
 std::string AESLib::intToHex(uint8_t intValue) {
     std::string hexStr;
     std::stringstream sstream;
@@ -12,6 +13,7 @@ std::string AESLib::intToHex(uint8_t intValue) {
     sstream.clear();
     return hexStr;
 }
+#endif
 #endif
 //AESLib::AESLib(void){};
 
@@ -70,6 +72,7 @@ uint16_t AESLib::decrypt(byte input[], uint16_t input_length, byte *plain, const
   int dec_len = aes.do_aes_decrypt((byte *)input, input_length, (byte *)plain, key, bits, (byte *)my_iv);
 
 #ifndef __AVR__
+#ifndef NRF5
 #ifndef __x86_64
 #ifdef AES_DEBUG
   Serial.printf("[AESLib::decrypt] Decrypted bytes = ");
@@ -77,6 +80,7 @@ uint16_t AESLib::decrypt(byte input[], uint16_t input_length, byte *plain, const
     Serial.printf("%s ", intToHex(plain[pos]).c_str());
   }
   Serial.printf("\n");
+#endif
 #endif
 #endif
 #endif
