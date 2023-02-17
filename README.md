@@ -2,7 +2,7 @@
 
 **Security Professional Advisory**
 
-> Please, do not use this library in your new project. It's designed for legacy devices. If you're in need of up-to date encryption system, refer to [Arduino Cryptography Library](https://rweather.github.io/arduinolibs/crypto.html) which supports CBC as well.
+> Please, do not use this library in your new project. It's designed for legacy devices with minimal memory footprint (or not enough memory to perform a HTTPS network connection). If you're in need of up-to date encryption system, refer to [Arduino Cryptography Library](https://rweather.github.io/arduinolibs/crypto.html) which supports CBC as well.
 
 An ESP32/ESP8266 library for Arduino IDE to wrap AES encryption with Base64 support. This project is originally based on [AESLib by kakopappa](https://github.com/kakopappa/arduino-esp8266-aes-lib). This fork actually works, will be maintained at least for a while, and provides optimised methods that do not require using Arduino's flawed String objects (even though those are still in examples).
 
