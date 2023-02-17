@@ -64,7 +64,7 @@ class AESLib
 
 #ifndef __AVR__
 #ifndef NRF5
-    std::string AESLib::intToHex(uint8_t intValue);
+    std::string intToHex(uint8_t intValue);
 #endif
 #endif
 
