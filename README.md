@@ -4,13 +4,11 @@
 
 > Please, do not use this library in your new project. It's designed for legacy devices with minimal memory footprint (or not enough memory to perform a HTTPS network connection). If you're in need of up-to date encryption system, refer to [Arduino Cryptography Library](https://rweather.github.io/arduinolibs/crypto.html) which supports CBC as well.
 
-An ESP32/ESP8266 library for Arduino IDE to wrap AES encryption with Base64 support. This project is originally based on [AESLib by kakopappa](https://github.com/kakopappa/arduino-esp8266-aes-lib). This fork actually works, will be maintained at least for a while, and provides optimised methods that do not require using Arduino's flawed String objects (unless you'll have to use Base64).
+> *Note:* You will have to provide your own IV in all calls. If you want to use gen_iv(), you will also have to seed the PRNG properly using srand() - notice that initialization typically takes the same time on every startup, so just using millis() will probably not result in a good seed. Make sure you countact a NTP time server before requesting a time-based random seed.
+
+Originally library for Arduino IDE (supporting Arduino, ESP32, ESP8266 and now NRF5x as well) to wrap AES encryption with optional Base64 support. This project is originally based on [AESLib by kakopappa](https://github.com/kakopappa/arduino-esp8266-aes-lib). My fork has been already maintained for a while (however it's now replaced with aforementioned Arduino Cryptography Library) and provides optimised methods that do not require using Arduino's flawed String objects (unless you'll have to use Base64).
 
 AESLib provides convenience methods for encrypting data to byte arrays and Strings, with optional additional base64 encoding to return strings instead of bare data.
-
-Since ESP8266 Arduino Core 2.6.2 is already out, this might be updated to use AES implementation from BearSSL (to save more RAM in larger projects). But it would loose compatibility with AVR so this is a NO for now.
-
-*Note:* You will have to provide your own IV in all calls. If you want to use gen_iv(), you will also have to seed the PRNG properly using srand() - notice that initialization typically takes the same time on every startup, so just using millis() will probably not result in a good seed.
 
 ## Tested on
 
