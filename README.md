@@ -1,4 +1,4 @@
-# THiNX AESLib (ESP32, ESP8266, Arduino)
+# THiNX AESLib (ESP32, ESP8266, Arduino, NRF5x)
 
 An ESP32/ESP8266 library for Arduino IDE to wrap AES encryption with Base64 support. This project is originally based on [AESLib by kakopappa](https://github.com/kakopappa/arduino-esp8266-aes-lib). This fork actually works, will be maintained at least for a while, and provides optimised methods that do not require using Arduino's flawed String objects (even though those are still in examples).
 
