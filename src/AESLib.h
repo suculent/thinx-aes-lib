@@ -61,6 +61,13 @@ class AESLib
 
     uint8_t getrnd();
 
+
+#ifndef __AVR__
+#ifndef NRF5
+    std::string AESLib::intToHex(uint8_t intValue);
+#endif
+#endif
+
   private:
     void clean();
     AES aes;
