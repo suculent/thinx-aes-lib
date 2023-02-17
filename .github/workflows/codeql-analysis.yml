@@ -60,4 +60,7 @@ jobs:
     #   make release
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v1
+      uses: github/codeql-action/analyze@v2
+
+    - name: Gimme results for Tungaacz
+      uses: github/codeql-action/upload-sarif@v2
