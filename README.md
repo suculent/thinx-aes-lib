@@ -16,6 +16,8 @@ Since ESP8266 Arduino Core 2.6.2 is already out, this might be updated to use AE
 
 ## Changes
 
+`2.3.5` - Fixed a memory leak in `decrypt64` (via [@motniemtin](https://github.com/motniemtin))
+
 `2.3.4` - Buildable for [NRF5x Core by Sandeep Mistry](https://github.com/sandeepmistry/arduino-nRF5)
 
 `2.3.3` - Reviewed/fixed examples in Arduino IDE (ESP8266 Core v3.0.2)
