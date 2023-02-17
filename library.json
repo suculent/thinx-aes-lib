@@ -1,7 +1,7 @@
 {
   "name": "AESLib",
   "keywords": "thinx, esp8266, 128, AES, CBC",
-  "description": "ESP8266 wrapper for AES library with 128-bit CBC encryption",
+  "description": "Easy-to-use cross-platform AES implementation (128-bit CBC) for low-memory conditions",
   "authors": {
     "name": "Matej Sychra",
     "email": "suculent@me.com",
@@ -13,5 +13,5 @@
   },
   "version": "2.3.5",
   "frameworks": "arduino",
-  "platforms": ["esp8266", "esp32", "avr", "linux"]
+  "platforms": ["esp8266", "esp32", "avr", "linux", "nrf5"]
 }
