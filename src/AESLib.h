@@ -6,7 +6,7 @@
 #include "AES.h"
 #include "xbase64.h"
 
-#if !(defined(__AVR__) || defined(NRF5))
+#if !(defined(__AVR__) || defined(ARDUINO_ARCH_SAMD) || defined(NRF5))
 #include <iomanip> // provides std::setfill and setw:: (only for intToHex debugging)
 #include <sstream>
 #include <cstdint>

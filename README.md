@@ -18,9 +18,12 @@ AESLib provides convenience methods for encrypting data to byte arrays and Strin
 * ESP8266 – Wemos D1 Mini & Mini Pro, and other variants (OK)
 * Arduino Uno (OK)
 * Arduino Mega 2560 (OK)
+* Arduino SAMD (to be confirmed)
 * nRF5x (to be confirmed)
 
 ## Changes
+
+`2.3.6` - Added compatibility/buildability for Arduino SAMD architecture
 
 `2.3.5` - Fixed a memory leak in `decrypt64` (via [@motniemtin](https://github.com/motniemtin))
 
