@@ -8,7 +8,8 @@ var key = CryptoJS.enc.Hex.parse(AESKey);
 
 var message = "username:password";
 
-console.log(AESKey); // added vulnerability
+const password = AESKey;
+console.log(password); // added vulnerability
 
 // ENCRYPT /////////////////////////////////////////////////////////////////////
 
