@@ -29,8 +29,8 @@ void AESLib::gen_iv(uint8_t * iv) {
         esp_fill_random(iv, N_BLOCK);
     #else
         for (int i = 0 ; i < N_BLOCK ; i++ ) {
-        iv[i]= getrnd();
-    }
+            iv[i]= getrnd();
+        }
     #endif
 }
 
