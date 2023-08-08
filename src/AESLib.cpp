@@ -25,9 +25,13 @@ uint8_t AESLib::getrnd()
 }
 
 void AESLib::gen_iv(uint8_t * iv) {
-    for (int i = 0 ; i < N_BLOCK ; i++ ) {
-        iv[i]= getrnd();
-    }
+    #ifdef ARDUINO_ARCH_ESP32
+        esp_fill_random(iv, N_BLOCK);
+    #else
+        for (int i = 0 ; i < N_BLOCK ; i++ ) {
+            iv[i]= getrnd();
+        }
+    #endif
 }
 
 void AESLib::set_paddingmode(paddingMode mode){
